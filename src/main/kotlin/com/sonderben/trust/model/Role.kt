@@ -1,22 +1,12 @@
 package com.sonderben.trust.model
 
+import com.sonderben.trust.db.entity.BaseEntity
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Entity
+import jakarta.persistence.Enumerated
+import jakarta.persistence.OneToMany
 
-data class Role(var name: String,var screens:MutableList<Screen>) {
-
-/*
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Role
-
-        if (name != other.name) return false
-        return screens == other.screens
-    }
-
-    override fun hashCode(): Int {
-        var result = name.hashCode()
-        result = 31 * result + screens.hashCode()
-        return result
-    }*/
+@Entity
+data class Role(var name: String, @OneToMany(cascade = [CascadeType.ALL]) var screens:MutableList<Screen>):BaseEntity() {
+    constructor() : this("", mutableListOf())
 }

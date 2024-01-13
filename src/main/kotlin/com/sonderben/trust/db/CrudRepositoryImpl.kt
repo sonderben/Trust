@@ -79,6 +79,12 @@ abstract class CrudRepositoryImpl<E : BaseEntity, T>  {
         return session.createQuery("select e from ${E::class.java.simpleName} e",E::class.java).resultList
     }
 
+    inline fun <reified E> findAll(entityClass: Class<E>): List<E> {
+        val session = sessionFactory.openSession()
+        return session.createQuery("select e from ${entityClass.simpleName} e", entityClass).resultList
+    }
+
+
 
 
 

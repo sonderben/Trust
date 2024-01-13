@@ -6,6 +6,7 @@ import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.customView.RolePane
 import com.sonderben.trust.db.HIbernateUtil
 import com.sonderben.trust.db.ProductDto
+import com.sonderben.trust.db.RoleDto
 import com.sonderben.trust.model.*
 import javafx.application.Platform
 import javafx.beans.property.SimpleDoubleProperty
@@ -218,41 +219,32 @@ class SaleController : Initializable {
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
-       /* val session = HIbernateUtil.getSessionFactory().openSession()
-        val tt = deleteClass(1L,"fff","fff")
-
-        session.beginTransaction();
-
-        session.merge(tt)
-
-        val print = session.get(deleteClass::class.java,tt.id)
-        println( print )
-
-        session.transaction.commit();
 
 
 
-        session.close()*/
-
-        var pr  = ProductDto()
-
-        val a =Product()
-
-        a.apply {
-            code = ("abc")
-
-             description= ("bla bla now")
-             price= (1.2)
-             discount= (0.2)
-             itbis= (12.2)
-             quantity = (12)
-
-        }
-
-        pr.save(a)
 
 
-        products.addAll( pr.findAll() )
+
+
+                var pr  = ProductDto()
+
+                val a =Product()
+
+                a.apply {
+                    code = ("abc")
+
+                     description= ("bla bla now")
+                     price= (1.2)
+                     discount= (0.2)
+                     itbis= (12.2)
+                     quantity = (12)
+
+                }
+
+                pr.save(a)
+
+
+                products.addAll( pr.findAll() )
 
 
 

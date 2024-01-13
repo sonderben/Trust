@@ -79,9 +79,21 @@
     -fx-border-radius: 5;
     -fx-background-radius: 5;
 }
+.custom-tab-button .label{
+    -fx-max-width: -2;
+    -fx-text-overrun: clip;
+}
+.custom-tab-button-area:hover  .label {
+    -fx-max-width: 200;
+}
+
 .custom-tab-button:pressed{
     -fx-padding: 2.9 2.9 2.9 2.9;
     -fx-background-color: #95c1e3;
+}
+.custom-tab-button:hover{
+    -fx-padding: 2.9 2.9 2.9 2.9;
+    -fx-background-color: -fx-primary-color ;
 }
 /*#3498db;*/
 

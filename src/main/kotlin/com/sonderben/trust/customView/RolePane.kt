@@ -2,6 +2,7 @@ package com.sonderben.trust.customView
 
 import com.sonderben.trust.constant.Action
 import com.sonderben.trust.constant.ScreenEnum
+import com.sonderben.trust.db.RoleDto
 import com.sonderben.trust.model.Role
 import com.sonderben.trust.model.Screen
 import javafx.beans.property.SimpleObjectProperty
@@ -35,6 +36,10 @@ class RolePane(screens: List<String>, actions: List<String>) : Pane(), EventHand
 
 
     init {
+
+
+
+
         this.style = "-fx-background-color:#032d3b;"
         this.prefHeight = 500.0
 
@@ -75,17 +80,7 @@ class RolePane(screens: List<String>, actions: List<String>) : Pane(), EventHand
         namePoint.onMouseClicked = this
         this.onMouseMoved = this
 
-         /*roleTemp = Role(
-            "Admin", mutableListOf(
-                Screen(ScreenEnum.INVENTORY, mutableListOf(Action.ADD, Action.READ, Action.UPDATE, Action.DELETE)),
-                Screen(ScreenEnum.ROLE, mutableListOf(Action.ADD, Action.READ, Action.UPDATE, Action.DELETE)),
 
-                Screen(ScreenEnum.USER, mutableListOf(Action.ADD, Action.READ, Action.UPDATE, Action.DELETE)),
-                Screen(ScreenEnum.LOGIN, mutableListOf(Action.ADD, Action.READ, Action.UPDATE, Action.DELETE)),
-
-                )
-
-        )*/
 
 
         role.addListener { _, _, newRole ->
@@ -128,14 +123,17 @@ class RolePane(screens: List<String>, actions: List<String>) : Pane(), EventHand
             }
         }
 
-/*
-        role.set( Role(name=role.name, screens = roleTemp.screens) )
 
-        roleTemp.screens.removeAt(0)
 
-        role.set(null)
+        val rol1 = Role("Sale", mutableListOf(  Screen(ScreenEnum.SALE, mutableListOf( Action.ADD,Action.DELETE,Action.READ,Action.UPDATE ))  ) )
+        val roleCrud = RoleDto()
+        val x = roleCrud.save( rol1 )
 
-        role.set( Role(name=role.name, screens = roleTemp.screens) )*/
+        val ps:List<Role> = roleCrud.findAll()
+
+        println( ps)
+
+        role.set( ps[0] )
 
 
 
