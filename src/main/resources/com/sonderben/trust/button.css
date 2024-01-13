@@ -1,0 +1,16 @@
+.button{
+    -fxbackground-radius:10;
+   -fx-border-color: #85858a;
+    -fx-border-width: 2;
+    -fx-background-color: #85858a;
+    -fx-border-radius: 10;
+    -fx-text-fill: white;
+}
+.text-field-auth{
+    -fxbackground-radius:10;
+    -fx-border-color: #3498db;
+    -fx-border-width: 2;
+    -fx-background-color: transparent;
+    -fx-border-radius: 10;
+    -fx-text-fill: white;
+}
