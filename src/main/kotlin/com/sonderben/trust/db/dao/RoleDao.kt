@@ -1,10 +1,9 @@
 package com.sonderben.trust.db.dao
 
+import Database
 import com.sonderben.trust.db.SqlCreateTables
 import com.sonderben.trust.model.Role
-import entity.CategoryEntity
 import javafx.collections.FXCollections
-import java.lang.Exception
 
 object RoleDao {
     val roles  = FXCollections.observableArrayList<Role>()
@@ -13,33 +12,42 @@ object RoleDao {
         findAll()
     }
 
-    const val insertRole = "INSERT INTO ${SqlCreateTables.roles} (name) values (?)"
-    const val insertScreen = " INSERT INTO ${SqlCreateTables.screen} (screenEnum,actions,id_role) values (?,?,?)"
-    const val selectAll = "SELECT * FROM ${SqlCreateTables.roles}"
+    private  val insertRole = buildString {
+        append("INSERT INTO ")
+        append(SqlCreateTables.roles)
+        append(" (name) values (?)")
+    }
+    private  val insertScreen = buildString {
+        append(" INSERT INTO ")
+        append(SqlCreateTables.screen)
+        append(" (screenEnum,actions,id_role) values (?,?,?)")
+    }
+    private const val selectAllRoles = "SELECT * FROM ${SqlCreateTables.roles}"
 
-    public fun save(role:Role){
-        val conexion = Database.connect()
+
+    fun save(role:Role){
+        val conection = Database.connect()
         try {
             var roleId:Long = 0
 
-            conexion.autoCommit = false
+            conection.autoCommit = false
 
-            conexion.prepareStatement( insertRole ).use { preparedStatement ->
+            conection.prepareStatement( insertRole ).use { preparedStatement ->
                 preparedStatement.setString(1,role.name)
                 val intRow = preparedStatement.executeUpdate()
                 if ( intRow>0 ){
                     roleId = Database.getLastId()
                     if (roleId==0L){
-                        throw Exception("can not get the id of the recent role")
+                        throw Exception("Can not get the id of the recent role")
                     }
                 }else{
-                    throw Exception("Role can' t be add")
+                    throw Exception("Role can not be saved")
                 }
             }
 
 
             for (screen in role.screens){
-                conexion.prepareStatement( insertScreen ).use { preparedStatement ->
+                conection.prepareStatement( insertScreen ).use { preparedStatement ->
                     preparedStatement.setString(1,screen.screen.name)
                     preparedStatement.setString(2,screen.actions.map { it.name }.joinToString ("," ) )
                     preparedStatement.setLong(3,roleId)
@@ -49,21 +57,26 @@ object RoleDao {
                         throw Exception("can't save screen: $screen")
                 }
             }
-            conexion.commit()
+            conection.commit()
         }catch (e:Exception){
-            conexion.rollback()
+            conection.rollback()
         }finally {
-            conexion.autoCommit = true
-            conexion.close()
+            conection.autoCommit = true
+            conection.close()
         }
     }
 
     private fun findAll() {
+
         val tempRoleList = mutableListOf<Role>()
         Database.connect().use { connection ->
             connection.autoCommit = true
             connection.createStatement().use { statement ->
-                statement.executeQuery(selectAll).use {resultSet ->
+
+
+
+                statement.executeQuery(selectAllRoles).use { resultSet ->
+
                     while ( resultSet.next() ){
                         val role = Role()
                         role.id = resultSet.getLong("id")
@@ -73,6 +86,7 @@ object RoleDao {
                         tempRoleList.add( role )
                     }
                     roles.addAll( tempRoleList )
+                    //println("roles: "+ roles)
 
                 }
 

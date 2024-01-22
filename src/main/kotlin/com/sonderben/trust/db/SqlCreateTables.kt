@@ -6,7 +6,9 @@ object SqlCreateTables {
     const val categories = "Categories"
     const val screen = "Screens"
     const val roles = "Roles"
-    const val screen_roles = "ScreenRoles"
+    const val schedules = "Schedules"
+    const val employees = "Employee"
+    const val employeesRoles = "employees_roles"
 
     private const val createCategoryTable = """
         create table if not exists ${categories} (
@@ -33,20 +35,50 @@ object SqlCreateTables {
     );
     """
 
-    private var createScreeRolesTable1 =  """
-    CREATE TABLE IF NOT EXISTS $screen_roles (
+    private var createEmployeeTable =  """
+    create table if not exists $employees (
+        birthDay timestamp,
         id integer primary key autoincrement,
-        id_screen INTEGER,
-        id_role INTEGER,
-        FOREIGN KEY (id_screen)
-            REFERENCES $screen (id),
-        FOREIGN KEY (id_role)
-            REFERENCES $roles (id)
+        bankAccount varchar(255) unique,
+        direction varchar(255),
+        email varchar(255) unique,
+        firstName varchar(255),
+        genre varchar(30),
+        lastName varchar(255),
+        passport varchar(255),
+        password varchar(255),
+        telephone varchar(255),
+        userName varchar(255) unique not null
     );
     
     """
 
-    val tables = listOf(createCategoryTable, createScreenTable, createRolesTable/*, createScreeRolesTable*/)
+    private val createRoleEmployee = """
+        CREATE TABLE IF NOT EXISTS $employeesRoles( 
+        id integer primary key autoincrement,  
+        id_role integer not null, 
+        id_employee integer not null, 
+        FOREIGN KEY(id_role) 
+            REFERENCES $roles (id) 
+        FOREIGN KEY (id_employee) 
+            REFERENCES $employees (id) 
+        )
+    """.trimIndent()
+    //Integer workDay; private Float startHour, endHour;
+    private val createScheduleTable = """
+        CREATE TABLE IF NOT EXISTS $schedules (
+        id integer primary key autoincrement,
+        workDay integer,
+        start_hour float(4),
+        end_hour float(4),
+        id_employee integer,
+        FOREIGN key (id_employee)
+            REFERENCES $employees (id)
+        );
+    """.trimIndent()
+
+    val tables = listOf(createCategoryTable, createScreenTable, createRolesTable, createEmployeeTable, createRoleEmployee,
+        createScheduleTable)
     var deleteCategoryTable = """
         drop table if exists ${categories};
     """.trimIndent()

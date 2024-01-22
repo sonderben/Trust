@@ -4,11 +4,13 @@ import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.constant.Action
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.db.dao.CategoryDao
+import com.sonderben.trust.db.dao.EmployeeDao
 import com.sonderben.trust.db.dao.RoleDao
 import com.sonderben.trust.model.Role
 import com.sonderben.trust.model.Screen
 import dto.CategoryDto
 import entity.CategoryEntity
+import entity.EmployeeEntity
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
@@ -29,14 +31,16 @@ class CategoryDialog : Dialog<CategoryEntity>(), Initializable {
     private var categorySelected:CategoryEntity?=null
     init {
 
-        RoleDao.save(
-            Role("Admin", mutableListOf(
-                Screen(ScreenEnum.LOGIN, mutableListOf(Action.READ,Action.ADD)),
-                Screen(ScreenEnum.SALE, mutableListOf(Action.READ,Action.ADD,Action.DELETE))
-            )
-            )
+        RoleDao.roles
+        var rol = Role()
+        rol.id = 1
+
+       // RoleDao.save( Role("name", mutableListOf(Screen(ScreenEnum.SALE, mutableListOf(Action.ADD)))) )
+
+        EmployeeDao.save(
+            EmployeeEntity("","1","1","1","1","1","1",
+                Calendar.getInstance(),"1","1","1", mutableListOf(rol), mutableListOf())
         )
-        println(RoleDao.roles)
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/GoToCategoryDialog.fxml"))
         fxmlLoader.setController(this)
         try {
