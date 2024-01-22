@@ -37,10 +37,11 @@ class CategoryDialog : Dialog<CategoryEntity>(), Initializable {
 
        // RoleDao.save( Role("name", mutableListOf(Screen(ScreenEnum.SALE, mutableListOf(Action.ADD)))) )
 
-        EmployeeDao.save(
+       /* EmployeeDao.save(
             EmployeeEntity("","1","1","1","1","1","1",
                 Calendar.getInstance(),"1","1","1", mutableListOf(rol), mutableListOf())
-        )
+        )*/
+        println("EmployeeDao.findAll(): "+ EmployeeDao.findAll() )
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/GoToCategoryDialog.fxml"))
         fxmlLoader.setController(this)
         try {
