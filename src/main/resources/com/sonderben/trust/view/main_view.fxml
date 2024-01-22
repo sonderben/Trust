@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.MainController">
+   <center>
+      <StackPane fx:id="stackPane" prefHeight="150.0" prefWidth="200.0" stylesheets="@../css/general.css" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding></StackPane>
+   </center>
+   <left>
+      <VBox fx:id="vboxLateral" prefHeight="200.0" prefWidth="100.0" spacing="20.0" styleClass="lateral-area-bg" stylesheets="@../css/lateral.css" BorderPane.alignment="TOP_LEFT">
+         <children>
+            <VBox alignment="CENTER_LEFT" spacing="5.0" styleClass="lateral-button">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/sales.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Sale" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_LEFT" spacing="5.0" styleClass="lateral-button">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/track.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Inventory" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_LEFT" spacing="5.0" styleClass="lateral-button">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/dairy-products.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Products" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_LEFT" spacing="5.0" styleClass="lateral-button">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/group.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Employee" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_LEFT" spacing="5.0" styleClass="lateral-button">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/permissions.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Roles" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER_LEFT" spacing="5.0" styleClass="lateral-button">
+               <children>
+                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/settings.png" />
+                     </image>
+                  </ImageView>
+                  <Label text="Configuration" />
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </left>
+</BorderPane>

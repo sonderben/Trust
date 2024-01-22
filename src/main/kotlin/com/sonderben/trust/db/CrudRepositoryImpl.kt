@@ -1,23 +1,23 @@
 package com.sonderben.trust.db
 
-import com.sonderben.trust.db.entity.BaseEntity
-import com.sonderben.trust.model.deleteClass
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import java.lang.Exception
 
-abstract class CrudRepositoryImpl<E : BaseEntity, T>  {
+abstract class CrudRepositoryImpl<E , T>  {
 
-     var sessionFactory:SessionFactory = HIbernateUtil.getSessionFactory()
+     protected var sessionFactory:SessionFactory = HIbernateUtil.getSessionFactory()
 
      fun save(entity: E):E {
          val session:Session = sessionFactory.openSession()
-        session.use { e ->
-            e.beginTransaction()
-            e.persist(entity)
-            e.transaction.commit()
+
+         session.beginTransaction()
+         session.merge(entity)
+         session.transaction.commit()
+
+         session.close()
             return entity
-        }
+
 
 
     }
@@ -57,32 +57,6 @@ abstract class CrudRepositoryImpl<E : BaseEntity, T>  {
          return entity
     }
 
-
-    //
-     inline fun<reified E> findById(id:T): E {
-         if (id == null){
-             throw Exception(" id entity ${E::class} can't be null ")
-         }
-        val session: Session = sessionFactory.openSession()
-        try {
-            return session.get(E::class.java, id)
-        } catch (e: Exception) {
-            throw Exception("Entity ${E::class} with $id don't exist.")
-        } finally {
-            session.close()
-        }
-
-    }
-
-    inline fun<reified  E> findAll():List<E>{
-        val session = sessionFactory.openSession()
-        return session.createQuery("select e from ${E::class.java.simpleName} e",E::class.java).resultList
-    }
-
-    inline fun <reified E> findAll(entityClass: Class<E>): List<E> {
-        val session = sessionFactory.openSession()
-        return session.createQuery("select e from ${entityClass.simpleName} e", entityClass).resultList
-    }
 
 
 

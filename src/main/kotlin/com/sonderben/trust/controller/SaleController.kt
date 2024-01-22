@@ -4,13 +4,13 @@ package com.sonderben.trust.controller
 import com.sonderben.trust.constant.Action
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.customView.RolePane
-import com.sonderben.trust.db.HIbernateUtil
-import com.sonderben.trust.db.ProductDto
-import com.sonderben.trust.db.RoleDto
+import com.sonderben.trust.customView.RoleTableView
 import com.sonderben.trust.model.*
+import dto.EmployeeDto
+import entity.EmployeeEntity
+import entity.ProductEntity
+import entity.ScheduleEntity
 import javafx.application.Platform
-import javafx.beans.property.SimpleDoubleProperty
-import javafx.beans.property.SimpleIntegerProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
@@ -37,49 +37,28 @@ import java.util.*
 
 class SaleController : Initializable {
 
-    var products:ObservableList<Product> = FXCollections.observableArrayList(
-        /*Product("100","Chinola",10.0,0.11,16.2,1),
-        Product("101","pan",45.0,0.11,51.2,2),
-        Product("102","cafe",51.0,1.51,41.2,3)*/
-    )
+    //var products:ObservableList<ProductEntity> = FXCollections.observableArrayList()
 
-    var rol = Role("Sale", mutableListOf(  Screen(ScreenEnum.SALE, mutableListOf( Action.ADD,Action.DELETE,Action.READ,Action.UPDATE ))  ) )
-    var schedule = Schedule(1,1.1f,1.1f)
-    var persons:ObservableList<Person> = FXCollections.observableArrayList(
-        Person("Jean","Jean-louis", Calendar.getInstance(),"passport","Male","Lascirie","b@gmail.com","4234","5454","fhh","bvcbvc",  listOf(rol) , listOf(schedule))
-    )
+    var roleEntities = FXCollections.observableArrayList<Role>()
+
+
+    private var employeeEntities:ObservableList<EmployeeEntity> = FXCollections.observableArrayList()
 
 
 
-    var productSelected:Product?=null
-    @FXML
-    private lateinit var codeCol: TableColumn<Product, String>
+    //var productSelected:ProductEntity?=null
+
 
     @FXML private lateinit var roleVBox:VBox
 
-    @FXML
-    private lateinit var descriptionCol: TableColumn<Product, String>
 
-    @FXML
-    private lateinit var discountCol: TableColumn<Product, String>
-
-    @FXML
-    private lateinit var itbisCol: TableColumn<Product, String>
 
 
     private lateinit var cubicCurve:CubicCurve
 
-    @FXML
-    private lateinit var priceCol: TableColumn<Product, String>
 
-    @FXML
-    private lateinit var qtyCol: TableColumn<Product, String>
 
-    @FXML
-    private lateinit var totalCol:TableColumn<Product,String>
 
-    @FXML
-    private lateinit var tableView: TableView<Product>
     @FXML
     private lateinit var descriptionText:Text
 
@@ -89,7 +68,7 @@ class SaleController : Initializable {
 
     //////////////////////
     @FXML
-    private lateinit var userTableView: TableView<Person>
+    private lateinit var userTableView: TableView<EmployeeEntity>
 
 
 
@@ -117,19 +96,19 @@ class SaleController : Initializable {
 
 
 
-    @FXML private lateinit var GenreCol: TableColumn<Person, String>
-    @FXML private lateinit var PassportCol: TableColumn<Person, String>
-    @FXML private lateinit var RolesCol: TableColumn<Person, String>
-    @FXML private lateinit var accountNumberCol: TableColumn<Person, String>
-    @FXML private lateinit var birthdayCol: TableColumn<Person, String>
-    @FXML private lateinit var directionCol: TableColumn<Person, String>
-    @FXML private lateinit var emailCol: TableColumn<Person, String>
-    @FXML private lateinit var firstNameCol: TableColumn<Person, String>
-    @FXML private lateinit var lastNameCol: TableColumn<Person, String>
-    //@FXML private lateinit var passwordCol: TableColumn<Person, String>
-    @FXML private lateinit var scheduleCol: TableColumn<Person, String>
-    @FXML private lateinit var telephoneCol: TableColumn<Person, String>
-    @FXML private lateinit var userNameCol: TableColumn<Person, String>
+    @FXML private lateinit var GenreCol: TableColumn<EmployeeEntity, String>
+    @FXML private lateinit var PassportCol: TableColumn<EmployeeEntity, String>
+    @FXML private lateinit var RolesCol: TableColumn<EmployeeEntity, String>
+    @FXML private lateinit var accountNumberCol: TableColumn<EmployeeEntity, String>
+    @FXML private lateinit var birthdayCol: TableColumn<EmployeeEntity, String>
+    @FXML private lateinit var directionCol: TableColumn<EmployeeEntity, String>
+    @FXML private lateinit var emailCol: TableColumn<EmployeeEntity, String>
+    @FXML private lateinit var firstNameCol: TableColumn<EmployeeEntity, String>
+    //@FXML private lateinit var lastNameCol: TableColumn<Employee, String>
+    //@FXML private lateinit var passwordCol: TableColumn<Employee, String>
+    @FXML private lateinit var scheduleCol: TableColumn<EmployeeEntity, String>
+    @FXML private lateinit var telephoneCol: TableColumn<EmployeeEntity, String>
+    @FXML private lateinit var userNameCol: TableColumn<EmployeeEntity, String>
 
 
 
@@ -147,14 +126,31 @@ class SaleController : Initializable {
     }
     @FXML
     fun onSaveButton(event: ActionEvent?) {
-        persons.add(
-            Person(firstNameTextField.text,lastNameTextField.text,
-                GregorianCalendar.from( birthdayDatePicker.value.atStartOfDay( ZoneId.systemDefault() ) ),passportTextField.text,
-                "Male",directionField.text,
-                emailTextField.text,accountNumberTextField.text,
-                telephoneTextField.text,userNameTextField.text,
-                passportTextField.text,  listOf(rol) , listOf(schedule))
-        )
+
+         val rol = Role("Sale", mutableListOf(  Screen(ScreenEnum.SALE, mutableListOf( Action.ADD,Action.DELETE,Action.READ,Action.UPDATE ))  ) )
+         val scheduleEntity = ScheduleEntity(null,1,1F,1.2F)
+
+
+        /*val emp = EmployeeEntity(
+            null,
+            firstNameTextField.text,
+            passportTextField.text,
+            lastNameTextField.text,
+            "male",
+            directionField.text,
+            emailTextField.text,
+            telephoneTextField.text,
+            GregorianCalendar.from( birthdayDatePicker.value.atStartOfDay( ZoneId.systemDefault() ) ),
+            accountNumberTextField.text,
+            userNameTextField.text,
+            passwordField.text,
+            listOf(rol) , listOf(scheduleEntity))
+
+        employeeDto.save( emp )
+
+        employeeEntities.add(
+            emp
+        )*/
     }
 
     ////////////////
@@ -163,34 +159,25 @@ class SaleController : Initializable {
 
     @FXML
     fun onAddProductButtonClick(event: ActionEvent) {
-        if ( codeProductTextField.text.isNotBlank() || qtyTextField.text.isNotBlank() ){
-            val product = Product()
+        /*if ( codeProductTextField.text.isNotBlank() || qtyTextField.text.isNotBlank() ){
+            val product = ProductEntity()
             product.apply {
                 id = 12
             }
 
-            products.add( Product(codeProductTextField.text,"cafe",51.0,15.1,41.2,qtyTextField.text.toInt()) )
+
             clearTextS()
-        }
+        }*/
     }
     @FXML
     fun onUpdateProductButtonClick(event:ActionEvent){
-        if (productSelected != null || products.isNotEmpty()){
-            val temp = productSelected
-            temp?.apply {
-                quantity = ( qtyTextField.text.toInt() )
-            }
-            //products.remove(productSelected)
-            val index = products.indexOf(productSelected)
-            products[index] = temp
-            clearTextS()
-        }
+
 
     }
     @FXML
     fun onDeleteProductButtonClick(event:ActionEvent){
-        products.remove(productSelected)
-        clearTextS()
+        /*products.remove(productSelected)
+        clearTextS()*/
     }
     @FXML
     lateinit var cardCheckBox:RadioButton
@@ -198,13 +185,17 @@ class SaleController : Initializable {
     @FXML
     lateinit var payMethodRBGroup:ToggleGroup
     @FXML
+    lateinit var choiceBoxRole: ChoiceBox<Role>
+    @FXML
+    lateinit var choiceBoxGender:ChoiceBox<String>
+    @FXML
     lateinit var cashTextField:TextField
     @FXML
     lateinit var qtyTextField:TextField
     @FXML
     lateinit var changeTextField:TextField
     @FXML
-    lateinit var countCol:TableColumn<Person,String>
+    lateinit var countCol:TableColumn<EmployeeEntity,String>
 
     @FXML
     lateinit var layoutTabPaneController:VBox
@@ -215,37 +206,34 @@ class SaleController : Initializable {
     lateinit var hour:Text
     @FXML
     fun qtyOnKeyTyped(event: KeyEvent){}
+    private val employeeDto = EmployeeDto()
 
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
 
+        choiceBoxRole.items = roleEntities
+
+
+        //employeeEntities.addAll( employeeDto.findAll(entity.EmployeeEntity::class.java) )
 
 
 
 
 
 
-                var pr  = ProductDto()
-
-                val a =Product()
-
-                a.apply {
-                    code = ("abc")
-
-                     description= ("bla bla now")
-                     price= (1.2)
-                     discount= (0.2)
-                     itbis= (12.2)
-                     quantity = (12)
-
-                }
-
-                pr.save(a)
 
 
-                products.addAll( pr.findAll() )
 
+
+
+
+        tabPane.setStyle(
+            "-fx-tab-max-height: -8;" +
+                    "-fx-tab-header-area-visible: false;"
+        );
+
+        //tabPane.styleClass.add(hh)
 
 
         layoutTabPaneController.children.forEach{
@@ -253,6 +241,7 @@ class SaleController : Initializable {
                 override fun handle(event: MouseEvent?) {
                     if (event != null) {
                         tabPane.selectionModel.select( layoutTabPaneController.children.indexOf( event.source ) )
+                        println( "geni: "+layoutTabPaneController.children.indexOf( event.source ) )
                     }
                 }
 
@@ -268,6 +257,7 @@ class SaleController : Initializable {
 
 
 
+        roleVBox.children.add( RoleTableView() )
         roleVBox.children.add( rolePane )
 
         cubicCurve = CubicCurve()
@@ -277,34 +267,14 @@ class SaleController : Initializable {
         cubicCurve.endY = 100.7
 
         createTimeLine( hour )
-        tableView.selectionModel.selectionMode = SelectionMode.SINGLE
 
-        tableView.selectionModel.selectedItemProperty().addListener( object:ChangeListener<Product>{
-            override fun changed(observable: ObservableValue<out Product>?, oldValue: Product?, newValue: Product?) {
-                if (newValue != null){
 
-                    productSelected = newValue
-                    qtyTextField.text = newValue.quantity.toString()
-                    codeProductTextField.text = newValue.code
-                    descriptionText.text = "Desc: " + newValue.description.replaceFirstChar { it.toString() }
-                }
-            }
-        })
 
-        codeCol.setCellValueFactory{data->SimpleStringProperty( data.value.code )}
-        itbisCol.setCellValueFactory{data->SimpleStringProperty( data.value.itbis.toString())}
-        discountCol.setCellValueFactory{data->SimpleStringProperty( data.value.discount.toString() )}
-        priceCol.setCellValueFactory{data->SimpleStringProperty( data.value.price.toString() )}
-        qtyCol.setCellValueFactory{data->SimpleStringProperty( data.value.quantity.toString())}
-        descriptionCol.setCellValueFactory{data->SimpleStringProperty( data.value.description.replaceFirstChar { it.uppercase() } )}
-        totalCol.setCellValueFactory {
-            SimpleStringProperty( it.value.total().toCurrency() )
-        }
 
-        tableView.items = products
 
-        firstNameCol.setCellValueFactory { data -> SimpleStringProperty(data.value.firstName) }
-        lastNameCol.setCellValueFactory { data -> SimpleStringProperty(data.value.lastName) }
+
+        firstNameCol.setCellValueFactory { data -> SimpleStringProperty("${data.value.firstName} ${data.value.lastName}") }
+        //lastNameCol.setCellValueFactory { data -> SimpleStringProperty(data.value.lastName) }
         directionCol.setCellValueFactory { data -> SimpleStringProperty(data.value.direction) }
 
         directionCol.setCellValueFactory { data -> SimpleStringProperty(data.value.direction) }
@@ -314,17 +284,17 @@ class SaleController : Initializable {
         GenreCol.setCellValueFactory { data -> SimpleStringProperty(data.value.genre) }
         emailCol.setCellValueFactory { data -> SimpleStringProperty(data.value.email) }
         accountNumberCol.setCellValueFactory { data -> SimpleStringProperty(data.value.bankAccount) }
-        PassportCol.setCellValueFactory { data -> SimpleStringProperty(data.value.id) }
+        PassportCol.setCellValueFactory { data -> SimpleStringProperty(data.value.passport) }
 
-        scheduleCol.setCellValueFactory { data -> SimpleStringProperty(data.value.schedule[0].toString()) }
-        RolesCol.setCellValueFactory { data -> SimpleStringProperty(data.value.roles.toString()) }
+        scheduleCol.setCellValueFactory { data -> SimpleStringProperty("data.value.schedule[0]".toString()) }
+        RolesCol.setCellValueFactory { data -> SimpleStringProperty(data.value.roleList.joinToString(separator = ", "){it.name}) }
         countCol.setCellValueFactory { data -> SimpleStringProperty((data.tableView.items.indexOf( data.value )+1).toString()) }
         userNameCol.setCellValueFactory { data -> SimpleStringProperty(data.value.userName) }
 
 
 
 
-        userTableView.items = persons
+        userTableView.items = employeeEntities
 
 
 
@@ -332,11 +302,7 @@ class SaleController : Initializable {
 
 
 
-        products.addListener(object:ListChangeListener<Product>{
-            override fun onChanged(c: ListChangeListener.Change<out Product>?) {
 
-            }
-        })
 
         payMethodRBGroup.selectedToggleProperty().addListener(object:ChangeListener<Toggle>{
             override fun changed(observable: ObservableValue<out Toggle>?, oldValue: Toggle?, newValue: Toggle?) {
@@ -356,16 +322,7 @@ class SaleController : Initializable {
 
 
     }
-    private fun Double.toCurrency(): String {
-        val local = Locale("en","us");
-        val format = NumberFormat.getCurrencyInstance(local)
 
-        return format.format(this)
-    }
-    private fun clearTextS(){
-        qtyTextField.text = ""
-        codeProductTextField.text = ""
-    }
     private fun createTimeLine(text:Text){
         val timer = Timer()
         timer.scheduleAtFixedRate(object: TimerTask(){

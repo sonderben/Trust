@@ -12,7 +12,10 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
+
+
 
 ext {
     junitVersion = '5.9.2'
@@ -66,10 +69,17 @@ dependencies {
 
     implementation 'org.xerial:sqlite-jdbc:3.44.1.0'
 
-    // orm
-    testImplementation("org.javalite:activejdbc-instrumentation:3.4-j11")
-    implementation('org.javalite:activejdbc:3.4-j11')
+    // data
+
     implementation("org.hibernate.orm:hibernate-core:6.4.1.Final")
+    //implementation('io.reactivex.rxjava3:rxjava:3.1.5')
+    implementation 'com.github.reactivex:rxjavafx:2.11.0-RC36'
+
+    implementation 'org.hibernate.orm:hibernate-community-dialects:6.4.2.Final'
+
+
+
+
 
     // itextpdf
     implementation("com.itextpdf:itextpdf:5.5.13.3")

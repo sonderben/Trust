@@ -2,9 +2,9 @@ package com.sonderben.trust.customView
 
 import com.sonderben.trust.constant.Action
 import com.sonderben.trust.constant.ScreenEnum
-import com.sonderben.trust.db.RoleDto
 import com.sonderben.trust.model.Role
 import com.sonderben.trust.model.Screen
+import dto.RoleDto
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
 import javafx.scene.control.Label
@@ -127,13 +127,13 @@ class RolePane(screens: List<String>, actions: List<String>) : Pane(), EventHand
 
         val rol1 = Role("Sale", mutableListOf(  Screen(ScreenEnum.SALE, mutableListOf( Action.ADD,Action.DELETE,Action.READ,Action.UPDATE ))  ) )
         val roleCrud = RoleDto()
-        val x = roleCrud.save( rol1 )
+        //val x = roleCrud.save( rol1 )
 
-        val ps:List<Role> = roleCrud.findAll()
+        //val ps:List<Role> = roleCrud.findAll( Role::class.java )
 
-        println( ps)
+       // println( ps)
 
-        role.set( ps[0] )
+       // role.set( ps[0] )
 
 
 
