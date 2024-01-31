@@ -4,6 +4,7 @@ import com.sonderben.trust.model.Role;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 import java.util.Calendar;
 import java.util.List;
@@ -11,17 +12,17 @@ import java.util.List;
 @Entity
 public class EmployeeEntity extends PersonEntity {
     String bankAccount,userName, password,passport ;
-    @OneToMany(cascade = CascadeType.ALL)
-    List<Role> roleList;
+    @OneToOne(cascade = CascadeType.ALL)
+    Role role;
     @OneToMany(cascade = CascadeType.ALL)
     List<ScheduleEntity> schedules;
 
-    public EmployeeEntity( String firstName, String passport, String lastName, String genre, String direction, String email, String telephone, Calendar birthDay, String bankAccount, String userName, String password, List<Role> roleList, List<ScheduleEntity> schedule) {
+    public EmployeeEntity( String firstName, String passport, String lastName, String genre, String direction, String email, String telephone, Calendar birthDay, String bankAccount, String userName, String password, Role role, List<ScheduleEntity> schedule) {
         super(null, firstName,passport, lastName, genre, direction, email, telephone, birthDay);
         this.bankAccount = bankAccount;
         this.userName = userName;
         this.password = password;
-        this.roleList = roleList;
+        this.role = role;
         this.schedules = schedule;
     }
 
@@ -61,12 +62,16 @@ public class EmployeeEntity extends PersonEntity {
         this.password = password;
     }
 
-    public List<Role> getRoleList() {
-        return roleList;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRoleList(List<Role> roleList) {
-        this.roleList = roleList;
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public void setSchedules(List<ScheduleEntity> schedules) {
+        this.schedules = schedules;
     }
 
     public List<ScheduleEntity> getSchedules() {
@@ -75,7 +80,7 @@ public class EmployeeEntity extends PersonEntity {
 
     @Override
     public String toString() {
-        return "EmployeeEntity{bankAccount='%s', userName='%s', password='%s', passport='%s', roleList=%s, schedules=%s, passport='%s', firstName='%s', lastName='%s', genre='%s', direction='%s', email='%s', telephone='%s', birthDay=%s, id=%d}".formatted(bankAccount, userName, password, passport, roleList, schedules, passport, firstName, lastName, genre, direction, email, telephone, birthDay.getTime().getTime(), id);
+        return "EmployeeEntity{bankAccount='%s', userName='%s', password='%s', passport='%s', roleList=%s, schedules=%s, passport='%s', firstName='%s', lastName='%s', genre='%s', direction='%s', email='%s', telephone='%s', birthDay=%s, id=%d}".formatted(bankAccount, userName, password, passport, role, schedules, passport, firstName, lastName, genre, direction, email, telephone, birthDay.getTime().getTime(), id);
     }
 
     public void setSchedule(List<ScheduleEntity> schedule) {

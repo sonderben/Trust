@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 public class InvoiceEntity extends BaseEntity {
     @OneToMany
-    private List<ProductEntity>products;
+    private List<ProductSaled>products;
     @OneToOne
     private EmployeeEntity employee;
     @OneToOne
@@ -20,11 +20,22 @@ public class InvoiceEntity extends BaseEntity {
     private Calendar date;
     public InvoiceEntity(){}
 
-    public List<ProductEntity> getProducts() {
+    public InvoiceEntity(List<ProductSaled> products, EmployeeEntity employee, CustomerEntity customer, String codeBar, Calendar date) {
+
+        this.products = products;
+        this.employee = employee;
+        this.customer = customer;
+        this.codeBar = codeBar;
+        this.date = date;
+    }
+
+
+
+    public List<ProductSaled> getProducts() {
         return products;
     }
 
-    public void setProducts(List<ProductEntity> products) {
+    public void setProducts(List<ProductSaled> products) {
         this.products = products;
     }
 

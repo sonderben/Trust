@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -16,7 +17,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxWidth="1.7976931348623157E308" prefHeight="200.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.EmployeeController">
+<VBox maxWidth="1.7976931348623157E308" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.EmployeeController">
    <children>
       <TableView fx:id="userTableView" editable="true" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
          <columns>
@@ -49,31 +50,52 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <TextField fx:id="firstNameTextField" promptText="First Name" />
-            <TextField fx:id="lastNameTextField" promptText="Last name" GridPane.columnIndex="1" />
-            <TextField fx:id="emailTextField" promptText="Email" GridPane.rowIndex="1" />
-            <TextField fx:id="accountNumberTextField" promptText="Account number" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="telephoneTextField" promptText="Telephone" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <TextField fx:id="userNameTextField" promptText="User name" GridPane.rowIndex="2" />
-            <TextField promptText="Schedules" GridPane.rowIndex="3" />
-            <TextField GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <DatePicker fx:id="birthdayDatePicker" promptText="Birtday" GridPane.columnIndex="2" />
-            <PasswordField fx:id="passwordField" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <ChoiceBox fx:id="choiceBoxGender" prefWidth="150.0" value="Select a role" GridPane.columnIndex="2" GridPane.rowIndex="2">
+            <TextField fx:id="firstNameTextField" promptText="First Name" GridPane.rowIndex="1" />
+            <TextField fx:id="lastNameTextField" promptText="Last name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="emailTextField" promptText="Email" GridPane.rowIndex="3" />
+            <TextField fx:id="accountNumberTextField" promptText="Account number" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="telephoneTextField" promptText="Telephone" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <TextField fx:id="userNameTextField" promptText="User name" GridPane.rowIndex="5" />
+            <TextField fx:id="scheduleTextField" editable="false" onMouseClicked="#scheduleOnMOuseClick" promptText="Schedules" GridPane.rowIndex="7" />
+            <TextField GridPane.columnIndex="2" GridPane.rowIndex="7" />
+            <DatePicker fx:id="birthdayDatePicker" promptText="Birtday" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <PasswordField fx:id="passwordField" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <ChoiceBox fx:id="choiceBoxGender" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
                <items>
                   <FXCollections fx:factory="observableArrayList">
-                     <String fx:value="M" />
-                     <String fx:value="F" />
+                     <String fx:value="Male" />
+                     <String fx:value="Female" />
                      <String fx:value="No binary" />
                   </FXCollections>
                </items>
             </ChoiceBox>
-            <TextField fx:id="directionField" promptText="Direction" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <TextField fx:id="passportTextField" promptText="Passport" GridPane.rowIndex="4" />
-            <ChoiceBox fx:id="choiceBoxRole" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="directionField" promptText="Direction" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+            <TextField fx:id="passportTextField" promptText="Passport" GridPane.rowIndex="9" />
+            <ChoiceBox fx:id="choiceBoxRole" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <Label text="First name" textFill="WHITE" />
+            <Label text="Last name" textFill="WHITE" GridPane.columnIndex="1" />
+            <Label text="Birthday" textFill="WHITE" GridPane.columnIndex="2" />
+            <Label text="Email" textFill="WHITE" GridPane.rowIndex="2" />
+            <Label text="Account number" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Telephone" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Label text="Username" textFill="WHITE" GridPane.rowIndex="4" />
+            <Label text="Password" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label text="Genre" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+            <Label text="Schedules" textFill="WHITE" GridPane.rowIndex="6" />
+            <Label text="Role" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+            <Label text="Direction" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+            <Label text="Passport" textFill="WHITE" GridPane.rowIndex="8" />
          </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
       </GridPane>
       <HBox alignment="CENTER_RIGHT" spacing="10.0">
          <children>

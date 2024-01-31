@@ -10,11 +10,6 @@ public class CategoryEntity extends BaseEntity{
     private String description;
     private double discount;
 
-    @Override
-    public String toString() {
-        return "CategoryEntity{code='%s', description='%s', discount=%s, id=%d}".formatted(code, description, discount, id);
-    }
-
     public CategoryEntity(String code, String description, double discount) {
         this.code = code;
         this.description = description;
@@ -41,6 +36,11 @@ public class CategoryEntity extends BaseEntity{
 
     public double getDiscount() {
         return discount;
+    }
+
+    @Override
+    public String toString() {
+        return "CategoryEntity{code='%s', description='%s', discount=%s, id=%d}".formatted(code, description, discount, id);
     }
 
     public void setDiscount(double discount) {

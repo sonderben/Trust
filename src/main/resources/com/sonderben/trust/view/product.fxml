@@ -39,7 +39,7 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <GridPane hgap="10.0" vgap="10.0">
+      <GridPane hgap="10.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -47,23 +47,43 @@
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <TextField fx:id="codeTf" promptText="code" GridPane.columnIndex="1" />
-            <TextField fx:id="descriptionTf" promptText="description" GridPane.columnIndex="2" />
-            <TextField fx:id="purchaseTf" promptText="purchase price" GridPane.rowIndex="1" />
-            <TextField fx:id="sellingTf" promptText="selling price" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="qtyTf" promptText="quantity" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <TextField fx:id="discountTf" promptText="discount" GridPane.rowIndex="2" />
-            <TextField fx:id="itbisTf" promptText="itbis" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="employeeTf" promptText="Employee" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <ChoiceBox fx:id="categoryCb" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="3" />
-            <DatePicker fx:id="expDateDp" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <DatePicker fx:id="dateAddedDp" disable="true" editable="false" />
+            <TextField fx:id="codeTf" promptText="code" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="descriptionTf" promptText="description" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="purchaseTf" promptText="purchase price" GridPane.rowIndex="3" />
+            <TextField fx:id="sellingTf" promptText="selling price" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="qtyTf" promptText="quantity" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+            <TextField fx:id="discountTf" promptText="discount" GridPane.rowIndex="5" />
+            <TextField fx:id="itbisTf" promptText="itbis" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+            <TextField fx:id="employeeTf" editable="false" promptText="Employee" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <ChoiceBox fx:id="categoryCb" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+            <DatePicker fx:id="expDateDp" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <DatePicker fx:id="dateAddedDp" disable="true" editable="false" GridPane.rowIndex="1" />
+            <Label text="Date added" textFill="WHITE" />
+            <Label text="Code" textFill="WHITE" GridPane.columnIndex="1" />
+            <Label text="Description" textFill="WHITE" GridPane.columnIndex="2" />
+            <Label text="Category" textFill="WHITE" GridPane.columnIndex="3" />
+            <Label text="Purchase price" textFill="WHITE" GridPane.rowIndex="2" />
+            <Label text="Selling price" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Expiration date" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+            <Label text="Quantity / weight" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+            <Label text="Discount" textFill="WHITE" GridPane.rowIndex="4" />
+            <Label text="Itbis" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label text="Employee" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4" />
          </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
       </GridPane>
       <HBox alignment="TOP_RIGHT" prefWidth="200.0" spacing="10.0" VBox.vgrow="NEVER">
          <children>

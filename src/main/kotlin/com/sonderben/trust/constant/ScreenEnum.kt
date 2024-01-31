@@ -6,6 +6,8 @@ enum class ScreenEnum  {
     INVENTORY,
     PRODUCT,
     USER,
-    ROLE
+    ROLE,
+    EMPLOYEE,
+    CONFIGURATION
 }
 

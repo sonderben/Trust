@@ -132,9 +132,12 @@ public class ProductEntity extends BaseEntity {
     }
 
     public double total() {
-        double itbisPrice = itbis + sellingPrice;
-        if (discount <= 0)
-            return itbisPrice * quantity;
-        return (itbisPrice + (discount * itbisPrice)) * quantity;
+        double normalPrice = (itbis + sellingPrice) * quantity;
+        if (discount <= 0){
+            return normalPrice;
+        } else if (category!=null && category.getDiscount()>0) {
+            return normalPrice-(sellingPrice * (quantity/100.0) * category.getDiscount());
+        }
+        return normalPrice-(sellingPrice * (quantity/100.0) * discount);
     }
 }

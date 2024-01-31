@@ -5,16 +5,21 @@
 .lateral-area-bg{
     -fx-background-color: #ccc;
     -fx-alignment:top-center;
-
-
+    -fx-padding: 0 0 0 5px;
 }
 .label{
     -fx-text-fill: white;
 }
 .lateral-button{
-    -fx-padding: 5px 5px 5px 15px;
+    -fx-padding: 20px 0px 20px 0px;
 }
 .lateral-button:pressed{
     -fx-background-color: -fx-primary-color;
 
+}
+
+.lateral-area-configuration-bg{
+    -fx-background-color: #ccc;
+    -fx-alignment:top-center;
+    -fx-padding: 0 0 0 5px;
 }

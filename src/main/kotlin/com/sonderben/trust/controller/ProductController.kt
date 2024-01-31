@@ -1,7 +1,11 @@
 package com.sonderben.trust.controller
 
+import com.sonderben.trust.Context
 import com.sonderben.trust.Util
-import dto.CategoryDto
+import com.sonderben.trust.db.dao.CategoryDao
+import com.sonderben.trust.db.dao.ProductDao
+import com.sonderben.trust.qr_code.MessageListener
+import com.sonderben.trust.qr_code.SocketMessageEvent
 import dto.EmployeeDto
 import dto.ProductDto
 import entity.CategoryEntity
@@ -23,14 +27,16 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
 
-class ProductController :Initializable {
+class ProductController :Initializable,MessageListener {
+    private var socketMesageEvent = SocketMessageEvent(this)
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
+        socketMesageEvent.startingListening()
+
+        employeeTf.text = Context.currentEmployee.value.userName
 
 
-        //tempEmployee = employeeDto.findAll()[0]
-        produtcs =  FXCollections.observableArrayList( productDto.findAll() )
-        categories = FXCollections.observableArrayList( categoryDto.findAll() )
+        categories = FXCollections.observableArrayList( CategoryDao.categories )
 
         dateAddedCol.setCellValueFactory { data -> SimpleStringProperty( Util.formatDate( data.value.dateAdded.time ) ) }
         codeCol.setCellValueFactory { data -> SimpleStringProperty(data.value.code) }
@@ -42,7 +48,7 @@ class ProductController :Initializable {
         qtyCol.setCellValueFactory { data -> SimpleStringProperty( data.value.quantity.toString() ) }
         discountCol.setCellValueFactory { data -> SimpleStringProperty( data.value.discount.toString() ) }
         itbisCol.setCellValueFactory { data -> SimpleStringProperty( data.value.itbis.toString() ) }
-        employeeCol.setCellValueFactory { data -> SimpleStringProperty( data.value.employee.fullName ) }
+        employeeCol.setCellValueFactory { data -> SimpleStringProperty( data.value.employee.userName ) }
 
         tableView.items = produtcs
 
@@ -72,13 +78,17 @@ class ProductController :Initializable {
                     qtyTf.text = newValue.quantity.toString()
                     discountTf.text = newValue.discount.toString()
                     itbisTf.text = newValue.quantity.toString()
-                    employeeTf.text = newValue.employee.fullName
+                    employeeTf.text = newValue.employee.userName
+
+                    categoryCb.selectionModel.select( categoryCb.items.indexOf( categoryCb.items.find { it.id == newValue.category.id } ) )
                 }
             }
         })
 
         categoryCb.converter = CategoryConverter()
         categoryCb.items = categories
+
+
     }
     @FXML
     private lateinit var categoryCb: ChoiceBox<CategoryEntity>
@@ -156,24 +166,30 @@ class ProductController :Initializable {
 
     @FXML
     fun onSaveBtn(event: ActionEvent) {
-        val dto = ProductDto()
+
         val cc = categoryCb.selectionModel.selectedItem
+        tempEmployee = Context.currentEmployee.value
 
-        val pro = ProductEntity(
-            codeTf.text,
-            descriptionTf.text,
-            sellingTf.text.toDouble(),
-            purchaseTf.text.toDouble(),
-            discountTf.text.toDouble(),
-            itbisTf.text.toDouble(),
-            qtyTf.text.toInt(),
-            GregorianCalendar.getInstance(),
-            GregorianCalendar.from( expDateDp.value.atStartOfDay( ZoneId.systemDefault() ) ),
-            cc,
-            tempEmployee
-        )
 
-        produtcs.add( dto.save( pro ) )
+       if (tempEmployee.id != null || tempEmployee.id != 0L ){
+           val pro = ProductEntity(
+               codeTf.text,
+               descriptionTf.text,
+               sellingTf.text.toDouble(),
+               purchaseTf.text.toDouble(),
+               discountTf.text.toDouble(),
+               itbisTf.text.toDouble(),
+               qtyTf.text.toInt(),
+               GregorianCalendar.getInstance(),
+               GregorianCalendar.from( expDateDp.value.atStartOfDay( ZoneId.systemDefault() ) ),
+               cc,
+               tempEmployee
+           )
+
+           ProductDao.save(pro)
+           //produtcs.add(pro)
+
+       }
     }
 
     @FXML
@@ -186,12 +202,10 @@ class ProductController :Initializable {
     fun onUpdateBtn(event: ActionEvent) {
         println("onUpdateBtn")
     }
-    private lateinit var produtcs:ObservableList<ProductEntity>
+    private  var produtcs:ObservableList<ProductEntity> = ProductDao.products//FXCollections.observableArrayList( ProductDao.products )
     private lateinit var tempEmployee:EmployeeEntity
     private lateinit var categories:ObservableList<CategoryEntity>
-    private  var productDto = ProductDto()
-    private  var categoryDto = CategoryDto()
-    private var employeeDto = EmployeeDto()
+
 
     class CategoryConverter: StringConverter<CategoryEntity>() {
         override fun toString(`object`: CategoryEntity?): String {
@@ -201,5 +215,10 @@ class ProductController :Initializable {
         override fun fromString(string: String?): CategoryEntity {
             return CategoryEntity()
         }
+    }
+
+    override fun onReceiveMessage(data: String) {
+
+        codeTf.text = data
     }
 }

@@ -5,17 +5,16 @@ import com.sonderben.trust.constant.Action
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.customView.RolePane
 import com.sonderben.trust.customView.RoleTableView
-import com.sonderben.trust.model.*
+import com.sonderben.trust.model.Role
+import com.sonderben.trust.model.Screen
 import dto.EmployeeDto
 import entity.EmployeeEntity
-import entity.ProductEntity
 import entity.ScheduleEntity
 import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
-import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
@@ -28,15 +27,13 @@ import javafx.scene.layout.VBox
 import javafx.scene.shape.CubicCurve
 import javafx.scene.text.Text
 import java.net.URL
-import java.text.NumberFormat
 import java.time.LocalDateTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.*
 
 
-class SaleController : Initializable {
-
+class SaleController /*: Initializable*/ {
+/*
     //var products:ObservableList<ProductEntity> = FXCollections.observableArrayList()
 
     var roleEntities = FXCollections.observableArrayList<Role>()
@@ -287,7 +284,7 @@ class SaleController : Initializable {
         PassportCol.setCellValueFactory { data -> SimpleStringProperty(data.value.passport) }
 
         scheduleCol.setCellValueFactory { data -> SimpleStringProperty("data.value.schedule[0]".toString()) }
-        RolesCol.setCellValueFactory { data -> SimpleStringProperty(data.value.roleList.joinToString(separator = ", "){it.name}) }
+        RolesCol.setCellValueFactory { data -> SimpleStringProperty(data.value.role.name) }
         countCol.setCellValueFactory { data -> SimpleStringProperty((data.tableView.items.indexOf( data.value )+1).toString()) }
         userNameCol.setCellValueFactory { data -> SimpleStringProperty(data.value.userName) }
 
@@ -295,13 +292,6 @@ class SaleController : Initializable {
 
 
         userTableView.items = employeeEntities
-
-
-
-
-
-
-
 
 
         payMethodRBGroup.selectedToggleProperty().addListener(object:ChangeListener<Toggle>{
@@ -331,8 +321,6 @@ class SaleController : Initializable {
             }
         },0,100)
     }
-
-
     private fun updateText(text:Text){
         Platform.runLater {
             val currentTime = LocalDateTime.now()
@@ -340,4 +328,6 @@ class SaleController : Initializable {
             text.text = formatTime
         }
     }
+
+ */
 }

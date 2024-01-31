@@ -9,11 +9,14 @@ import javafx.stage.Stage
 class HelloApplication : Application() {
 
     override fun start(stage: Stage) {
+        Database.createTable()
+        //Database.prepopulate()
         primary = stage;
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("hello-view.fxml"))
         val scene = Scene(fxmlLoader.load(), 920.0, 640.0)
         stage.title = "Trust"
         stage.scene = scene
+        stage.isAlwaysOnTop = true
         stage.show()
 
     }

@@ -4,17 +4,11 @@ import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.constant.Action
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.db.dao.CategoryDao
-import com.sonderben.trust.db.dao.EmployeeDao
 import com.sonderben.trust.db.dao.RoleDao
 import com.sonderben.trust.model.Role
 import com.sonderben.trust.model.Screen
-import dto.CategoryDto
 import entity.CategoryEntity
-import entity.EmployeeEntity
 import javafx.beans.property.SimpleStringProperty
-import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
-import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
@@ -35,18 +29,14 @@ class CategoryDialog : Dialog<CategoryEntity>(), Initializable {
         var rol = Role()
         rol.id = 1
 
-       // RoleDao.save( Role("name", mutableListOf(Screen(ScreenEnum.SALE, mutableListOf(Action.ADD)))) )
+        RoleDao.save( Role("Admin", mutableListOf(Screen(ScreenEnum.SALE, mutableListOf(Action.ADD)))) )
 
-       /* EmployeeDao.save(
-            EmployeeEntity("","1","1","1","1","1","1",
-                Calendar.getInstance(),"1","1","1", mutableListOf(rol), mutableListOf())
-        )*/
-        println("EmployeeDao.findAll(): "+ EmployeeDao.findAll() )
+
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/GoToCategoryDialog.fxml"))
         fxmlLoader.setController(this)
         try {
             dialogPane = fxmlLoader.load()
-             ButtonType("Ok", ButtonBar.ButtonData.OK_DONE)
+             //ButtonType("Ok", ButtonBar.ButtonData.OK_DONE)
             dialogPane.buttonTypes.addAll( ButtonType("Ok", ButtonBar.ButtonData.OK_DONE) )
 
 

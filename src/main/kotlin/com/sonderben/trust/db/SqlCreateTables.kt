@@ -8,11 +8,16 @@ object SqlCreateTables {
     const val roles = "Roles"
     const val schedules = "Schedules"
     const val employees = "Employee"
-    const val employeesRoles = "employees_roles"
+    const val products = "products"
+    const val customers = "customers"
+    const val invoices = "invoices"
+    const val invoiceProduct = "invoiceProduct"
+    const val productSealed = "productSealed"
+
 
     private const val createCategoryTable = """
         create table if not exists ${categories} (
-        discount float(53) not null,
+        discount float default 0 check(discount >=0 and discount<100),
         id integer primary key autoincrement,
         code nvarchar(255),
         description nvarchar(255) unique
@@ -34,6 +39,50 @@ object SqlCreateTables {
         name varchar(30) unique
     );
     """
+    private var createCustomerTable =  """
+    create table if not exists $customers (
+        birthDay timestamp,
+        id integer primary key autoincrement,
+        direction varchar(255),
+        point integer default 0,
+        email varchar(255) unique,
+        firstName varchar(255),
+        genre varchar(30),
+        lastName varchar(255),
+        passport varchar(255),
+        password varchar(255),
+        telephone varchar(255)
+    );
+    
+    """
+
+    private var createInvoiceTable =  """
+    create table if not exists $invoices (
+        dateCreated timestamp,
+        id integer primary key autoincrement,
+        codeBar varchar,
+        id_employee integer not null,
+        id_customer integer,
+        
+        foreign key(id_employee)
+            references $employees(id),
+        foreign key(id_customer)
+            references $customers(id)
+    );
+    
+    """
+    public var createInvoiceProductTable = """
+        create table if not exists $invoiceProduct(
+        id integer primary key autoincrement,
+                id_invoice integer not null,
+                id_product integer not null,
+                foreign key(id_invoice) 
+                    references $invoices(id),
+                foreign key(id_product) 
+                    references $productSealed(id)
+        );
+        
+    """.trimIndent()
 
     private var createEmployeeTable =  """
     create table if not exists $employees (
@@ -48,18 +97,32 @@ object SqlCreateTables {
         passport varchar(255),
         password varchar(255),
         telephone varchar(255),
-        userName varchar(255) unique not null
+        userName varchar(255) unique not null,
+        id_role integer,
+        FOREIGN KEY (id_role) 
+        REFERENCES $roles (id)
     );
     
     """
 
-    private val createRoleEmployee = """
-        CREATE TABLE IF NOT EXISTS $employeesRoles( 
+    private val createProductsTable = """
+        CREATE TABLE IF NOT EXISTS $products( 
         id integer primary key autoincrement,  
-        id_role integer not null, 
-        id_employee integer not null, 
-        FOREIGN KEY(id_role) 
-            REFERENCES $roles (id) 
+        discount float default 0 check(discount>=0 and discount<100),
+        itbis float not null,
+        purchasePrice float not null,
+        quantity integer not null,
+        sellingPrice float not null,
+        id_category bigint ,
+        dateAdded timestamp,
+        id_employee bigint ,
+        expirationDate timestamp,
+
+        code varchar(10) not null unique,
+        description varchar(255),
+
+        FOREIGN KEY(id_category) 
+            REFERENCES $categories (id) 
         FOREIGN KEY (id_employee) 
             REFERENCES $employees (id) 
         )
@@ -77,8 +140,23 @@ object SqlCreateTables {
         );
     """.trimIndent()
 
-    val tables = listOf(createCategoryTable, createScreenTable, createRolesTable, createEmployeeTable, createRoleEmployee,
-        createScheduleTable)
+    private val createProductSealed = """
+        CREATE TABLE IF NOT EXISTS $productSealed(
+        id integer primary key autoincrement,
+        code varchar,
+        description varchar,
+        price float,
+        quantity float,
+        discount float,
+        itbis float,
+        total float,
+        wasDiscountCategory boolean
+        )
+    """.trimIndent()
+
+    val tables = listOf(createCategoryTable,
+        createCustomerTable, createScreenTable, createRolesTable, createEmployeeTable, /*createRoleEmployee,*/
+        createScheduleTable, createProductsTable, createInvoiceTable, createInvoiceProductTable,createProductSealed)
     var deleteCategoryTable = """
         drop table if exists ${categories};
     """.trimIndent()

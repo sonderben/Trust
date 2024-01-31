@@ -12,19 +12,18 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
 
    var employees = FXCollections.observableArrayList<EmployeeEntity>()
     init {
-        //findAll()
+        findAll()
     }
-    override fun save(employee: EmployeeEntity): Boolean {
+    override fun save(entity: EmployeeEntity): Boolean {
+        if (entity.role == null || entity.role.id == null){
+            throw Exception("Role or Role.id can not be null")
+        }
         val insertEmployee = buildString {
             append("Insert into ${SqlCreateTables.employees} ")
-            append("(bankAccount,direction,email,firstName,genre,lastName,passport,password,telephone,userName,birthDay) ")
-            append("values (?,?,?,?,?,?,?,?,?,?,?) ")
+            append("(bankAccount,direction,email,firstName,genre,lastName,passport,password,telephone,userName,birthDay,id_role) ")
+            append("values (?,?,?,?,?,?,?,?,?,?,?,?) ")
         }
-        val insertRoleEmployee = buildString {
-            append("insert into ${SqlCreateTables.employeesRoles} ")
-            append("(id_role,id_employee) ")
-            append("values (?,?)")
-        }
+
 
         val insertIntoSchedule = buildString {
             append("INSERT INTO ${SqlCreateTables.schedules }")
@@ -35,34 +34,36 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
         Database.connect().use { connection ->
             connection.autoCommit = false
             connection.prepareStatement(insertEmployee).use {preparedStatement ->
-                preparedStatement.setString(1,employee.bankAccount)
-                preparedStatement.setString(2,employee.direction)
-                preparedStatement.setString(3,employee.email)
-                preparedStatement.setString(4,employee.firstName)
-                preparedStatement.setString(5,employee.genre)
-                preparedStatement.setString(6,employee.lastName)
-                preparedStatement.setString(7,employee.passport)
-                preparedStatement.setString(8,employee.password)
-                preparedStatement.setString(9,employee.telephone)
-                preparedStatement.setString(10,employee.userName)
-                preparedStatement.setTimestamp(10,Timestamp(employee.birthDay.time.time))
+                preparedStatement.setString(1,entity.bankAccount)
+                preparedStatement.setString(2,entity.direction)
+                preparedStatement.setString(3,entity.email)
+                preparedStatement.setString(4,entity.firstName)
+                preparedStatement.setString(5,entity.genre)
+                preparedStatement.setString(6,entity.lastName)
+                preparedStatement.setString(7,entity.passport)
+                preparedStatement.setString(8,entity.password)
+                preparedStatement.setString(9,entity.telephone)
+                preparedStatement.setString(10,entity.userName)
+                preparedStatement.setTimestamp(11,Timestamp(entity.birthDay.time.time))
+                preparedStatement.setLong(12,entity.role.id)
 
                 val rowCount = preparedStatement.executeUpdate()
 
 
                 if (rowCount>0){
                     lastIdEmployeeAdded = Database.getLastId()
-                    for (role in employee.roleList){
-                        connection.prepareStatement(insertRoleEmployee).use {ps ->
-                            ps.setLong(1,role.id)
+                    entity.id = lastIdEmployeeAdded
+
+                       /* connection.prepareStatement(insertRoleEmployee).use {ps ->
+                            ps.setLong(1,entity.role.id)
                             ps.setLong(2,lastIdEmployeeAdded)
                              val rowCount2 = ps.executeUpdate()
                             if (rowCount2<0){
                                 throw Exception(" unable to add relationship table (${SqlCreateTables.employeesRoles})")
                             }
-                        }
-                    }
-                    for (schedule in employee.schedules){
+                        }*/
+
+                    for (schedule in entity.schedules){
                         connection.prepareStatement(insertIntoSchedule).use {ps ->
                             ps.setInt(1,schedule.workDay)
                             ps.setFloat(2,schedule.startHour)
@@ -71,10 +72,13 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
                             val rowCount2 = ps.executeUpdate()
                             if (rowCount2<0){
                                 throw Exception(" unable to add  table: (${SqlCreateTables.schedules})")
+                            }else{
+                                schedule.id = Database.getLastId()
                             }
                         }
                     }
                 }
+                employees.add( entity )
                 connection.commit()
 
                 return rowCount>0
@@ -86,6 +90,33 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
     }
 
     override fun delete(idEntity: Long): Boolean {
+        Database.connect().autoCommit = false
+        val deleteEmployee = "delete from ${SqlCreateTables.employees} where id = ?"
+        val deleteSchedule = "delete from ${SqlCreateTables.schedules} where id_employee = ?"
+        Database.connect().prepareStatement(deleteEmployee).use { ps ->
+            ps.setLong(1,idEntity)
+            val rowCount = ps.executeUpdate()
+            if (rowCount>0){
+                Database.connect().prepareStatement( deleteSchedule ).use {preparedStatement ->
+                    preparedStatement.setLong(1,idEntity)
+                    if (preparedStatement.executeUpdate()>0){
+                        Database.connect().commit()
+                        Database.connect().autoCommit = true
+                        employees.removeIf { it.id==idEntity }
+                        println("li delete")
+                        return true
+                    }else{
+                        Database.connect().rollback()
+                        Database.connect().autoCommit = true
+                        println("li pa delete")
+                    }
+                }
+            }else{
+                println("can not delete employee")
+                Database.connect().rollback()
+                Database.connect().autoCommit = true
+            }
+        }
         return false
     }
 
@@ -101,7 +132,25 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
                 statement.executeQuery(selectAll).use {resultSet ->
                     while (resultSet.next()){
                         val id = resultSet.getLong("id")
-                        var employee = EmployeeEntity(
+                        val employee = EmployeeEntity()
+                        employee.apply {
+                            this.id = id
+                            firstName = resultSet.getString("firstName")
+                            passport = resultSet.getString("passport")
+                            lastName = resultSet.getString("lastName")
+                            genre = resultSet.getString("genre")
+                            direction = resultSet.getString("direction")
+                            email = resultSet.getString("email")
+                            telephone = resultSet.getString("telephone")
+                            birthDay = Util.timeStampToCalendar( resultSet.getTimestamp("birthDay") )
+                            bankAccount = resultSet.getString("bankAccount")
+                            this.userName = resultSet.getString("userName")
+                            this.password = resultSet.getString("password")
+
+                            role = Database.findRolesByIdEmployee( resultSet.getLong("id_role") )
+                            schedules =  Database.findScheduleByIdEmployee( id )
+                        }
+                        /*val employee = EmployeeEntity(
                             resultSet.getString("firstName"),
                             resultSet.getString("passport"),
                             resultSet.getString("lastName"),
@@ -113,10 +162,10 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
                             resultSet.getString("bankAccount"),
                             resultSet.getString("userName"),
                             resultSet.getString("password"),
-                            Database.findRolesByIdEmployee(id),
+                            Database.findRolesByIdEmployee( resultSet.getLong("id_role") ),
                             Database.findScheduleByIdEmployee( id )
-                        )
-                        employee.id = id
+                        )*/
+                        //employee.id = id
                         tempEmployees.add( employee )
                     }
                     employees.addAll( tempEmployees )
@@ -127,6 +176,45 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
 
             }
 
+        }
+    }
+
+    fun login(userName:String,password:String):EmployeeEntity?{
+        Database.connect().use {connection ->
+            connection.prepareStatement("select * from ${SqlCreateTables.employees} where userName= ? and password =? ;").use { preparedStatement ->
+                preparedStatement.setString(1,userName)
+                preparedStatement.setString(2,password)
+                preparedStatement.executeQuery().use { resultSet ->
+
+                    val employee = EmployeeEntity()
+                    val id = resultSet.getLong("id")
+                    if ( id==0L){
+                        println("user dont found: "+resultSet.fetchSize)
+                        return null
+                    }
+
+                    employee.apply {
+                        this.id = id
+                        firstName = resultSet.getString("firstName")
+                        passport = resultSet.getString("passport")
+                        lastName = resultSet.getString("lastName")
+                        genre = resultSet.getString("genre")
+                        direction = resultSet.getString("direction")
+                        email = resultSet.getString("email")
+                        telephone = resultSet.getString("telephone")
+                        birthDay = Util.timeStampToCalendar( resultSet.getTimestamp("birthDay") )
+                        bankAccount = resultSet.getString("bankAccount")
+                        this.userName = resultSet.getString("userName")
+                        this.password = resultSet.getString("password")
+
+                        role = Database.findRolesByIdEmployee( resultSet.getLong("id_role") )
+                        schedules =  Database.findScheduleByIdEmployee( id )
+                    }
+                    return employee
+
+
+                }
+            }
         }
     }
 

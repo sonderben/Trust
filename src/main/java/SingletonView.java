@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class SingletonView {
 
-    private static Node nodeEmployee, nodeSale,nodeUser,nodeProduct;
+    private static Node nodeEmployee,nodeConfiguration, nodeSale,nodeUser,nodeProduct;
     private SingletonView(){
 
     }
@@ -32,14 +32,21 @@ public class SingletonView {
                     nodeProduct = fxmlLoader.load();
                     return nodeProduct;
                 }
-                return nodeProduct;//new FXMLLoader(HelloApplication.class.getResource(path)).load();
+                return nodeProduct;
             }
             case "view/employee.fxml" -> {
                 if (nodeEmployee == null) {
                     nodeEmployee = fxmlLoader.load();
                     return nodeEmployee;
                 }
-                return nodeEmployee;//new FXMLLoader(HelloApplication.class.getResource(path)).load();
+                return nodeEmployee;
+            }
+            case "view/configuration.fxml" -> {
+                if (nodeConfiguration == null) {
+                    nodeConfiguration = fxmlLoader.load();
+                    return nodeConfiguration;
+                }
+                return nodeConfiguration;
             }
             default -> {
                 System.err.println("Error: Unknown view path");

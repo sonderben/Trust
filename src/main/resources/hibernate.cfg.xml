@@ -9,8 +9,8 @@
         <property name = "hibernate.connection.password">u1234</property>
         <property name = "hibernate.connection.driver_class">org.sqlite.JDBC</property>
         <property name = "hibernate.dialect">org.hibernate.community.dialect.SQLiteDialect</property>
-        <property name = "hibernate.show_sql">false</property>
-        <property name = "hibernate.format_sql">false</property>
+        <property name = "hibernate.show_sql">true</property>
+        <property name = "hibernate.format_sql">true</property>
         <property name = "hibernate.hbm2ddl.auto">create</property>
 
     </session-factory>

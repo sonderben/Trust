@@ -1,13 +1,19 @@
 import com.sonderben.trust.constant.Action;
 import com.sonderben.trust.constant.ScreenEnum;
 import com.sonderben.trust.db.SqlCreateTables;
+import com.sonderben.trust.db.dao.CategoryDao;
+import com.sonderben.trust.db.dao.EmployeeDao;
+import com.sonderben.trust.db.dao.RoleDao;
 import com.sonderben.trust.model.Role;
 import com.sonderben.trust.model.Screen;
+import entity.CategoryEntity;
+import entity.EmployeeEntity;
 import entity.ScheduleEntity;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,8 +28,7 @@ public class Database {
                 Class.forName( "org.sqlite.JDBC" );
                 connection = DriverManager.getConnection("jdbc:sqlite:data/midb.db"/*,"",""*/);
                 System.out.println(" connection open");
-                //deleteTables();
-                createTable();
+
                 return connection;
             }
              return connection;
@@ -33,26 +38,69 @@ public class Database {
     }
 
 
-    private static void createTable() throws SQLException {
+    public static void createTable() throws SQLException {
         Statement statement = null;
+        String tableError = "";
         try {
-            connection.setAutoCommit(false);
-            statement = connection.createStatement();
+            Database.connect().setAutoCommit(false);
+            statement = Database.connect().createStatement();
 
             List<String> tables = SqlCreateTables.INSTANCE.getTables();
             for (String table : tables) {
+                tableError = table;
                 statement.execute(table);
             }
-            connection.commit();
+            Database.connect().commit();
             System.out.println("Tables create successfully");
         } catch (SQLException e) {
-            connection.rollback();
+            Database.connect().rollback();
             System.out.println("can not create tables");
+            System.out.println("error on "+tableError);
+            System.err.println( e.getMessage() );
             throw new RuntimeException(e);
         }finally {
-            connection.setAutoCommit(true);
+            Database.connect().setAutoCommit(true);
         }
 
+    }
+    public static void prepopulate(){
+        CategoryDao.INSTANCE.save(
+                new CategoryEntity("0000","General",0)
+        );
+
+        RoleDao.INSTANCE.save(
+                new Role(
+                        "Admin",List.of(
+                                new Screen( ScreenEnum.LOGIN,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                        new Screen( ScreenEnum.LOGIN,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                        new Screen( ScreenEnum.INVENTORY,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                        new Screen( ScreenEnum.ROLE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                        new Screen( ScreenEnum.USER,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                        new Screen( ScreenEnum.SALE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                        new Screen( ScreenEnum.PRODUCT,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                        new Screen( ScreenEnum.EMPLOYEE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                        new Screen( ScreenEnum.CONFIGURATION,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) )
+                )
+                )
+        );
+        Role role = new Role();
+        role.setId(1L);
+        EmployeeDao.INSTANCE.save(
+                new EmployeeEntity("Admin","12345","Admin","Male","Admin","admin@gmail.com","11111", Calendar.getInstance(),"1","root","1234",role,List.of())
+        );
+
+        RoleDao.INSTANCE.save(
+                new Role("Saler",List.of(
+                        new Screen(ScreenEnum.SALE,List.of(
+                                Action.DELETE,Action.ADD,Action.UPDATE,Action.READ
+                        ))
+                ))
+        );
+        Role role2 = new Role();
+        role2.setId(2L);
+        EmployeeDao.INSTANCE.save(
+                new EmployeeEntity("Sale","1234551","Pierre","Female","PV","pierresophie@gmail.com","8293045678", Calendar.getInstance(),"123-2342-3423","sofi","1234",role2,List.of())
+        );
     }
 
     private static void deleteTables()  {
@@ -126,27 +174,28 @@ public class Database {
         return schedules;
     }
 
-    public static List<Role> findRolesByIdEmployee(Long employeeId){
+    public static Role findRolesByIdEmployee(Long roleId){
+        if (roleId ==null){
+            return new Role();
+        }
         List<Role>roleList = new ArrayList<>();
-        var selectAllIdRole = """
-                SELECT Roles.id,Roles.name from Roles 
-                INNER JOIN employees_roles 
-                on Roles.id = employees_roles.id_role 
-                where employees_roles.id_employee = ? 
+        final var selectAllIdRole = """
+                SELECT * from Roles 
+                where id = ? 
                 """;
         try {
             PreparedStatement ps = Database.connect().prepareStatement(selectAllIdRole);
-            ps.setLong(1,employeeId);
+            ps.setLong(1,roleId);
             ResultSet resultSet =  ps.executeQuery();
-            while (resultSet.next()){
-                Long roleId = resultSet.getLong("id");
+
+
                 String roleName = resultSet.getString("name");
                 List<Screen> screens = findScreenByIdRole(roleId);
                 Role role = new Role(roleName,screens);
                 role.setId( roleId );
                 roleList.add( role );
-            }
-            return roleList;
+
+            return role;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
