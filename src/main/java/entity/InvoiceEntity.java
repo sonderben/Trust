@@ -1,20 +1,18 @@
 package entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+
 
 import java.util.Calendar;
 import java.util.List;
 
-@Entity
+
 public class InvoiceEntity extends BaseEntity {
-    @OneToMany
+
     private List<ProductSaled>products;
-    @OneToOne
+
     private EmployeeEntity employee;
-    @OneToOne
+
     private CustomerEntity customer;
     private String codeBar;
     private Calendar date;

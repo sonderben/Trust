@@ -1,20 +1,17 @@
 package entity;
 
 import com.sonderben.trust.model.Role;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+
 
 import java.util.Calendar;
 import java.util.List;
 
-@Entity
+
 public class EmployeeEntity extends PersonEntity {
     String bankAccount,userName, password,passport ;
-    @OneToOne(cascade = CascadeType.ALL)
+
     Role role;
-    @OneToMany(cascade = CascadeType.ALL)
+
     List<ScheduleEntity> schedules;
 
     public EmployeeEntity( String firstName, String passport, String lastName, String genre, String direction, String email, String telephone, Calendar birthDay, String bankAccount, String userName, String password, Role role, List<ScheduleEntity> schedule) {

@@ -1,17 +1,13 @@
 package entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
+
 
 import java.util.Calendar;
 
-@Entity
+
 public class ProductEntity extends BaseEntity {
 
-    @Column(unique = true,nullable = false)
+
     private String code;
     private String description;
     private double sellingPrice,purchasePrice, discount, itbis;
@@ -50,10 +46,10 @@ public class ProductEntity extends BaseEntity {
         this.employee = employee;
     }
 
-    @OneToOne()
+
     private CategoryEntity category;
     
-    @OneToOne()
+
     private EmployeeEntity employee;
 
     public CategoryEntity getCategory() {

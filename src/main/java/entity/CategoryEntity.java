@@ -1,12 +1,9 @@
 package entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 
-@Entity
 public class CategoryEntity extends BaseEntity{
     private String code;
-    @Column(unique = true)
+
     private String description;
     private double discount;
 

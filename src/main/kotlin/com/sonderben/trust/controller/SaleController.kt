@@ -1,37 +1,6 @@
 package com.sonderben.trust.controller
 
 
-import com.sonderben.trust.constant.Action
-import com.sonderben.trust.constant.ScreenEnum
-import com.sonderben.trust.customView.RolePane
-import com.sonderben.trust.customView.RoleTableView
-import com.sonderben.trust.model.Role
-import com.sonderben.trust.model.Screen
-import dto.EmployeeDto
-import entity.EmployeeEntity
-import entity.ScheduleEntity
-import javafx.application.Platform
-import javafx.beans.property.SimpleStringProperty
-import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
-import javafx.event.ActionEvent
-import javafx.event.EventHandler
-import javafx.fxml.FXML
-import javafx.fxml.Initializable
-import javafx.scene.control.*
-import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
-import javafx.scene.layout.VBox
-import javafx.scene.shape.CubicCurve
-import javafx.scene.text.Text
-import java.net.URL
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
-
-
 class SaleController /*: Initializable*/ {
 /*
     //var products:ObservableList<ProductEntity> = FXCollections.observableArrayList()

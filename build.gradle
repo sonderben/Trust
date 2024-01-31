@@ -58,7 +58,7 @@ dependencies {
         exclude(group: 'org.openjfx')
     }*/
     implementation ('org.xerial:sqlite-jdbc:3.44.1.0')
-    implementation('com.h2database:h2:2.2.220')
+    //implementation('com.h2database:h2:2.2.220')
 
     implementation('com.github.almasb:fxgl:17.2') {
         exclude(group: 'org.openjfx')
@@ -71,11 +71,11 @@ dependencies {
 
     // data
 
-    implementation("org.hibernate.orm:hibernate-core:6.4.1.Final")
+    //implementation("org.hibernate.orm:hibernate-core:6.4.1.Final")
     //implementation('io.reactivex.rxjava3:rxjava:3.1.5')
     implementation 'com.github.reactivex:rxjavafx:2.11.0-RC36'
 
-    implementation 'org.hibernate.orm:hibernate-community-dialects:6.4.2.Final'
+    //implementation 'org.hibernate.orm:hibernate-community-dialects:6.4.2.Final'
 
 
 

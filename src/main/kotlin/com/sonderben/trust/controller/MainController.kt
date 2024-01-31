@@ -2,23 +2,9 @@ package com.sonderben.trust.controller
 
 import SingletonView
 import com.sonderben.trust.Context
-import com.sonderben.trust.constant.Action
-import com.sonderben.trust.constant.ScreenEnum
-import com.sonderben.trust.db.dao.CategoryDao
-import com.sonderben.trust.model.Role
-import com.sonderben.trust.model.Screen
-import dto.EmployeeDto
-import dto.ProductDto
-import entity.CategoryEntity
-import entity.EmployeeEntity
-import entity.ProductEntity
-import entity.ScheduleEntity
-import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.Node
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox

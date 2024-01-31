@@ -6,8 +6,6 @@ import com.sonderben.trust.db.dao.CategoryDao
 import com.sonderben.trust.db.dao.ProductDao
 import com.sonderben.trust.qr_code.MessageListener
 import com.sonderben.trust.qr_code.SocketMessageEvent
-import dto.EmployeeDto
-import dto.ProductDto
 import entity.CategoryEntity
 import entity.EmployeeEntity
 import entity.ProductEntity

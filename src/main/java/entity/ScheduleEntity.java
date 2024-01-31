@@ -1,10 +1,6 @@
 package entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 
-@Table(name = "SCHEDULEENTITY")
-@Entity
 public class ScheduleEntity extends BaseEntity{
     private Integer workDay; private Float startHour, endHour;
 

@@ -1,10 +1,10 @@
 package entity;
 
-import jakarta.persistence.MappedSuperclass;
+
 
 import java.util.Calendar;
 
-@MappedSuperclass
+
 public class PersonEntity extends BaseEntity{
     String passport, firstName, lastName, genre, direction, email, telephone;
     Calendar birthDay;
