@@ -5,7 +5,7 @@ import com.sonderben.trust.db.SqlCreateTables
 import com.sonderben.trust.model.Role
 import javafx.collections.FXCollections
 
-object RoleDao {
+object RoleDao:CrudDao<Role> {
     val roles  = FXCollections.observableArrayList<Role>()
 
     init {
@@ -25,48 +25,76 @@ object RoleDao {
     private const val selectAllRoles = "SELECT * FROM ${SqlCreateTables.roles}"
 
 
-    fun save(role:Role){
-        val conection = Database.connect()
-        try {
-            var roleId:Long = 0
+    override fun save(entity:Role):Boolean{
+        var tempRole = entity
+        Database.connect().use { connection ->
+            var roleId:Long
 
-            conection.autoCommit = false
+            connection.autoCommit = false
 
-            conection.prepareStatement( insertRole ).use { preparedStatement ->
-                preparedStatement.setString(1,role.name)
+            connection.prepareStatement( insertRole ).use { preparedStatement ->
+                preparedStatement.setString(1,entity.name)
                 val intRow = preparedStatement.executeUpdate()
                 if ( intRow>0 ){
                     roleId = Database.getLastId()
-                    if (roleId==0L){
-                        throw Exception("Can not get the id of the recent role")
+                    tempRole.id = roleId
+
+                    for (screen in entity.screens){
+                        connection.prepareStatement( insertScreen ).use { ps ->
+                            ps.setString(1,screen.screen.name)
+                            ps.setString(2,screen.actions.map { it.name }.joinToString ("," ) )
+                            ps.setLong(3,roleId)
+
+                            val rowCount = ps.executeUpdate()
+                            if (rowCount<=0) {
+                                connection.rollback()
+                                connection.autoCommit = true
+                                throw Exception("can't save screen: $screen")
+                            }
+
+                        }
                     }
+
+                    connection.commit()
+                    roles.add( tempRole )
+                    return true
+
                 }else{
+                    connection.rollback()
+                    connection.autoCommit = true
                     throw Exception("Role can not be saved")
                 }
             }
 
 
-            for (screen in role.screens){
-                conection.prepareStatement( insertScreen ).use { preparedStatement ->
-                    preparedStatement.setString(1,screen.screen.name)
-                    preparedStatement.setString(2,screen.actions.map { it.name }.joinToString ("," ) )
-                    preparedStatement.setLong(3,roleId)
+        }
 
-                    val rowCount = preparedStatement.executeUpdate()
-                    if (rowCount<=0)
-                        throw Exception("can't save screen: $screen")
+
+
+
+    }
+
+    override fun delete(idEntity: Long): Boolean {
+
+        Database.connect().use { connection ->
+            connection.prepareStatement("delete from ${SqlCreateTables.roles} where id = ?").use { preparedStatement ->
+                preparedStatement.setLong(1,idEntity)
+                val rowCount = preparedStatement.executeUpdate()
+                if (rowCount>0){
+                    roles.removeIf { it.id.equals(idEntity) }
+                    return true
                 }
+                return false
             }
-            conection.commit()
-        }catch (e:Exception){
-            conection.rollback()
-        }finally {
-            conection.autoCommit = true
-            conection.close()
+
         }
     }
 
-    private fun findAll() {
+    override fun findById(iEntity: Long): Role? {
+        return null
+    }
+
+    override fun findAll():Boolean {
 
         val tempRoleList = mutableListOf<Role>()
         Database.connect().use { connection ->
@@ -86,13 +114,18 @@ object RoleDao {
                         tempRoleList.add( role )
                     }
                     roles.addAll( tempRoleList )
-                    //println("roles: "+ roles)
+
 
                 }
 
             }
 
         }
+        return true
+    }
+
+    override fun update(entity: Role): Boolean {
+        return true
     }
 
     private fun deleteById(){}

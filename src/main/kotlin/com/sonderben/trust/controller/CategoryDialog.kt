@@ -25,11 +25,11 @@ class CategoryDialog : Dialog<CategoryEntity>(), Initializable {
     private var categorySelected:CategoryEntity?=null
     init {
 
-        RoleDao.roles
-        var rol = Role()
-        rol.id = 1
+        //RoleDao.roles
+       // var rol = Role()
+       // rol.id = 1
 
-        RoleDao.save( Role("Admin", mutableListOf(Screen(ScreenEnum.SALE, mutableListOf(Action.ADD)))) )
+        //RoleDao.save( Role("Admin", mutableListOf(Screen(ScreenEnum.SALE, mutableListOf(Action.ADD)))) )
 
 
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/GoToCategoryDialog.fxml"))

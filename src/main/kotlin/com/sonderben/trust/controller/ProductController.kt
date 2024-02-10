@@ -1,11 +1,14 @@
 package com.sonderben.trust.controller
 
 import com.sonderben.trust.Context
+import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.Util
 import com.sonderben.trust.db.dao.CategoryDao
 import com.sonderben.trust.db.dao.ProductDao
+import com.sonderben.trust.hide
 import com.sonderben.trust.qr_code.MessageListener
 import com.sonderben.trust.qr_code.SocketMessageEvent
+import com.sonderben.trust.viewUtil.ViewUtil
 import entity.CategoryEntity
 import entity.EmployeeEntity
 import entity.ProductEntity
@@ -13,12 +16,14 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
+import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.*
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.VBox
 import javafx.util.StringConverter
 import java.net.URL
 import java.time.LocalDate
@@ -33,8 +38,15 @@ class ProductController :Initializable,MessageListener {
 
         employeeTf.text = Context.currentEmployee.value.userName
 
-
         categories = FXCollections.observableArrayList( CategoryDao.categories )
+        CategoryDao.categories.addListener(object :ListChangeListener<CategoryEntity>{
+            override fun onChanged(c: ListChangeListener.Change<out CategoryEntity>?) {
+                categories = FXCollections.observableArrayList( CategoryDao.categories )
+            }
+        })
+
+
+
 
         dateAddedCol.setCellValueFactory { data -> SimpleStringProperty( Util.formatDate( data.value.dateAdded.time ) ) }
         codeCol.setCellValueFactory { data -> SimpleStringProperty(data.value.code) }
@@ -153,6 +165,8 @@ class ProductController :Initializable,MessageListener {
 
     @FXML
     private lateinit var sellingTf: TextField
+    @FXML
+    private lateinit var bottomPanelVBOx:VBox
 
     @FXML
     private lateinit var tableView: TableView<ProductEntity>
@@ -193,12 +207,17 @@ class ProductController :Initializable,MessageListener {
     @FXML
     fun goToCategoryOnMouseClicked(event: MouseEvent) {
         val cc = CategoryDialog()
+        cc.initOwner(HelloApplication.primary)
         cc.showAndWait()
     }
 
     @FXML
     fun onUpdateBtn(event: ActionEvent) {
         println("onUpdateBtn")
+    }
+
+    fun hideBottomPanelOnMouseClicked(){
+         bottomPanelVBOx.hide()
     }
     private  var produtcs:ObservableList<ProductEntity> = ProductDao.products//FXCollections.observableArrayList( ProductDao.products )
     private lateinit var tempEmployee:EmployeeEntity

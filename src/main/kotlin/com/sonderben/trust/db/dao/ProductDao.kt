@@ -33,7 +33,8 @@ object ProductDao:CrudDao<ProductEntity> {
                 preparedStatement.setTimestamp(7,Timestamp(Calendar.getInstance().timeInMillis))
                 preparedStatement.setLong(8,entity.employee.id)
                 preparedStatement.setTimestamp(9,Timestamp(entity.expirationDate.timeInMillis) )
-                preparedStatement.setString(10,entity.code)
+                val tempCode = entity.code.padStart(12,'0')
+                preparedStatement.setString(10,tempCode)
                 preparedStatement.setString(11,entity.description)
                 val rowCount = preparedStatement.executeUpdate()
                 val lastId = Database.getLastId()
@@ -134,7 +135,7 @@ object ProductDao:CrudDao<ProductEntity> {
 
         Database.connect().use { connection ->
             connection.prepareStatement(selectByCode).use { preparedStatement ->
-                preparedStatement.setString(1,code)
+                preparedStatement.setString(1,code.padStart(12,'0'))
                 val resultSet = preparedStatement.executeQuery()
 
                 //

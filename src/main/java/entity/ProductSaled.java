@@ -1,7 +1,9 @@
 package entity;
 
+// i create this class because a product can change, tomorrow the price.... can change
+// thats why i create a separate class
 public class ProductSaled extends BaseEntity{
-    private String code, description;
+    private String code, description,category;
     private float price, qty, discount, itbis;
     private double total;
     private boolean wasDiscountCategory;
@@ -17,8 +19,9 @@ public class ProductSaled extends BaseEntity{
         this.itbis = (float) p.getItbis();
         this.total = p.total();
         this.wasDiscountCategory = wasDiscountCategory;
+        this.category = p.getCategory().getDescription();
     }
-    public ProductSaled(String code, String description, float price, float qty, float discount, float itbis, double total,boolean wasDiscountCategory) {
+    public ProductSaled(String code, String description, float price, float qty, float discount, float itbis, double total,boolean wasDiscountCategory,String category) {
         this.code = code;
         this.description = description;
         this.price = price;
@@ -27,10 +30,19 @@ public class ProductSaled extends BaseEntity{
         this.itbis = itbis;
         this.total = total;
         this.wasDiscountCategory = wasDiscountCategory;
+        this.category = category;
     }
 
     public String getCode() {
         return code;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public void setCode(String code) {
@@ -95,6 +107,6 @@ public class ProductSaled extends BaseEntity{
 
     @Override
     public String toString() {
-        return "ProductSaled{code='%s', description='%s', price=%s, qty=%s, discount=%s, itbis=%s, total=%s, wasDiscountCategory=%s}".formatted(code, description, price, qty, discount, itbis, total, wasDiscountCategory);
+        return "ProductSaled{code='%s', description='%s', price=%s, qty=%s, discount=%s, itbis=%s, total=%s, wasDiscountCategory=%s, description=%s}".formatted(code, description, price, qty, discount, itbis, total, wasDiscountCategory, description);
     }
 }

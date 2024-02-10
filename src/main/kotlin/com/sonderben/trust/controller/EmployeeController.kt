@@ -4,6 +4,7 @@ import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.Util
 import com.sonderben.trust.db.dao.EmployeeDao
 import com.sonderben.trust.db.dao.RoleDao
+import com.sonderben.trust.hide
 import com.sonderben.trust.model.Role
 import entity.EmployeeEntity
 import entity.ScheduleEntity
@@ -17,6 +18,7 @@ import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.control.*
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.VBox
 import javafx.util.Callback
 import javafx.util.StringConverter
 import java.net.URL
@@ -55,6 +57,10 @@ class EmployeeController: Initializable {
                 newValue: EmployeeEntity?
             ) {
                 if (newValue!=null){
+                    if (! bottomPanelVBOx.isVisible ){
+                        bottomPanelVBOx.hide()
+                    }
+
                     employeeToSave = newValue
                     telephoneTextField.text=newValue.telephone
                     lastNameTextField.text = newValue.lastName
@@ -205,6 +211,8 @@ class EmployeeController: Initializable {
         userTableView.selectionModel.select(null)
     }
     @FXML
+    private lateinit var bottomPanelVBOx:VBox
+    @FXML
     fun scheduleOnMOuseClick(event: MouseEvent) {
         val scheduleEntity = SchedulerController( employeeToSave.schedules?: mutableListOf() ).showAndWait()
         println("$scheduleEntity : genial")
@@ -223,6 +231,11 @@ class EmployeeController: Initializable {
         userNameTextField.text = ""
         passwordField.text = ""
     }
+
+    fun hideBottomPanelOnMouseClicked(mouseEvent: MouseEvent) {
+        bottomPanelVBOx.hide()
+    }
+
     class RoleStringConverter: StringConverter<Role>() {
         override fun toString(`object`: Role?): String {
             return `object`?.name ?: "null"
@@ -276,6 +289,8 @@ class EmployeeController: Initializable {
         @FXML
         private lateinit var tableView: TableView<ScheduleEntity>
 
+
+
         @FXML
         fun onDelete(event: ActionEvent?) {
         }
@@ -295,5 +310,6 @@ class EmployeeController: Initializable {
         @FXML
         fun onUpdate(event: ActionEvent?) {
         }
+
     }
 }

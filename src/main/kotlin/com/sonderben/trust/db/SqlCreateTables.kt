@@ -15,6 +15,8 @@ object SqlCreateTables {
     const val productSealed = "productSealed"
 
 
+
+
     private const val createCategoryTable = """
         create table if not exists ${categories} (
         discount float default 0 check(discount >=0 and discount<100),
@@ -30,7 +32,7 @@ object SqlCreateTables {
         actions varchar(255),
         id_role integer,
         FOREIGN KEY (id_role)
-            REFERENCES $roles (id)
+            REFERENCES $roles (id) on delete cascade
     );
     """
     private const val createRolesTable = """
@@ -42,6 +44,7 @@ object SqlCreateTables {
     private var createCustomerTable =  """
     create table if not exists $customers (
         birthDay timestamp,
+        code varchar unique,
         id integer primary key autoincrement,
         direction varchar(255),
         point integer default 0,
@@ -50,7 +53,6 @@ object SqlCreateTables {
         genre varchar(30),
         lastName varchar(255),
         passport varchar(255),
-        password varchar(255),
         telephone varchar(255)
     );
     
@@ -75,10 +77,10 @@ object SqlCreateTables {
         create table if not exists $invoiceProduct(
         id integer primary key autoincrement,
                 id_invoice integer not null,
-                id_product integer not null,
+                id_product_sealed integer not null,
                 foreign key(id_invoice) 
                     references $invoices(id),
-                foreign key(id_product) 
+                foreign key(id_product_sealed) 
                     references $productSealed(id)
         );
         
@@ -87,6 +89,7 @@ object SqlCreateTables {
     private var createEmployeeTable =  """
     create table if not exists $employees (
         birthDay timestamp,
+        code varchar,
         id integer primary key autoincrement,
         bankAccount varchar(255) unique,
         direction varchar(255),
@@ -144,7 +147,8 @@ object SqlCreateTables {
         CREATE TABLE IF NOT EXISTS $productSealed(
         id integer primary key autoincrement,
         code varchar,
-        description varchar,
+        description nvarchar,
+        category varchar,
         price float,
         quantity float,
         discount float,
@@ -156,7 +160,8 @@ object SqlCreateTables {
 
     val tables = listOf(createCategoryTable,
         createCustomerTable, createScreenTable, createRolesTable, createEmployeeTable, /*createRoleEmployee,*/
-        createScheduleTable, createProductsTable, createInvoiceTable, createInvoiceProductTable,createProductSealed)
+        createScheduleTable, createProductsTable, createInvoiceTable, createInvoiceProductTable,createProductSealed/*,
+        getFullName*/)
     var deleteCategoryTable = """
         drop table if exists ${categories};
     """.trimIndent()

@@ -16,9 +16,11 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
     override fun save(entity: InvoiceEntity): Boolean {
 
         val insertInvoice = "insert into ${SqlCreateTables.invoices} (dateCreated, codeBar, id_employee, id_customer) values (?,?,?,?)"
+
         val insertProductSealed = "Insert into ${SqlCreateTables.productSealed}" +
-                " (code,description,price,quantity,discount,itbis,total,wasDiscountCategory)  values(?,?,?,?,?,?,?,?);"
-        val insertInvoiceProductSealed = "Insert into  ${SqlCreateTables.invoiceProduct} (id_invoice,id_product) values(?,?);"
+                " (code,description,price,quantity,discount,itbis,total,wasDiscountCategory,category)  values(?,?,?,?,?,?,?,?,?);"
+
+        val insertInvoiceProductSealed = "Insert into  ${SqlCreateTables.invoiceProduct} (id_invoice,id_product_sealed) values(?,?);"
 
 
         Database.connect().use { connection ->
@@ -54,6 +56,7 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
                         preparedStatement.setFloat(6,productSale.itbis)
                         preparedStatement.setDouble(7,productSale.total)
                         preparedStatement.setBoolean(8,productSale.isWasDiscountCategory)
+                        preparedStatement.setString(9,productSale.category)
                         val rowCount = preparedStatement.executeUpdate()
 
                         if (rowCount<=0){
@@ -109,5 +112,62 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
         return true
     }
 
+    fun productSealed():List<ProductSealed>{
+        val productsSealed = mutableListOf<ProductSealed>()
+        val ps = """
+            SELECT ps.code,
+            ps.description,
+            SUM(ps.price * ps.quantity) as total_price,
+            SUM(ps.quantity) as total_quantity,
+            ps.category,
+            ip.id_invoice,
+            iv.dateCreated
+            FROM productSealed as ps
+            INNER JOIN invoiceProduct as ip ON ip.id_product_sealed = ps.id
+            INNER JOIN invoices as iv ON iv.id = ip.id_invoice
+            INNER JOIN Employee as emp ON emp.id = iv.id_employee
+            /*WHERE Date(iv.dateCreated/1000,'unixepoch') = date('now')*/
+            GROUP BY ps.code;
+
+        """.trimIndent()
+       Database.connect().use { connection ->
+           connection.createStatement().use { statement ->
+               statement.executeQuery(ps).use { resultSet ->
+                   while (resultSet.next()){
+
+
+
+                       productsSealed.add( ProductSealed(
+                           resultSet.getString("code"),
+                                   resultSet.getString("description"),
+                                   resultSet.getString("total_price"),
+                                   resultSet.getString("total_quantity"),
+                                   resultSet.getString("dateCreated"),
+                                   resultSet.getString("category")
+                       ) )
+                   }
+                   return productsSealed
+               }
+
+           }
+       }
+    }
+//select ps.code ,ps.description,ps.price,ps.quantity,ip.id_invoice,iv.dateCreated   from productSealed as ps
+//            INNER JOIN invoiceProduct as ip on
+//            ip.id_product_sealed = ps.id
+//            INNER JOIN  invoices as iv on
+//            iv.id =  ip.id_invoice
+//            INNER JOIN Employee as emp on
+//            emp.id = iv.id_employee
+//            WHERE Date(iv.dateCreated/1000,'unixepoch') = date('now')
+
+    data class ProductSealed(var code:String,
+             var description:String,
+             var totalPrice:String,
+             var totalQuantity:String,
+             var dateCreated:String,
+             var category:String){
+
+    }
 
 }

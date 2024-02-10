@@ -14,8 +14,8 @@ public class EmployeeEntity extends PersonEntity {
 
     List<ScheduleEntity> schedules;
 
-    public EmployeeEntity( String firstName, String passport, String lastName, String genre, String direction, String email, String telephone, Calendar birthDay, String bankAccount, String userName, String password, Role role, List<ScheduleEntity> schedule) {
-        super(null, firstName,passport, lastName, genre, direction, email, telephone, birthDay);
+    public EmployeeEntity( String code,String firstName, String passport, String lastName, String genre, String direction, String email, String telephone, Calendar birthDay, String bankAccount, String userName, String password, Role role, List<ScheduleEntity> schedule) {
+        super(null, code,firstName,passport, lastName, genre, direction, email, telephone, birthDay);
         this.bankAccount = bankAccount;
         this.userName = userName;
         this.password = password;

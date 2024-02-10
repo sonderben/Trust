@@ -32,7 +32,7 @@ class HelloController : Initializable{
         if ( employeeEntity != null ){
             Context.currentEmployee = SimpleObjectProperty(employeeEntity)
             val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/main_view.fxml"))
-            val scene = Scene(fxmlLoader.load(), 920.0, 640.0)
+            val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
             HelloApplication.primary.scene = scene
         }else{
             infoLabel.text = "username or password is wrong"

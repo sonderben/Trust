@@ -8,20 +8,22 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.ProductController">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.ProductController">
    <children>
-      <HBox prefHeight="100.0" prefWidth="200.0">
+      <HBox alignment="CENTER_LEFT" minHeight="30.0" prefHeight="30.0" prefWidth="200.0" VBox.vgrow="NEVER">
          <children>
             <Label onMouseClicked="#goToCategoryOnMouseClicked" text="Go categories" textFill="WHITE" underline="true" />
          </children>
       </HBox>
-      <TableView fx:id="tableView" editable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+      <TableView fx:id="tableView" editable="true" minHeight="50.0" VBox.vgrow="SOMETIMES">
          <columns>
             <TableColumn fx:id="dateAddedCol" prefWidth="75.0" text="Date added" />
             <TableColumn fx:id="codeCol" prefWidth="75.0" text="Code" />
@@ -39,61 +41,80 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
-      <GridPane hgap="10.0">
-        <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
+      <HBox alignment="CENTER_RIGHT" maxHeight="18.0">
          <children>
-            <TextField fx:id="codeTf" promptText="code" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="descriptionTf" promptText="description" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <TextField fx:id="purchaseTf" promptText="purchase price" GridPane.rowIndex="3" />
-            <TextField fx:id="sellingTf" promptText="selling price" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <TextField fx:id="qtyTf" promptText="quantity" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-            <TextField fx:id="discountTf" promptText="discount" GridPane.rowIndex="5" />
-            <TextField fx:id="itbisTf" promptText="itbis" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-            <TextField fx:id="employeeTf" editable="false" promptText="Employee" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-            <ChoiceBox fx:id="categoryCb" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-            <DatePicker fx:id="expDateDp" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <DatePicker fx:id="dateAddedDp" disable="true" editable="false" GridPane.rowIndex="1" />
-            <Label text="Date added" textFill="WHITE" />
-            <Label text="Code" textFill="WHITE" GridPane.columnIndex="1" />
-            <Label text="Description" textFill="WHITE" GridPane.columnIndex="2" />
-            <Label text="Category" textFill="WHITE" GridPane.columnIndex="3" />
-            <Label text="Purchase price" textFill="WHITE" GridPane.rowIndex="2" />
-            <Label text="Selling price" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="Expiration date" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-            <Label text="Quantity / weight" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-            <Label text="Discount" textFill="WHITE" GridPane.rowIndex="4" />
-            <Label text="Itbis" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <Label text="Employee" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-         </children>
-         <VBox.margin>
-            <Insets />
-         </VBox.margin>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
-      </GridPane>
-      <HBox alignment="TOP_RIGHT" prefWidth="200.0" spacing="10.0" VBox.vgrow="NEVER">
-         <children>
-            <Button mnemonicParsing="false" onAction="#onSaveBtn" text="Save" />
-            <Button mnemonicParsing="false" onAction="#onUpdateBtn" text="Update" />
-            <Button mnemonicParsing="false" onAction="#onDeleteBtn" text="Delete" />
+            <ImageView fitHeight="17.0" fitWidth="17.0" onMouseClicked="#hideBottomPanelOnMouseClicked" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/hide_panel.PNG" />
+               </image>
+            </ImageView>
          </children>
          <padding>
-            <Insets bottom="30.0" top="10.0" />
+            <Insets right="5.0" top="1.0" />
          </padding>
       </HBox>
+      <VBox fx:id="bottomPanelVBOx" minHeight="230.0" VBox.vgrow="NEVER">
+         <children>
+            <GridPane hgap="10.0" minWidth="300.0" VBox.vgrow="NEVER">
+              <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <TextField fx:id="codeTf" promptText="code" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="descriptionTf" promptText="description" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <TextField fx:id="purchaseTf" promptText="purchase price" GridPane.rowIndex="3" />
+                  <TextField fx:id="sellingTf" promptText="selling price" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <TextField fx:id="qtyTf" promptText="quantity" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                  <TextField fx:id="discountTf" promptText="discount" GridPane.rowIndex="5" />
+                  <TextField fx:id="itbisTf" promptText="itbis" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <TextField fx:id="employeeTf" editable="false" promptText="Employee" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                  <ChoiceBox fx:id="categoryCb" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                  <DatePicker fx:id="expDateDp" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                  <DatePicker fx:id="dateAddedDp" disable="true" editable="false" GridPane.rowIndex="1" />
+                  <Label text="Date added" textFill="WHITE" />
+                  <Label text="Code" textFill="WHITE" GridPane.columnIndex="1" />
+                  <Label text="Description" textFill="WHITE" GridPane.columnIndex="2" />
+                  <Label text="Category" textFill="WHITE" GridPane.columnIndex="3" />
+                  <Label text="Purchase price" textFill="WHITE" GridPane.rowIndex="2" />
+                  <Label text="Selling price" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label text="Expiration date" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <Label text="Quantity / weight" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                  <Label text="Discount" textFill="WHITE" GridPane.rowIndex="4" />
+                  <Label text="Itbis" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Label text="Employee" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+               </children>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </GridPane>
+            <HBox alignment="TOP_RIGHT" prefWidth="200.0" spacing="10.0" VBox.vgrow="NEVER">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#onSaveBtn" text="Save" />
+                  <Button mnemonicParsing="false" onAction="#onUpdateBtn" text="Update" />
+                  <Button mnemonicParsing="false" onAction="#onDeleteBtn" text="Delete" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" top="10.0" />
+               </padding>
+            </HBox>
+         </children>
+         <padding>
+            <Insets right="5.0" />
+         </padding>
+      </VBox>
    </children>
 </VBox>

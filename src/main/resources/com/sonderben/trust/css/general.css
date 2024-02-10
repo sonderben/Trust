@@ -1,3 +1,50 @@
 .main-bg{
-    -fx-background-color: #032d3b;
+    /*-fx-background-color: #032d3b;*/
+    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #032d3b,#3498db);
+}
+.text-field{
+    -fxbackground-radius:10;
+    -fx-border-color: #769cb6;
+    -fx-border-width: 1;
+    -fx-pref-height: 40;
+    -fx-prompt-text-fill: gray;
+    -fx-background-color: transparent;
+    -fx-border-radius: 5;
+    -fx-text-fill: white;
+}
+.button{
+    -fx-border-color: #769cb6;
+    -fx-border-width: 2;
+    -fx-background-color: #769cb6;
+    -fx-border-radius: 10;
+    -fx-text-fill: white;
+}
+.table-view{
+
+}
+
+.radio-button{
+    -fx-text-fill: white;
+}
+
+.bar-chart{
+    -fx-horizontal-grid-lines-visible: false;
+    -fx-vertical-grid-lines-visible: false;
+    -fx-bar-fill:white;
+}
+
+
+.chart-plot-background{
+    -fx-background-color: tranparent;
+}
+.chart-title{
+    -fx-text-fill: white;
+}
+.chart-pie-label{
+    -fx-fill: white;
+}
+.container-chart{
+    -fx-background-color: rgba(255, 255, 255, 0.11);
+    -fx-background-radius: 10px;
+    -fx-margin:10px
 }

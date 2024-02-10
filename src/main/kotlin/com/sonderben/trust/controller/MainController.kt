@@ -2,12 +2,20 @@ package com.sonderben.trust.controller
 
 import SingletonView
 import com.sonderben.trust.Context
+import com.sonderben.trust.HelloApplication
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.geometry.Rectangle2D
 import javafx.scene.Node
+import javafx.scene.control.MenuBar
+import javafx.scene.image.ImageView
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
+import javafx.stage.Screen
+import javafx.stage.Stage
 import java.net.URL
 import java.util.*
 
@@ -15,6 +23,12 @@ import java.util.*
 class MainController : Initializable {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
+
+        next = nextPage
+        forward = forwardPage
+
+
+        menuBar.useSystemMenuBarProperty().set(true)
         screensByRole()
         if (vboxLateral.children.size ==1 ){
             borderpane.left = null
@@ -38,6 +52,26 @@ class MainController : Initializable {
     @FXML
     private lateinit var borderpane: BorderPane
 
+    @FXML
+    private lateinit var menuBar: MenuBar
+    @FXML
+    private lateinit var topBarHBox: HBox
+
+    @FXML
+    private lateinit var nextPage:ImageView
+    @FXML
+    private lateinit var forwardPage: ImageView
+
+    companion object {
+
+        lateinit var next:ImageView
+        lateinit var forward:ImageView
+
+
+    }
+
+
+
 
 
     private fun onSelect() {
@@ -45,12 +79,14 @@ class MainController : Initializable {
             it.setOnMouseClicked { event ->
                 if (event != null) {
                     onClickLateralButton(event.source as Node)
-                    println("id: ${it.id.lowercase()}")
                     when (it.id.lowercase()) {
                         "sale" -> changeView("view/sale.fxml")
                         "product" -> changeView("view/product.fxml")
                         "employee" -> changeView("view/employee.fxml")
                         "configuration" -> changeView("view/configuration.fxml")
+                        "inventory" -> changeView("view/inventory.fxml")
+                        "role" -> changeView("view/role.fxml")
+                        "queries" -> changeView("view/queries/queries.fxml")
                     }
                 }
             }
@@ -59,8 +95,6 @@ class MainController : Initializable {
 
     private fun changeView(relativeUrl: String) {
         val a = SingletonView.get(relativeUrl)
-
-
         if (a != null && !stackPane.children.contains(a)) {
             stackPane.children.add(a)
         }
@@ -77,12 +111,39 @@ class MainController : Initializable {
 
         vboxLateral.children.forEach {
             if (node === it){
-                it.style = "-fx-background-color: #032d3b"
+                //032D3BFF
+                it.style = "-fx-background-color: #FFFFFF35"
             }else{
                 it.style = ""
             }
         }
     }
 
+    private  var xOffset = 0.0
+    private  var yOffset = 0.0
+    fun topBarHBoxOnMousePressed(event: MouseEvent) {
+        xOffset = event.screenX - HelloApplication.primary.x
+        yOffset = event.screenY - HelloApplication.primary.y
+    }
+
+    fun topBarHBoxOnMouseDragged(event:MouseEvent) {
+        HelloApplication.primary.x = event.screenX - xOffset
+        HelloApplication.primary.y = event.screenY - yOffset
+    }
+
+
+
+
+
+    fun  hideLeftPanelOnMouseClicked() {
+        if (borderpane.left.isVisible){
+            borderpane.left.isVisible = false
+            borderpane.left.managedProperty().set(false)
+        }else{
+            borderpane.left.isVisible = true
+            borderpane.left.managedProperty().set(true)
+        }
+
+    }
 
 }

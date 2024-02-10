@@ -1,14 +1,10 @@
 import com.sonderben.trust.constant.Action;
 import com.sonderben.trust.constant.ScreenEnum;
 import com.sonderben.trust.db.SqlCreateTables;
-import com.sonderben.trust.db.dao.CategoryDao;
-import com.sonderben.trust.db.dao.EmployeeDao;
-import com.sonderben.trust.db.dao.RoleDao;
+import com.sonderben.trust.db.dao.*;
 import com.sonderben.trust.model.Role;
 import com.sonderben.trust.model.Screen;
-import entity.CategoryEntity;
-import entity.EmployeeEntity;
-import entity.ScheduleEntity;
+import entity.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -68,6 +64,8 @@ public class Database {
                 new CategoryEntity("0000","General",0)
         );
 
+
+
         RoleDao.INSTANCE.save(
                 new Role(
                         "Admin",List.of(
@@ -79,14 +77,16 @@ public class Database {
                         new Screen( ScreenEnum.SALE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
                         new Screen( ScreenEnum.PRODUCT,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
                         new Screen( ScreenEnum.EMPLOYEE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
-                        new Screen( ScreenEnum.CONFIGURATION,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) )
+                        new Screen( ScreenEnum.CONFIGURATION,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                        new Screen( ScreenEnum.QUERIES,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) )
+
                 )
                 )
         );
         Role role = new Role();
         role.setId(1L);
         EmployeeDao.INSTANCE.save(
-                new EmployeeEntity("Admin","12345","Admin","Male","Admin","admin@gmail.com","11111", Calendar.getInstance(),"1","root","1234",role,List.of())
+                new EmployeeEntity("000000000001","Admin","12345","Admin","Male","Admin","admin@gmail.com","11111", Calendar.getInstance(),"1","root","1234",role,List.of())
         );
 
         RoleDao.INSTANCE.save(
@@ -99,7 +99,22 @@ public class Database {
         Role role2 = new Role();
         role2.setId(2L);
         EmployeeDao.INSTANCE.save(
-                new EmployeeEntity("Sale","1234551","Pierre","Female","PV","pierresophie@gmail.com","8293045678", Calendar.getInstance(),"123-2342-3423","sofi","1234",role2,List.of())
+                new EmployeeEntity("000000000002","Sale","1234551","Pierre","Female","PV","pierresophie@gmail.com","8293045678", Calendar.getInstance(),"123-2342-3423","sofi","1234",role2,List.of())
+        );
+
+        CustomerDao.INSTANCE.save(
+                new CustomerEntity("000000000001","Jean","1234","Pierre","male","PV","jean@gmail.com","34543454",Calendar.getInstance(),0L)
+        );
+        CategoryEntity category = new CategoryEntity();
+        category.setId(1L);
+        EmployeeEntity employee = new EmployeeEntity();
+        employee.setId(1L);
+        ProductDao.INSTANCE.save(
+                new ProductEntity("1","Pan",10,12,0,0,15,Calendar.getInstance(),Calendar.getInstance(),category,employee)
+        );
+
+        ProductDao.INSTANCE.save(
+                new ProductEntity("2","Hard disk 2GB",3000,3601,0,21,5,Calendar.getInstance(),Calendar.getInstance(),category,employee)
         );
     }
 

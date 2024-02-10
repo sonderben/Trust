@@ -2,10 +2,14 @@ package com.sonderben.trust.controller
 
 import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
+import com.sonderben.trust.db.dao.CustomerDao
 import com.sonderben.trust.db.dao.InvoiceDao
 import com.sonderben.trust.db.dao.ProductDao
+import com.sonderben.trust.hide
 import com.sonderben.trust.qr_code.MessageListener
 import com.sonderben.trust.qr_code.SocketMessageEvent
+import com.sonderben.trust.viewUtil.ViewUtil
+import entity.CustomerEntity
 import entity.InvoiceEntity
 import entity.ProductEntity
 import entity.ProductSaled
@@ -20,6 +24,7 @@ import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.*
+import javafx.scene.input.InputMethodEvent
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.VBox
@@ -36,32 +41,40 @@ import kotlin.random.nextLong
 
 class Sale :Initializable,MessageListener{
     private var socketMesageEvent = SocketMessageEvent(this)
+    private var mCurrentCustomer:CustomerEntity? = null
 
-    companion object{
 
-    }
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         //socketMesageEvent.startingListening()
 
 
         qtyTotal.prefWidthProperty().bind( qtyCol.widthProperty() )
-        itbisTotal.prefWidthProperty().bind( qtyCol.widthProperty() )
-        discountTotal.prefWidthProperty().bind( qtyCol.widthProperty() )
         grandTotal.prefWidthProperty().bind( qtyCol.widthProperty() )
 
 
-        tableView.selectionModel.selectionMode = SelectionMode.SINGLE
+        tableView.setOnKeyReleased { event ->
+            val tableViewSelectedItems: ObservableList<ProductEntity> = tableView.selectionModel.selectedItems
+            if (event.code==KeyCode.DELETE && tableViewSelectedItems.size>0){
+                mProducts.removeAll( tableViewSelectedItems )
+                clearAll()
+            }
+        }
+        tableView.selectionModel.selectionMode = SelectionMode.MULTIPLE
         tableView.selectionModel.selectedItemProperty().addListener( object: ChangeListener<ProductEntity> {
             override fun changed(observable: ObservableValue<out ProductEntity>?, oldValue: ProductEntity?, newValue: ProductEntity?) {
                 if (newValue != null){
 
+                    if (! bottomPanelVBOx.isVisible ){
+                        bottomPanelVBOx.hide()
+                    }
+
                     mProductSelected = newValue
                     qtyTextField.text = newValue.quantity.toString()
                     codeProductTextField.text = newValue.code
-                   // descriptionText.text = "Desc: " + newValue.description.replaceFirstChar { it.toString() }
                 }
             }
         })
+        tableView.placeholder = Text("")
 
 
 
@@ -96,34 +109,27 @@ class Sale :Initializable,MessageListener{
                         totaldiscount += prod.discount
                         bigTotal += prod.total()
                     }
-                    itbisTotal.text = (totalItbis * totalQty).toString()
+
                     qtyTotal.text = totalQty.toString()
                     grandTotal.text = bigTotal.toString()
-                    discountTotal.text = (totaldiscount*totalQty).toString()
+
                 }
             }
         })
 
-        createTimeLine( hour )
-
-
-        mainNode.setOnKeyTyped { event ->
-            if (event.code==KeyCode.ENTER){
-                if (qtyTextField.isFocused){
-                    cashTextField.requestFocus()
-                }else if (cashTextField.isFocused){
-                    codeProductTextField.requestFocus()
-                }else if (codeProductTextField.isFocused){
-                    qtyTextField.requestFocus()
-                }else{
-                    codeProductTextField.requestFocus()
-                }
+        qtyTextField.setOnKeyReleased { event ->
+            if(event.code == KeyCode.ENTER){
+                findProductBy( codeProductTextField.text )
+                codeProductTextField.requestFocus()
             }
         }
 
+        createTimeLine( hour )
+
+
+
+
     }
-    /*@FXML
-    private lateinit var cardCheckBox: RadioButton*/
 
     @FXML
     private lateinit var cashTextField: TextField
@@ -139,9 +145,9 @@ class Sale :Initializable,MessageListener{
 
     @FXML
     private lateinit var descriptionCol: TableColumn<ProductEntity, String>
-/*
+
     @FXML
-    private lateinit var descriptionText: Text*/
+    private lateinit var payBtn:Button
     @FXML
     private lateinit var mainNode: VBox
 
@@ -154,8 +160,7 @@ class Sale :Initializable,MessageListener{
     @FXML
     private lateinit var itbisCol: TableColumn<ProductEntity, String>
 
-    /*@FXML
-    private lateinit var payMethodRBGroup: ToggleGroup*/
+
 
     @FXML
     private lateinit var priceCol: TableColumn<ProductEntity, String>
@@ -165,12 +170,10 @@ class Sale :Initializable,MessageListener{
 
     //
 
-    @FXML
-    private lateinit var  discountTotal: TextField
+
     @FXML
     private lateinit var qtyTotal: TextField
-    @FXML
-    private lateinit var  itbisTotal: TextField
+
     @FXML
     private lateinit var grandTotal: TextField
 
@@ -186,14 +189,9 @@ class Sale :Initializable,MessageListener{
     @FXML
     private lateinit var totalCol: TableColumn<ProductEntity, String>
 
-    @FXML
-    fun onAddProductButtonClick(event: ActionEvent) {
-        beep()
-        if ( codeProductTextField.text.isNotBlank()  ){
+    @FXML lateinit var customerCode:TextField
 
-            findProductBy( codeProductTextField.text )
-        }
-    }
+
 
     @FXML
     fun onDeleteProductButtonClick(event: ActionEvent) {
@@ -204,22 +202,82 @@ class Sale :Initializable,MessageListener{
     @FXML
     fun codeOnKeyReleased(event: KeyEvent) {
         if (event.code.equals(KeyCode.ENTER)){
-            mProducts.add( ProductDao.findProductByCode( codeProductTextField.text ) )
-            println("KeyCode.ENTER")
+            if ( codeProductTextField.text.isNotBlank()  ){
+                qtyTextField.requestFocus()
+            }else if (mProducts.size!=0){
+                cashTextField.requestFocus()
+            }
         }
+    }
 
+
+    @FXML
+    fun onKeyTypedCash(event: KeyEvent) {
+        changeTextField.text = (cashTextField.text.toDouble()-grandTotal.text.toDouble()).toString()
+        if (/*event.code == KeyCode.ENTER &&*/ changeTextField.text.toDouble()>-1){
+            payBtn.requestFocus()
+        }
     }
     @FXML
     fun onPay(event: ActionEvent) {
        if(mProducts.size>0){
-           val ra = Random.nextLong(LongRange(10_000_000,99_999_999))
-           InvoiceDao.save(
-               InvoiceEntity(mProducts.map { ProductSaled(it,false) },Context.currentEmployee.value,null,ra.toString(), Calendar.getInstance())
-           )
+           if (cashTextField.text.isBlank()){
+               cashTextField.text = "0.0"
+           }
+           if (cashTextField.text.toDouble()>=grandTotal.text.toDouble()){
+               val codeBar = Random.nextLong(LongRange(10_000_000,99_999_999))
+              val isPayed = InvoiceDao.save(
+                   InvoiceEntity(mProducts.map { ProductSaled(it,false) },Context.currentEmployee.value,mCurrentCustomer,codeBar.toString(), Calendar.getInstance())
+               )
+               if (isPayed){
+                   mCurrentCustomer?.let { CustomerDao.updatePoint(it.id,
+                       (changeTextField.text.toDouble()/100.0).toLong()
+                   ) }
+                   println("point: ${(cashTextField.text.toDouble()).toLong()}")
+                   println("point: ${(cashTextField.text.toDouble()/100.0).toLong()}")
+                   ViewUtil.createAlert(Alert.AlertType.CONFIRMATION,"Payment","Pay with success").showAndWait()
+                   clearAll()
+                   customerCode.requestFocus()
+               }
+
+           }else{
+               ViewUtil.createAlert(Alert.AlertType.WARNING,"Invalid Data","Cash must be greater than grand total").showAndWait()
+
+           }
+       }else{
+           ViewUtil.createAlert(Alert.AlertType.WARNING,"Invalid Data","There is no product to pay").showAndWait()
        }
 
     }
 
+    private fun clearAll(){
+        clearTextS()
+        cashTextField.text = ""
+        changeTextField.text = ""
+        grandTotal.text = ""
+        qtyTotal.text = ""
+        customerCode.text = ""
+        mProducts.clear()
+    }
+
+    @FXML
+    fun onKeyReleasedCustomer(event: KeyEvent) {
+       // println("genial: "+event.code.name)
+        if (event.code.equals( KeyCode.ENTER )){
+
+            var code = (event.source as TextField).text
+            code = code.padStart(12,'0')
+            println(code)
+            mCurrentCustomer = CustomerDao.findByCode(code)
+            mCurrentCustomer.let {
+                (event.source as TextField).text = mCurrentCustomer!!.fullName
+            }
+
+            codeProductTextField.requestFocus()
+
+        }
+
+    }
 
 
     private fun clearTextS(){
@@ -258,25 +316,21 @@ class Sale :Initializable,MessageListener{
         mMediaplayer.stop()
         mMediaplayer.play()
     }
-
+    @FXML
+    private lateinit var bottomPanelVBOx:VBox
     override fun onReceiveMessage(data: String) {
         Platform.runLater(Runnable {
             findProductBy(code = data)
-
-
-
-
-
         })
     }
 
     private fun findProductBy(code:String){
-        val productFind = mProducts.find { it.code == code }
+        val tempCode = code.padStart(12,'0')
+        val productFind = mProducts.find { it.code == tempCode }
         if (qtyTextField.text.isBlank()){
             qtyTextField.text = "1"
         }
         if (productFind!=null){
-            //change the quantity
             val index = mProducts.indexOf( productFind )
             productFind.quantity += qtyTextField.text.toInt()
             mProducts[index] = productFind
@@ -290,12 +344,17 @@ class Sale :Initializable,MessageListener{
                 clearTextS()
                 beep()
             }else{
-                val alert = Alert(Alert.AlertType.WARNING)
-                alert.title = "Product not found:"
-                alert.headerText = "code prod. : $code"
-                alert.showAndWait()
+                ViewUtil.createAlert(
+                    Alert.AlertType.WARNING,
+                    "Product not found",
+                    "code prod. : $tempCode"
+                ).showAndWait()
             }
         }
+    }
+
+    fun hideBottomPanelOnMouseClicked(){
+        bottomPanelVBOx.hide()
     }
 
 }

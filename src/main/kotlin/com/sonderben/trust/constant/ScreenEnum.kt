@@ -8,6 +8,7 @@ enum class ScreenEnum  {
     USER,
     ROLE,
     EMPLOYEE,
-    CONFIGURATION
+    CONFIGURATION,
+    QUERIES
 }
 
