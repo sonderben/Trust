@@ -111,10 +111,11 @@ object SqlCreateTables {
     private val createProductsTable = """
         CREATE TABLE IF NOT EXISTS $products( 
         id integer primary key autoincrement,  
-        discount float default 0 check(discount>=0 and discount<100),
+        discount float default 0 check( discount >= 0 and discount < 100 ),
         itbis float not null,
         purchasePrice float not null,
-        quantity integer not null,
+        quantity integer not null default 0 check( quantity>-1 ),
+        quantityRemaining integer not null default 0 check( quantityRemaining >-1 and quantityRemaining <= quantity ),
         sellingPrice float not null,
         id_category bigint ,
         dateAdded timestamp,

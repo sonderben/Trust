@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-
-<StackPane fx:id="mainLayoutStackPane" prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.queries.Queries">
+<StackPane fx:id="mainLayoutStackPane" prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../../css/general.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.queries.Queries">
    <children>
-      <GridPane fx:id="gridPane" gridLinesVisible="true">
+      <GridPane fx:id="gridPane" hgap="10.0" vgap="10.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -28,7 +23,7 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <VBox fx:id="productSold" alignment="CENTER">
+            <VBox fx:id="productSold" alignment="CENTER" styleClass="container-chart">
                <children>
                   <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -37,6 +32,9 @@
                   </ImageView>
                   <Label text="Product sold" textFill="WHITE" />
                </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
             </VBox>
             <VBox fx:id="productRemaining" alignment="CENTER" layoutX="10.0" layoutY="10.0" GridPane.columnIndex="1">
                <children>
@@ -58,7 +56,7 @@
                   <Label text="Product Expired" textFill="WHITE" />
                </children>
             </VBox>
-            <VBox fx:id="productBestSelling" alignment="CENTER" layoutX="250.0" layoutY="10.0" GridPane.columnIndex="3">
+            <VBox fx:id="bestSellingProduct" alignment="CENTER" layoutX="250.0" layoutY="10.0" GridPane.columnIndex="3">
                <children>
                   <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -68,24 +66,24 @@
                   <Label text="Best selling product" textFill="WHITE" />
                </children>
             </VBox>
-            <VBox fx:id="productPurchasingCustomer" alignment="CENTER" layoutX="370.0" layoutY="10.0" GridPane.columnIndex="4">
+            <VBox fx:id="frequentCustomers" alignment="CENTER" layoutX="370.0" layoutY="10.0" GridPane.columnIndex="4">
                <children>
                   <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../image/query/best-price.png" />
                      </image>
                   </ImageView>
-                  <Label text="Frequent purchasing customer" textFill="WHITE" />
+                  <Label text="Frequent customers" textFill="WHITE" />
                </children>
             </VBox>
-            <VBox fx:id="customerSpendMoney" alignment="CENTER" layoutX="490.0" layoutY="10.0" GridPane.rowIndex="1">
+            <VBox fx:id="spendingCustomers" alignment="CENTER" layoutX="490.0" layoutY="10.0" GridPane.rowIndex="1">
                <children>
                   <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../image/query/best-customer-experience.png" />
                      </image>
                   </ImageView>
-                  <Label text="Customer who spends more" textFill="WHITE" />
+                  <Label text="Spending Customers" textFill="WHITE" />
                </children>
             </VBox>
             <VBox fx:id="bestEmployee" alignment="CENTER" layoutX="10.0" layoutY="90.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -98,7 +96,7 @@
                   <Label text="Best Employee" textFill="WHITE" />
                </children>
             </VBox>
-            <VBox fx:id="returnedProduct" alignment="CENTER" layoutX="130.0" layoutY="90.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <VBox fx:id="productReturned" alignment="CENTER" layoutX="130.0" layoutY="90.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
                <children>
                   <ImageView fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -109,6 +107,9 @@
                </children>
             </VBox>
          </children>
+         <StackPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </StackPane.margin>
       </GridPane>
    </children>
 </StackPane>

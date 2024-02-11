@@ -8,6 +8,16 @@ import java.util.Calendar;
 public class ProductEntity extends BaseEntity {
 
 
+    private  int quantityRemaining;
+
+    public int getQuantityRemaining() {
+        return quantityRemaining;
+    }
+
+    public void setQuantityRemaining(int quantityRemaining) {
+        this.quantityRemaining = quantityRemaining;
+    }
+
     private String code;
     private String description;
     private double sellingPrice,purchasePrice, discount, itbis;
@@ -63,7 +73,12 @@ public class ProductEntity extends BaseEntity {
     public ProductEntity() {
     }
 
-    public ProductEntity(String code, String description, double sellingPrice, double purchasePrice, double discount, double itbis, int quantity, Calendar dateAdded, Calendar expirationDate, CategoryEntity category, EmployeeEntity employee) {
+    @Override
+    public String toString() {
+        return "ProductEntity{quantityRemaining=%d, code='%s', description='%s', sellingPrice=%s, purchasePrice=%s, discount=%s, itbis=%s, quantity=%d, dateAdded=%s, expirationDate=%s, category=%s, employee=%s, id=%d}".formatted(quantityRemaining, code, description, sellingPrice, purchasePrice, discount, itbis, quantity, dateAdded, expirationDate, category, employee, id);
+    }
+
+    public ProductEntity(String code, String description, double sellingPrice, double purchasePrice, double discount, double itbis, int quantity, int quantityRemaining, Calendar dateAdded, Calendar expirationDate, CategoryEntity category, EmployeeEntity employee) {
         this.code = code;
         this.description = description;
         this.sellingPrice = sellingPrice;
@@ -71,6 +86,7 @@ public class ProductEntity extends BaseEntity {
         this.discount = discount;
         this.itbis = itbis;
         this.quantity = quantity;
+        this.quantityRemaining = quantityRemaining;
         this.dateAdded = dateAdded;
         this.expirationDate = expirationDate;
         this.category = category;

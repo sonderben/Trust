@@ -4,6 +4,7 @@ import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.Util
 import com.sonderben.trust.db.dao.EmployeeDao
 import com.sonderben.trust.db.dao.RoleDao
+import com.sonderben.trust.format
 import com.sonderben.trust.hide
 import com.sonderben.trust.model.Role
 import entity.EmployeeEntity
@@ -32,7 +33,7 @@ class EmployeeController: Initializable {
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         GenreCol.setCellValueFactory { employee -> SimpleStringProperty(employee.value.genre) }
-        birthdayCol.setCellValueFactory { employee -> SimpleStringProperty( Util.formatDate( employee.value.birthDay.time ) ) }
+        birthdayCol.setCellValueFactory { employee -> SimpleStringProperty( employee.value.birthDay.format() ) }
         firstNameCol.setCellValueFactory { employee -> SimpleStringProperty("${employee.value.fullName}") }
         directionCol.setCellValueFactory { employee -> SimpleStringProperty(employee.value.direction) }
         emailCol.setCellValueFactory { employee -> SimpleStringProperty(employee.value.email) }
@@ -50,36 +51,36 @@ class EmployeeController: Initializable {
         choiceBoxRole.converter = RoleStringConverter()
 
         userTableView.selectionModel.selectionMode = SelectionMode.SINGLE
-        userTableView.selectionModel.selectedItemProperty().addListener(object :ChangeListener<EmployeeEntity>{
-            override fun changed(
-                observable: ObservableValue<out EmployeeEntity>?,
-                oldValue: EmployeeEntity?,
-                newValue: EmployeeEntity?
-            ) {
-                if (newValue!=null){
-                    if (! bottomPanelVBOx.isVisible ){
-                        bottomPanelVBOx.hide()
-                    }
+        userTableView.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
+            if (newValue != null) {
+                if (!bottomPanelVBOx.isVisible) {
+                    bottomPanelVBOx.hide()
+                }
 
-                    employeeToSave = newValue
-                    telephoneTextField.text=newValue.telephone
-                    lastNameTextField.text = newValue.lastName
-                    emailTextField.text = newValue.email
-                    firstNameTextField.text = newValue.firstName
-                    directionField.text = newValue.direction
-                    choiceBoxGender.selectionModel.select( choiceBoxGender.items.indexOf( newValue.genre ) )
-                    choiceBoxRole.selectionModel.select( choiceBoxRole.items.indexOf( newValue.role ) )
-                    accountNumberTextField.text = newValue.bankAccount
-                    userNameTextField.text = newValue.userName
-                    telephoneTextField.text = newValue.telephone
-                    passwordField.text = newValue.password
-                    telephoneTextField.text = newValue.telephone
-                    val cal = newValue.birthDay
-                    birthdayDatePicker.value = LocalDate.of(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH)+1,cal.get(Calendar.DAY_OF_MONTH))
-                    scheduleTextField.text = newValue.schedules.joinToString(separator = ", ") { scheduleEntity -> days[scheduleEntity.workDay].substring(0,2) }
+                employeeToSave = newValue
+                telephoneTextField.text = newValue.telephone
+                lastNameTextField.text = newValue.lastName
+                emailTextField.text = newValue.email
+                firstNameTextField.text = newValue.firstName
+                directionField.text = newValue.direction
+                choiceBoxGender.selectionModel.select(choiceBoxGender.items.indexOf(newValue.genre))
+                choiceBoxRole.selectionModel.select(choiceBoxRole.items.indexOf(newValue.role))
+                accountNumberTextField.text = newValue.bankAccount
+                userNameTextField.text = newValue.userName
+                telephoneTextField.text = newValue.telephone
+                passwordField.text = newValue.password
+                telephoneTextField.text = newValue.telephone
+                val cal = newValue.birthDay
+                birthdayDatePicker.value =
+                    LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH))
+                scheduleTextField.text = newValue.schedules.joinToString(separator = ", ") { scheduleEntity ->
+                    days[scheduleEntity.workDay].substring(
+                        0,
+                        2
+                    )
                 }
             }
-        })
+        }
 
 
     }

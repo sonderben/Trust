@@ -6,8 +6,11 @@ import java.io.IOException;
 
 public class SingletonView {
 
-    private static Node nodeEmployee,nodeConfiguration, nodeSale,nodeUser,nodeProduct,
-            nodeInvoice,nodeBusinessInfo,nodeInventory,nodeRole,nodeQueries,nodeProductSold;
+    private static Node employee, configuration, sale, user, product,
+            invoice, businessInfo, inventory, role, queries, productSold,
+            productRemaining, bestEmployee, bestSellingProduct, frequentCustomer,
+            productExpired, returned,spendingCustomer;
+
 
     private SingletonView(){
 
@@ -16,117 +19,123 @@ public class SingletonView {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path));
         switch (path) {
             case "view/sale.fxml" -> {
-                if (nodeSale == null) {
-                    nodeSale = fxmlLoader.load();
-                    return nodeSale;
+                if (sale == null) {
+                    sale = fxmlLoader.load();
                 }
-                return nodeSale;
+                return sale;
             }
             case "view/user.fxml" -> {
-                if (nodeUser == null) {
-                    nodeUser = fxmlLoader.load();
-                    return nodeUser;
+                if (user == null) {
+                    user = fxmlLoader.load();
                 }
-                return nodeUser;
+                return user;
             }
             case "view/product.fxml" -> {
-                if (nodeProduct == null) {
-                    nodeProduct = fxmlLoader.load();
-                    return nodeProduct;
+                if (product == null) {
+                    product = fxmlLoader.load();
                 }
-                return nodeProduct;
+                return product;
             }
             case "view/employee.fxml" -> {
-                if (nodeEmployee == null) {
-                    nodeEmployee = fxmlLoader.load();
-                    return nodeEmployee;
+                if (employee == null) {
+                    employee = fxmlLoader.load();
                 }
-                return nodeEmployee;
+                return employee;
             }
             case "view/configuration.fxml" -> {
-                if (nodeConfiguration == null) {
-                    nodeConfiguration = fxmlLoader.load();
-                    return nodeConfiguration;
+                if (configuration == null) {
+                    configuration = fxmlLoader.load();
                 }
-                return nodeConfiguration;
+                return configuration;
             }
             case "view/config/businessInfo.fxml" -> {
-                if (nodeBusinessInfo == null) {
-                    nodeBusinessInfo = fxmlLoader.load();
-                    return nodeBusinessInfo;
+                if (businessInfo == null) {
+                    businessInfo = fxmlLoader.load();
                 }
-                return nodeBusinessInfo;
+                return businessInfo;
             }
             case "view/config/invoice.fxml" -> {
-                if (nodeInvoice == null) {
-                    nodeInvoice = fxmlLoader.load();
-                    return nodeInvoice;
+                if (invoice == null) {
+                    invoice = fxmlLoader.load();
                 }
-                return nodeInvoice;
+                return invoice;
             }
             case "view/inventory.fxml"->{
-                if (nodeInventory == null){
-                    nodeInventory = fxmlLoader.load();
-                    return nodeInventory;
+                if (inventory == null){
+                    inventory = fxmlLoader.load();
                 }
-                return nodeInventory;
+                return inventory;
             }
             case "view/role.fxml"->{
-                if (nodeRole==null){
-                    nodeRole = fxmlLoader.load();
-                    return nodeRole;
+                if (role ==null){
+                    role = fxmlLoader.load();
                 }
-                return nodeRole;
+                return role;
             }
             case "view/queries/queries.fxml"->{
-                if (nodeQueries == null){
-                    return nodeQueries = fxmlLoader.load();
+                if (queries == null){
+                    queries = fxmlLoader.load();
                 }
-                return nodeQueries;
+                return queries;
             }
             case "view/queries/productSold.fxml"->{
-                if (nodeProduct==null){
-                    return nodeProductSold = fxmlLoader.load();
+                if (product ==null){
+                    productSold = fxmlLoader.load();
                 }
-                return nodeProductSold;
+                return productSold;
             }
+            case "view/queries/bestEmployee.fxml"->{
+                if (bestEmployee ==null){
+                    bestEmployee = fxmlLoader.load();
+                }
+                return bestEmployee;
+            }
+
+
+            case "view/queries/bestSellingProduct.fxml"->{
+                if (bestSellingProduct ==null){
+                    bestSellingProduct = fxmlLoader.load();
+                }
+                return bestSellingProduct;
+            }
+            case "view/queries/frequentCustomers.fxml"->{
+                if (frequentCustomer ==null){
+                    frequentCustomer = fxmlLoader.load();
+                }
+                return frequentCustomer;
+            }
+            case "view/queries/productExpired.fxml"->{
+                if (productExpired ==null){
+                    productExpired = fxmlLoader.load();
+                }
+                return productExpired;
+            }
+            case "view/queries/productRemaining.fxml"->{
+                if (productRemaining ==null){
+                    productRemaining = fxmlLoader.load();
+                }
+                return productRemaining;
+            }
+            case "view/queries/productReturned.fxml"->{
+                if (returned ==null){
+                    returned = fxmlLoader.load();
+                }
+                return returned;
+            }
+            case "view/queries/spendingCustomers.fxml"->{
+                if (spendingCustomer==null){
+                    spendingCustomer = fxmlLoader.load();
+                }
+                return spendingCustomer;
+            }
+
+
+
             default -> {
                 System.err.println("Error: Unknown view path");
                 return null;
             }
         }
     }
-    /*public static Node get( String path ) throws IOException {
-        var fxmlLoader = new FXMLLoader(HelloApplication.class.getResource( path ) );
-        switch (path) {
-            case "view/sale.fxml" -> {
-                if (nodeSale == null) {
 
-                    nodeSale = fxmlLoader.load();
-                    node = nodeSale;
-
-                    return node;
-                }
-            }
-            case "view/user.fxml" -> {
-                if (nodeUser == null) {
-                    nodeUser = fxmlLoader.load();
-                    node = nodeUser;
-                    return node;
-                }
-            }
-            case "view/product.fxml" -> {
-                if (nodeProduct == null) {
-                    nodeProduct = fxmlLoader.load();
-                    node = nodeProduct;
-                    return node;
-                }
-            }default -> {
-                System.err.println(" errror");
-            }
-
-        }
-
-        return node;
-    }*/
 }

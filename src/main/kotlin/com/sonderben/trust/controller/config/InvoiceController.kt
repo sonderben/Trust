@@ -1,6 +1,6 @@
 package com.sonderben.trust.controller.config
 
-import com.gluonhq.richtextarea.RichTextArea
+//import com.gluonhq.richtextarea.RichTextArea
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
@@ -17,14 +17,14 @@ class InvoiceController:Initializable {
     @FXML
     private lateinit var mainhbox:HBox
     @FXML
-    private lateinit var richTextArea:RichTextArea
+    //private lateinit var richTextArea:RichTextArea
     val paper = Paper.A4
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
 
 
-        richTextArea.prefWidth = (80 * 72 / 25.4 + 0.5)
-        richTextArea.prefHeight = paper.height
+        //richTextArea.prefWidth = (80 * 72 / 25.4 + 0.5)
+        //richTextArea.prefHeight = paper.height
         //mainhbox.children.add(0,richTextArea)
 
     }
@@ -36,12 +36,12 @@ class InvoiceController:Initializable {
     fun onRotate(event: ActionEvent) {
 
         if (paper.equals( Paper.A4 )){
-            if (richTextArea.prefWidth==paper.height){
+            //if (richTextArea.prefWidth==paper.height){
 
-            }
+           // }
         }
 
-        richTextArea.prefWidth = paper.height
+       // richTextArea.prefWidth = paper.height
 
     }
 

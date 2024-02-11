@@ -19,8 +19,8 @@ object ProductDao:CrudDao<ProductEntity> {
 
         var insertProduct = """
             INSERT INTO ${SqlCreateTables.products} 
-            (discount, itbis, purchasePrice, quantity, sellingPrice,id_category, dateAdded, id_employee, expirationDate, code, description ) 
-            values(?,?,?,?,?,?,?,?,?,?,?)
+            (discount, itbis, purchasePrice, quantity, sellingPrice,id_category, dateAdded, id_employee, expirationDate, code, description,quantityRemaining ) 
+            values(?,?,?,?,?,?,?,?,?,?,?,?)
         """.trimIndent()
         Database.connect().use { connection ->
             connection.prepareStatement(insertProduct).use {preparedStatement ->
@@ -36,6 +36,7 @@ object ProductDao:CrudDao<ProductEntity> {
                 val tempCode = entity.code.padStart(12,'0')
                 preparedStatement.setString(10,tempCode)
                 preparedStatement.setString(11,entity.description)
+                preparedStatement.setInt(12,entity.quantity)
                 val rowCount = preparedStatement.executeUpdate()
                 val lastId = Database.getLastId()
                 entity.id = lastId
@@ -67,10 +68,10 @@ object ProductDao:CrudDao<ProductEntity> {
     override fun findAll(): Boolean {
         val tempProduct = mutableListOf<ProductEntity>()
         val selectAll = """
-            SELECT  products.id,products.discount as discount_product,quantity,itbis,sellingPrice,purchaseprice,
+            SELECT products.quantityRemaining,products.id,products.discount as discount_product,quantity,itbis,sellingPrice,purchaseprice,
             id_category,products.dateAdded,id_employee,expirationDate,products.code as code_product,products.description as description_product,
             Categories.discount as discount_category,Categories.code as code_categpry,Categories.description as description_category,userName
-             from products INNER JOIN Employee  on 
+             from ${SqlCreateTables.products} INNER JOIN Employee  on 
             products.id_employee = Employee.id
             INNER JOIN Categories on 
             products.id_category = Categories.id
@@ -100,6 +101,7 @@ object ProductDao:CrudDao<ProductEntity> {
                             resultSet.getDouble("discount_product"),
                             resultSet.getDouble("itbis"),
                             resultSet.getInt("quantity"),
+                            resultSet.getInt("quantityRemaining"),
                             Util.timeStampToCalendar( resultSet.getTimestamp( "dateAdded") ),
                             Util.timeStampToCalendar( resultSet.getTimestamp( "expirationDate") ),
                             category,
@@ -123,7 +125,7 @@ object ProductDao:CrudDao<ProductEntity> {
     fun findProductByCode(code:String):ProductEntity?{
 
         val selectByCode = """
-            SELECT  products.id,products.discount as discount_product,quantity,itbis,sellingPrice,purchaseprice,
+            SELECT  products.id,products.quantityRemaining,products.discount as discount_product,quantity,itbis,sellingPrice,purchaseprice,
             id_category,products.dateAdded,id_employee,expirationDate,products.code as code_product,products.description as description_product,
             Categories.discount as discount_category,Categories.code as code_categpry,Categories.description as description_category
              from products 
@@ -157,6 +159,7 @@ object ProductDao:CrudDao<ProductEntity> {
                     resultSet.getDouble("discount_product"),
                     resultSet.getDouble("itbis"),
                     resultSet.getInt("quantity"),
+                    resultSet.getInt("quantityRemaining"),
                     Util.timeStampToCalendar( resultSet.getTimestamp( "dateAdded") ),
                     Util.timeStampToCalendar( resultSet.getTimestamp( "expirationDate") ),
                     category,
@@ -173,7 +176,65 @@ object ProductDao:CrudDao<ProductEntity> {
             }
 
         }
+
+
+     fun findProductsExpired(): MutableList<ProductEntity> {
+        val tempProduct = mutableListOf<ProductEntity>()
+        val selectAll = """
+            SELECT products.quantityRemaining,products.id,products.discount as discount_product,quantity,itbis,sellingPrice,purchaseprice,
+            id_category,products.dateAdded,id_employee,expirationDate,products.code as code_product,products.description as description_product,
+            Categories.discount as discount_category,Categories.code as code_categpry,Categories.description as description_category,userName
+             from ${SqlCreateTables.products} INNER JOIN Employee  on 
+            products.id_employee = Employee.id
+            INNER JOIN Categories on 
+            products.id_category = Categories.id
+            WHERE products.quantityRemaining > 0 and Date(expirationDate/1000,'unixepoch') <= date('now')
+        """.trimIndent()
+        Database.connect().use { connection ->
+            connection.createStatement().use { statement ->
+                statement.executeQuery(selectAll).use { resultSet ->
+                    while (resultSet.next()){
+                        val employee = EmployeeEntity()
+                        employee.apply {
+                            id = resultSet.getLong("id_employee")
+                            userName = resultSet.getString("userName")
+                        }
+                        println("empl;oye name: ${employee.userName}")
+                        val category = CategoryEntity()
+                        category.apply {
+                            id = resultSet.getLong("id_category")
+                            code = resultSet.getString("code_categpry")
+                            description = resultSet.getString("description_category")
+                            discount = resultSet.getDouble("discount_category")
+                        }
+                        val prod = ProductEntity(
+                            resultSet.getString("code_product"),
+                            resultSet.getString("description_product"),
+                            resultSet.getDouble("sellingPrice"),
+                            resultSet.getDouble("purchaseprice"),
+                            resultSet.getDouble("discount_product"),
+                            resultSet.getDouble("itbis"),
+                            resultSet.getInt("quantity"),
+                            resultSet.getInt("quantityRemaining"),
+                            Util.timeStampToCalendar( resultSet.getTimestamp( "dateAdded") ),
+                            Util.timeStampToCalendar( resultSet.getTimestamp( "expirationDate") ),
+                            category,
+                            employee)
+                        tempProduct.add( prod )
+                    }
+                    return tempProduct
+                }
+            }
+        }
+
+
+
+
     }
+
+    }
+
+
 
 
 

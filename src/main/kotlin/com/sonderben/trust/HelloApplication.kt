@@ -4,6 +4,7 @@ import javafx.application.Application
 import javafx.application.Platform
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
+import javafx.scene.image.Image
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 
@@ -17,6 +18,12 @@ class HelloApplication : Application() {
         primary = stage
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
         val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
+
+
+
+        primary.icons.add(
+            Factory.createImage("image/shield.png")
+        )
 
         stage.title = "Trust"
         stage.scene = scene

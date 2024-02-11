@@ -1,11 +1,8 @@
 package com.sonderben.trust.controller
 
-import com.sonderben.trust.Context
-import com.sonderben.trust.HelloApplication
-import com.sonderben.trust.Util
+import com.sonderben.trust.*
 import com.sonderben.trust.db.dao.CategoryDao
 import com.sonderben.trust.db.dao.ProductDao
-import com.sonderben.trust.hide
 import com.sonderben.trust.qr_code.MessageListener
 import com.sonderben.trust.qr_code.SocketMessageEvent
 import com.sonderben.trust.viewUtil.ViewUtil
@@ -48,13 +45,13 @@ class ProductController :Initializable,MessageListener {
 
 
 
-        dateAddedCol.setCellValueFactory { data -> SimpleStringProperty( Util.formatDate( data.value.dateAdded.time ) ) }
+        dateAddedCol.setCellValueFactory { data -> SimpleStringProperty( data.value.dateAdded.format() ) }
         codeCol.setCellValueFactory { data -> SimpleStringProperty(data.value.code) }
         descriptionCol.setCellValueFactory { data -> SimpleStringProperty( data.value.description ) }
         categoryCol.setCellValueFactory { data -> SimpleStringProperty( data.value.category.description ) }
         purchaseCol.setCellValueFactory { data -> SimpleStringProperty( data.value.purchasePrice.toString() ) }
         sellingCol.setCellValueFactory { data -> SimpleStringProperty( data.value.sellingPrice.toString() ) }
-        exp_dateCole.setCellValueFactory { data -> SimpleStringProperty( Util.formatDate( data.value.expirationDate.time ) ) }
+        exp_dateCole.setCellValueFactory { data -> SimpleStringProperty( data.value.expirationDate.format() ) }
         qtyCol.setCellValueFactory { data -> SimpleStringProperty( data.value.quantity.toString() ) }
         discountCol.setCellValueFactory { data -> SimpleStringProperty( data.value.discount.toString() ) }
         itbisCol.setCellValueFactory { data -> SimpleStringProperty( data.value.itbis.toString() ) }
@@ -63,37 +60,31 @@ class ProductController :Initializable,MessageListener {
         tableView.items = produtcs
 
         tableView.selectionModel.selectionMode = SelectionMode.SINGLE
-        tableView.selectionModel.selectedItemProperty().addListener(object :ChangeListener<ProductEntity>{
-            override fun changed(
-                observable: ObservableValue<out ProductEntity>?,
-                oldValue: ProductEntity?,
-                newValue: ProductEntity?
-            ) {
-                if (newValue != null) {
-                    var year = newValue.dateAdded.get( Calendar.YEAR )
-                    var month = newValue.dateAdded.get( Calendar.MONTH ) + 1
-                    var day = newValue.dateAdded.get( Calendar.DAY_OF_MONTH )
+        tableView.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+            if (newValue != null) {
+                var year = newValue.dateAdded.get(Calendar.YEAR)
+                var month = newValue.dateAdded.get(Calendar.MONTH) + 1
+                var day = newValue.dateAdded.get(Calendar.DAY_OF_MONTH)
 
-                    dateAddedDp.value = LocalDate.of(year,month,day)
-                     year = newValue.expirationDate.get( Calendar.YEAR )
-                     month = newValue.expirationDate.get( Calendar.MONTH ) + 1
-                     day = newValue.expirationDate.get( Calendar.DAY_OF_MONTH )
+                dateAddedDp.value = LocalDate.of(year, month, day)
+                year = newValue.expirationDate.get(Calendar.YEAR)
+                month = newValue.expirationDate.get(Calendar.MONTH) + 1
+                day = newValue.expirationDate.get(Calendar.DAY_OF_MONTH)
 
-                    expDateDp.value = LocalDate.of( year,month,day  )
-                    codeTf.text = newValue.code
-                    descriptionTf.text = newValue.description
-                    purchaseTf.text = newValue.purchasePrice.toString()
-                    sellingTf.text = newValue.sellingPrice.toString()
+                expDateDp.value = LocalDate.of(year, month, day)
+                codeTf.text = newValue.code
+                descriptionTf.text = newValue.description
+                purchaseTf.text = newValue.purchasePrice.toString()
+                sellingTf.text = newValue.sellingPrice.toString()
 
-                    qtyTf.text = newValue.quantity.toString()
-                    discountTf.text = newValue.discount.toString()
-                    itbisTf.text = newValue.quantity.toString()
-                    employeeTf.text = newValue.employee.userName
+                qtyTf.text = newValue.quantity.toString()
+                discountTf.text = newValue.discount.toString()
+                itbisTf.text = newValue.quantity.toString()
+                employeeTf.text = newValue.employee.userName
 
-                    categoryCb.selectionModel.select( categoryCb.items.indexOf( categoryCb.items.find { it.id == newValue.category.id } ) )
-                }
+                categoryCb.selectionModel.select(categoryCb.items.indexOf(categoryCb.items.find { it.id == newValue.category.id }))
             }
-        })
+        }
 
         categoryCb.converter = CategoryConverter()
         categoryCb.items = categories
@@ -191,6 +182,7 @@ class ProductController :Initializable,MessageListener {
                purchaseTf.text.toDouble(),
                discountTf.text.toDouble(),
                itbisTf.text.toDouble(),
+               qtyTf.text.toInt(),
                qtyTf.text.toInt(),
                GregorianCalendar.getInstance(),
                GregorianCalendar.from( expDateDp.value.atStartOfDay( ZoneId.systemDefault() ) ),

@@ -64,11 +64,14 @@ class Queries : Initializable,EventHandler<MouseEvent> {
             if (event.eventType.equals( MouseEvent.MOUSE_CLICKED)){
 
                 if ( event.source is VBox ){
-                    val path = "view/queries/${(event.source as Node).id}.fxml"
-                    pageBefore = SingletonView.get(path)
+                    val path = "view/queries/${(event.source as VBox).id}.fxml"
                     println(path)
-                    mainLayoutStackPane.children.add( pageBefore )
-                    MainController.forward.opacity =1.0
+                   if(SingletonView.get(path)!=null){
+                       pageBefore = SingletonView.get(path)
+
+                       mainLayoutStackPane.children.add( pageBefore )
+                       MainController.forward.opacity =1.0
+                   }
                 }else if ( (event.source as Node).id.equals("forwardPage") ){
 
                     mainLayoutStackPane.children.remove(pageBefore)

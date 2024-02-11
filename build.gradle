@@ -60,7 +60,7 @@ dependencies {
     implementation ('org.xerial:sqlite-jdbc:3.44.1.0')
     //implementation('com.h2database:h2:2.2.220')
     //implementation('com.gluonhq:rich-text-area:1.1.1')
-    implementation("com.gluonhq:rich-text-area:1.1.1")
+    //implementation("com.gluonhq:rich-text-area:1.1.1")
 
 
     implementation('com.github.almasb:fxgl:17.2') {
