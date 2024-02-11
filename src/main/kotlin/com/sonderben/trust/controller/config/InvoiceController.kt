@@ -6,6 +6,8 @@ import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.print.Paper
 import javafx.scene.control.ChoiceBox
+import javafx.scene.control.TextArea
+import javafx.scene.input.KeyEvent
 import javafx.scene.layout.HBox
 import java.net.URL
 import java.util.*
@@ -17,33 +19,24 @@ class InvoiceController:Initializable {
     @FXML
     private lateinit var mainhbox:HBox
     @FXML
-    //private lateinit var richTextArea:RichTextArea
-    val paper = Paper.A4
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
-
-
-        //richTextArea.prefWidth = (80 * 72 / 25.4 + 0.5)
-        //richTextArea.prefHeight = paper.height
-        //mainhbox.children.add(0,richTextArea)
-
-    }
-
-    @FXML
-    private lateinit var sizePaperCb: ChoiceBox<Any>
-
-    @FXML
-    fun onRotate(event: ActionEvent) {
-
-        if (paper.equals( Paper.A4 )){
-            //if (richTextArea.prefWidth==paper.height){
-
-           // }
+        textArea.addEventFilter(KeyEvent.KEY_TYPED){event->
+            val caretPosition = textArea.caretPosition
+            val currentline =textArea.text.substring(0,caretPosition).lines().last()
+            if (currentline.length>=12){
+                event.consume()
+            }
         }
 
-       // richTextArea.prefWidth = paper.height
 
     }
+
+    @FXML
+    private lateinit var textArea: TextArea
+
+
 
     /*private fun saveContent() {
         val file = File("data/res.html")
@@ -56,8 +49,8 @@ class InvoiceController:Initializable {
         }catch (ex:IOException){
             ex.printStackTrace()
         }
-    }
-    private fun readContent() {
+    }*/
+    /*private fun readContent() {
         try {
             val temp = String( Files.readAllBytes( Paths.get( "data/res.html" ) ) )
             textArea.text = temp

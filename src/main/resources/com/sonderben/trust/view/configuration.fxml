@@ -1,85 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.Pagination?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Line?>
-<?import javafx.scene.text.Font?>
 
-<HBox prefHeight="253.0" prefWidth="427.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.ConfigurationController">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.ConfigurationController">
    <children>
-      <VBox fx:id="lateralVboxConfig" style="-fx-background-color: ccc;">
-         <children>
-            <HBox fx:id="businessConf" alignment="CENTER_LEFT" maxWidth="200.0" prefWidth="200.0">
-               <children>
-                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../image/shop.png" />
-                     </image>
-                     <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </ImageView>
-                  <VBox maxHeight="1.7976931348623157E308">
-                     <children>
-                        <Label text="Business" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label lineSpacing="1.0" maxHeight="60.0" text="Everything related your business" textFill="#fff6f6" wrapText="true">
-                           <font>
-                              <Font size="10.0" />
-                           </font></Label>
-                     </children>
-                  </VBox>
-               </children>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </HBox>
-            <Line endX="109.60049438476562" endY="-1.03655207157135" startX="-78.69239807128906" startY="-1.0355340242385864" stroke="#dddddd" />
-            <HBox fx:id="invoiceConf" alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="200.0" prefWidth="200.0">
-               <children>
-                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../image/invoice.png" />
-                     </image>
-                     <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </ImageView>
-                  <VBox maxHeight="1.7976931348623157E308">
-                     <children>
-                        <Label text="Invoice" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label lineSpacing="1.0" maxHeight="60.0" text="Everything related your business" textFill="#fff6f6" wrapText="true">
-                           <font>
-                              <Font size="10.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </VBox>
-               </children>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </HBox>
-            <Line endX="109.60049438476562" endY="-1.03655207157135" layoutX="89.0" layoutY="62.0" startX="-78.69239807128906" startY="-1.0355340242385864" stroke="#dddddd" />
-         </children>
-      </VBox>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="main-bg" stylesheets="@../css/general.css" HBox.hgrow="ALWAYS">
-         <children>
-            <StackPane fx:id="stackPaneConfig" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-         </children>
-      </AnchorPane>
+      <Pagination fx:id="pagination" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
    </children>
-</HBox>
+</AnchorPane>

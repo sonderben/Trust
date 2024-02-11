@@ -7,6 +7,7 @@ import javafx.fxml.Initializable
 import javafx.scene.Node
 import javafx.scene.image.ImageView
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.FlowPane
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
@@ -19,8 +20,15 @@ class Queries : Initializable,EventHandler<MouseEvent> {
         MainController.forward.onMouseClicked = this
 
 
-        gridPane.children.forEach { node ->
-            node.onMouseClicked = this
+        vboxContainer.children.forEach { node ->
+            if (node is FlowPane){
+                node.children.forEach { vb ->
+                    if (vb is VBox){
+                        vb.onMouseClicked = this
+                    }
+                }
+            }
+
         }
 
 
@@ -34,7 +42,7 @@ class Queries : Initializable,EventHandler<MouseEvent> {
     private lateinit var customerSpendMoney: VBox
 
     @FXML
-    private lateinit var gridPane: GridPane
+    private lateinit var vboxContainer: VBox
 
     @FXML
     private lateinit var mainLayoutStackPane: StackPane

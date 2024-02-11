@@ -2,48 +2,68 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<?import com.gluonhq.richtextarea.RichTextArea?>
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.config.InvoiceController">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.config.InvoiceController">
    <children>
-      <HBox fx:id="mainhbox" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <HBox fx:id="mainhbox" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <RichTextArea fx:id="richTextArea" >
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </RichTextArea>
-            <VBox prefHeight="200.0" prefWidth="100.0">
+            <TextArea fx:id="textArea" maxWidth="600.0" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+
+            <VBox maxHeight="1.7976931348623157E308" prefHeight="200.0" style="-fx-background-color: transparent;">
                <children>
-                  <HBox prefHeight="100.0" prefWidth="200.0">
+                  <HBox style="-fx-background-color: transparent;">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onRotate" text="rotate">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../image/online-analytical.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                        <ChoiceBox fx:id="sizePaperCb" prefWidth="150.0" >
-                           <items>
-                              <FXCollections fx:factory="observableArrayList">
-                                 <String fx:value="A4" />
-                                 <String fx:value="Female" />
-                                 <String fx:value="No binary" />
-                              </FXCollections>
-                           </items>
-                        </ChoiceBox>
+                        <VBox style="-fx-background-color: transparent;">
+                           <children>
+                              <Label text="Variables" textFill="WHITE">
+                                 <font>
+                                    <Font size="26.0" />
+                                 </font>
+                              </Label>
+                              <ScrollPane hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" prefWidth="106.0" styleClass="main-bg" stylesheets="@../../css/general.css" vbarPolicy="NEVER">
+                                 <content>
+                                    <VBox spacing="5.0" styleClass="main-bg" stylesheets="@../../css/general.css">
+                                       <children>
+                                          <Label text="Entrprise" textFill="#ebebeb">
+                                             <VBox.margin>
+                                                <Insets top="-10.0" />
+                                             </VBox.margin>
+                                          </Label>
+                                          <Button mnemonicParsing="false" text="name" />
+                                          <Button layoutX="10.0" layoutY="27.0" mnemonicParsing="false" text="direction" />
+                                          <Button layoutX="10.0" layoutY="27.0" mnemonicParsing="false" text="telephones" />
+                                          <Button layoutX="10.0" layoutY="52.0" mnemonicParsing="false" text="foundation date" />
+                                          <Button layoutX="10.0" layoutY="27.0" mnemonicParsing="false" text="website" />
+                                          <Label layoutX="10.0" layoutY="36.0" text="Product" textFill="#ebebeb" />
+                                          <Button layoutX="10.0" layoutY="52.0" mnemonicParsing="false" text="Description" />
+                                          <Button layoutX="10.0" layoutY="77.0" mnemonicParsing="false" text="Quantity" />
+                                          <Button layoutX="10.0" layoutY="102.0" mnemonicParsing="false" text="Price" />
+                                          <Button layoutX="10.0" layoutY="290.0" mnemonicParsing="false" text="Taxe" />
+                                          <Button layoutX="10.0" layoutY="320.0" mnemonicParsing="false" text="Discount" />
+                                          <Button layoutX="10.0" layoutY="350.0" mnemonicParsing="false" text="total" />
+                                          <Button layoutX="10.0" layoutY="380.0" mnemonicParsing="false" text="Sub total" />
+                                          <Button layoutX="10.0" layoutY="410.0" mnemonicParsing="false" text="Cash" />
+                                          <Button layoutX="10.0" layoutY="440.0" mnemonicParsing="false" text="Change" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="10.0" top="10.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </VBox>
                      </children>
+                     <VBox.margin>
+                        <Insets left="5.0" right="5.0" />
+                     </VBox.margin>
                   </HBox>
                </children></VBox>
          </children>

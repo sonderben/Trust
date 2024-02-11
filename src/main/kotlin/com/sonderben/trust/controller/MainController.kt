@@ -109,6 +109,7 @@ class MainController : Initializable {
 
     private fun onClickLateralButton(node:Node ){
 
+
         vboxLateral.children.forEach {
             if (node === it){
                 //032D3BFF
