@@ -22,13 +22,15 @@ class InvoiceController:Initializable {
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
-        textArea.addEventFilter(KeyEvent.KEY_TYPED){event->
+        textArea.addEventFilter(KeyEvent.KEY_TYPED){ event->
             val caretPosition = textArea.caretPosition
             val currentline =textArea.text.substring(0,caretPosition).lines().last()
             if (currentline.length>=12){
                 event.consume()
             }
         }
+
+
 
 
     }
