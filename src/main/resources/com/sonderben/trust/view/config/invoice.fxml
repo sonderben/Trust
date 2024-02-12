@@ -8,90 +8,135 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.web.HTMLEditor?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../../css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.config.InvoiceController">
+<VBox styleClass="main-bg" stylesheets="@../../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.config.InvoiceController">
    <children>
-      <HBox fx:id="mainhbox" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Label text="Invoice" textFill="WHITE">
+         <font>
+            <Font size="26.0" />
+         </font>
+         <VBox.margin>
+            <Insets left="10.0" right="10.0" />
+         </VBox.margin>
+      </Label>
+      <HBox prefWidth="200.0" spacing="10.0">
          <children>
-            <TextArea fx:id="textArea" maxWidth="600.0" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
-               <font>
-                  <Font name="Arial" size="12.0" />
-               </font></TextArea>
-
-            <VBox maxHeight="1.7976931348623157E308" prefHeight="200.0" style="-fx-background-color: transparent;">
-               <children>
-                  <HBox style="-fx-background-color: transparent;">
-                     <children>
-                        <VBox style="-fx-background-color: transparent;">
-                           <children>
-                              <Label text="Sheet" textFill="WHITE">
-                                 <font>
-                                    <Font size="26.0" />
-                                 </font>
-                              </Label>
-                              <ChoiceBox prefWidth="150.0">
-                                 <items>
-                                    <FXCollections fx:factory="observableArrayList">
-                                       <String fx:value="Thermal 57 mm" />
-                                       <String fx:value="Thermal 60 mm" />
-                                       <String fx:value="A4" />
-                                    </FXCollections>
-                                 </items>
-                              </ChoiceBox>
-                              <Label text="Variables" textFill="WHITE">
-                                 <font>
-                                    <Font size="26.0" />
-                                 </font>
-                              </Label>
-                              <ScrollPane hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" prefWidth="106.0" style="-fx-background-color: transparent;">
-                                 <content>
-                                    <VBox spacing="5.0">
-                                       <children>
-                                          <Label text="Entrprise" textFill="#ebebeb">
-                                             <VBox.margin>
-                                                <Insets top="-10.0" />
-                                             </VBox.margin>
-                                          </Label>
-                                          <Button mnemonicParsing="false" text="Name" />
-                                          <Button layoutX="10.0" layoutY="27.0" mnemonicParsing="false" text="Direction" />
-                                          <Button layoutX="10.0" layoutY="27.0" mnemonicParsing="false" text="Telephones" />
-                                          <Button layoutX="10.0" layoutY="52.0" mnemonicParsing="false" text="Date foundation" />
-                                          <Button layoutX="10.0" layoutY="27.0" mnemonicParsing="false" text="Website" />
-                                          <Label layoutX="10.0" layoutY="36.0" text="Product" textFill="#ebebeb" />
-                                          <Button layoutX="10.0" layoutY="52.0" mnemonicParsing="false" text="Description" />
-                                          <Button layoutX="10.0" layoutY="77.0" mnemonicParsing="false" text="Quantity" />
-                                          <Button layoutX="10.0" layoutY="102.0" mnemonicParsing="false" text="Price" />
-                                          <Button layoutX="10.0" layoutY="290.0" mnemonicParsing="false" text="Taxe" />
-                                          <Button layoutX="10.0" layoutY="320.0" mnemonicParsing="false" text="Discount" />
-                                          <Button layoutX="10.0" layoutY="350.0" mnemonicParsing="false" text="Total" />
-                                          <Button layoutX="10.0" layoutY="380.0" mnemonicParsing="false" text="Sub total" />
-                                          <Button layoutX="10.0" layoutY="410.0" mnemonicParsing="false" text="Cash" />
-                                          <Button layoutX="10.0" layoutY="440.0" mnemonicParsing="false" text="Change" />
-                                          <Label text="Employee" textFill="WHITE" />
-                                          <Button layoutX="10.0" layoutY="496.0" mnemonicParsing="false" text="Name" />
-                                       </children>
-                                       <padding>
-                                          <Insets bottom="10.0" top="10.0" />
-                                       </padding>
-                                    </VBox>
-                                 </content>
-                              </ScrollPane>
-                           </children>
-                        </VBox>
-                     </children>
-                     <VBox.margin>
-                        <Insets left="5.0" right="5.0" />
-                     </VBox.margin>
-                  </HBox>
-               </children></VBox>
+            <ImageView fitHeight="15.0" fitWidth="15.0" onMouseClicked="#boldMouseClicked" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../image/bold.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="15.0" fitWidth="15.0" layoutX="10.0" layoutY="10.0" onMouseClicked="#alignLeftMouseClicked" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../image/align_left.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="15.0" fitWidth="15.0" layoutX="35.0" layoutY="10.0" onMouseClicked="#alignCenterMouseClicked" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../image/align_center.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="15.0" fitWidth="15.0" layoutX="60.0" layoutY="10.0" onMouseClicked="#alignRightMouseClicked" pickOnBounds="true" preserveRatio="true" rotate="180.0">
+               <image>
+                  <Image url="@../../image/align_left.png" />
+               </image>
+            </ImageView>
          </children>
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
+         <VBox.margin>
+            <Insets left="10.0" right="10.0" />
+         </VBox.margin>
       </HBox>
+      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="400.0" prefWidth="600.0">
+         <children>
+            <HBox fx:id="mainhbox" alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <HTMLEditor fx:id="htmlEditor" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" prefHeight="200.0" prefWidth="506.0" />
+                  <TextArea fx:id="textArea" maxWidth="600.0" prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                     <font>
+                        <Font name="Arial" size="12.0" />
+                     </font>
+                  </TextArea>
+      
+                        <VBox maxHeight="1.7976931348623157E308" prefHeight="200.0" style="-fx-background-color: transparent;">
+                     <children>
+                        <HBox style="-fx-background-color: transparent;">
+                           <children>
+                              <VBox style="-fx-background-color: transparent;">
+                                 <children>
+                                    <Label text="Sheet" textFill="WHITE">
+                                       <font>
+                                          <Font size="26.0" />
+                                       </font>
+                                    </Label>
+                                    <ChoiceBox prefWidth="150.0">
+                                       <items>
+                                          <FXCollections fx:factory="observableArrayList">
+                                             <String fx:value="Thermal 57 mm" />
+                                             <String fx:value="Thermal 60 mm" />
+                                             <String fx:value="A4" />
+                                          </FXCollections>
+                                       </items>
+                                    </ChoiceBox>
+                                    <Label text="Variables" textFill="WHITE">
+                                       <font>
+                                          <Font size="26.0" />
+                                       </font>
+                                    </Label>
+                                    <ScrollPane hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" prefWidth="106.0" style="-fx-background-color: transparent;">
+                                       <content>
+                                          <VBox spacing="5.0">
+                                             <children>
+                                                <Label text="Entrprise" textFill="#ebebeb">
+                                                   <VBox.margin>
+                                                      <Insets top="-10.0" />
+                                                   </VBox.margin>
+                                                </Label>
+                                                <Button mnemonicParsing="false" text="Name" />
+                                                <Button layoutX="10.0" layoutY="27.0" mnemonicParsing="false" text="Direction" />
+                                                <Button layoutX="10.0" layoutY="27.0" mnemonicParsing="false" text="Telephones" />
+                                                <Button layoutX="10.0" layoutY="52.0" mnemonicParsing="false" text="Date foundation" />
+                                                <Button layoutX="10.0" layoutY="27.0" mnemonicParsing="false" text="Website" />
+                                                <Label layoutX="10.0" layoutY="36.0" text="Product" textFill="#ebebeb" />
+                                                <Button layoutX="10.0" layoutY="52.0" mnemonicParsing="false" text="Description" />
+                                                <Button layoutX="10.0" layoutY="77.0" mnemonicParsing="false" text="Quantity" />
+                                                <Button layoutX="10.0" layoutY="102.0" mnemonicParsing="false" text="Price" />
+                                                <Button layoutX="10.0" layoutY="290.0" mnemonicParsing="false" text="Taxe" />
+                                                <Button layoutX="10.0" layoutY="320.0" mnemonicParsing="false" text="Discount" />
+                                                <Button layoutX="10.0" layoutY="350.0" mnemonicParsing="false" text="Total" />
+                                                <Button layoutX="10.0" layoutY="380.0" mnemonicParsing="false" text="Sub total" />
+                                                <Button layoutX="10.0" layoutY="410.0" mnemonicParsing="false" text="Cash" />
+                                                <Button layoutX="10.0" layoutY="440.0" mnemonicParsing="false" text="Change" />
+                                                <Label text="Employee" textFill="WHITE" />
+                                                <Button layoutX="10.0" layoutY="496.0" mnemonicParsing="false" text="Name" />
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="10.0" top="10.0" />
+                                             </padding>
+                                          </VBox>
+                                       </content>
+                                    </ScrollPane>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="5.0" right="5.0" />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </HBox>
+         </children>
+      </AnchorPane>
    </children>
-</AnchorPane>
+</VBox>

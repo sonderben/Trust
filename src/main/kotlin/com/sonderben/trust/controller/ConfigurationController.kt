@@ -22,7 +22,8 @@ class ConfigurationController:Initializable {
     private fun createPage(index :Int):Node{
         when(index){
             0 -> return SingletonView.get("view/config/businessInfo.fxml")
-            1 -> return SingletonView.get("view/config/invoice.fxml")
+            1 -> return SingletonView.get("view/config/admin.fxml")
+            2 -> return SingletonView.get("view/config/invoice.fxml")
         }
         val vbox = VBox()
         vbox.children.add( Label("Chen") )

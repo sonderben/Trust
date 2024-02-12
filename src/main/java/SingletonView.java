@@ -9,7 +9,7 @@ public class SingletonView {
     private static Node employee, configuration, sale, user, product,
             invoice, businessInfo, inventory, role, queries, productSold,
             productRemaining, bestEmployee, bestSellingProduct, frequentCustomer,
-            productExpired, returned,spendingCustomer;
+            productExpired, returned,spendingCustomer,admin;
 
 
     private SingletonView(){
@@ -41,6 +41,12 @@ public class SingletonView {
                     employee = fxmlLoader.load();
                 }
                 return employee;
+            }
+            case "view/config/admin.fxml"->{
+                if (admin == null) {
+                    admin = fxmlLoader.load();
+                }
+                return admin;
             }
             case "view/configuration.fxml" -> {
                 if (configuration == null) {

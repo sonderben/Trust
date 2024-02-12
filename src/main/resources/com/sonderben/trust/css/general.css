@@ -56,3 +56,7 @@
 .scroll-pane .viewport{
 -fx-background-color: transparent
 }
+
+.tool-bar{
+    -fx-background-color: black;
+}
