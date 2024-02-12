@@ -5,12 +5,14 @@ import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.print.Paper
+import javafx.scene.Node
 import javafx.scene.control.ChoiceBox
 import javafx.scene.control.TextArea
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.HBox
 import javafx.scene.web.HTMLEditor
+import org.scenicview.ScenicView
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
@@ -34,16 +36,23 @@ class InvoiceController:Initializable {
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
-        textArea.isVisible = false
-        textArea.isManaged = false
+
+        val first = htmlEditor.lookup(".tool-bar")
+        println(first !=null)
+        if (first !=null){
+            first.isVisible = false
+            first.isManaged = false
+        }
+
 
         readContent()
         htmlEditor.addEventFilter(KeyEvent.KEY_TYPED){ event->
-            val caretPosition = textArea.caretPosition
+            //ScenicView.show(htmlEditor)
+            /*val caretPosition = textArea.caretPosition
             val currentLine =textArea.text.substring(0,caretPosition).lines().last()
             if (currentLine.length >= MAX_COLUMN){
                 event.consume()
-            }
+            }*/
             saveContent()
         }
 
@@ -52,8 +61,7 @@ class InvoiceController:Initializable {
 
     }
 
-    @FXML
-    private lateinit var textArea: TextArea
+
 
 
 
@@ -80,43 +88,5 @@ class InvoiceController:Initializable {
 
     }
 
-    fun alignRightMouseClicked(mouseEvent: MouseEvent) {
 
-    }
-
-    fun alignCenterMouseClicked(mouseEvent: MouseEvent) {
-
-    }
-
-    fun alignLeftMouseClicked(mouseEvent: MouseEvent) {
-
-    }
-
-    fun boldMouseClicked(mouseEvent: MouseEvent) {
-        val selectedText = textArea.selectedText
-        if (selectedText.isNotBlank()){
-            val currentText = textArea.text
-            val lines = selectedText.lines()
-
-
-            var dd = ""
-            for (i in 0 until lines.size){
-                val length:Int = (MAX_COLUMN-lines.size )/2
-
-                if (length>0){
-
-                    dd += lines[i].padStart(length+lines[i].length,'*').padEnd(MAX_COLUMN,'*')
-                    dd += "\n"
-
-                }
-
-            }
-            dd=dd.dropLast(1)
-
-
-            val newTextArea = currentText.replace(selectedText,dd)
-            textArea.text = newTextArea
-        }
-        //println(selectedText)
-    }
 }

@@ -58,5 +58,5 @@
 }
 
 .tool-bar{
-    -fx-background-color: black;
+    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #032d3b,#3498db);
 }
