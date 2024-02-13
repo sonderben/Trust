@@ -89,7 +89,6 @@ object SqlCreateTables {
     private var createEmployeeTable =  """
     create table if not exists $employees (
         birthDay timestamp,
-        code varchar,
         id integer primary key autoincrement,
         bankAccount varchar(255) unique,
         direction varchar(255),

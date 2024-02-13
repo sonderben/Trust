@@ -86,7 +86,8 @@ public class Database {
         Role role = new Role();
         role.setId(1L);
         EmployeeDao.INSTANCE.save(
-                new EmployeeEntity("000000000001","Admin","12345","Admin","Male","Admin","admin@gmail.com","11111", Calendar.getInstance(),"1","root","1234",role,List.of())
+                new EmployeeEntity("Admin","12345","Admin","Male","Admin","admin@gmail.com","11111", Calendar.getInstance(),"1","root","1234",
+                        role,List.of( new ScheduleEntity(null,1,11.30f,1f) ))
         );
 
         RoleDao.INSTANCE.save(
@@ -99,7 +100,7 @@ public class Database {
         Role role2 = new Role();
         role2.setId(2L);
         EmployeeDao.INSTANCE.save(
-                new EmployeeEntity("000000000002","Sale","1234551","Pierre","Female","PV","pierresophie@gmail.com","8293045678", Calendar.getInstance(),"123-2342-3423","sofi","1234",role2,List.of())
+                new EmployeeEntity("Sale","1234551","Pierre","Female","PV","pierresophie@gmail.com","8293045678", Calendar.getInstance(),"123-2342-3423","sofi","1234",role2,List.of())
         );
 
         CustomerDao.INSTANCE.save(

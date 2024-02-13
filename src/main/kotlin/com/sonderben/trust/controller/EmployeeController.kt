@@ -20,6 +20,7 @@ import javafx.fxml.Initializable
 import javafx.scene.control.*
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.VBox
+import javafx.stage.Modality
 import javafx.util.Callback
 import javafx.util.StringConverter
 import java.net.URL
@@ -41,7 +42,9 @@ class EmployeeController: Initializable {
         telephoneCol.setCellValueFactory { employee -> SimpleStringProperty(employee.value.telephone) }
         userNameCol.setCellValueFactory { employee -> SimpleStringProperty(employee.value.userName) }
         RolesCol.setCellValueFactory { employee -> SimpleStringProperty(employee.value.role.name ) }
+
         PassportCol.setCellValueFactory { employee -> SimpleStringProperty(employee.value.passport) }
+
         scheduleCol.setCellValueFactory { employee -> SimpleStringProperty(employee.value.schedules.joinToString { schedule ->days[schedule.workDay].substring(0,2)  }) }
 
 
@@ -68,8 +71,9 @@ class EmployeeController: Initializable {
                 accountNumberTextField.text = newValue.bankAccount
                 userNameTextField.text = newValue.userName
                 telephoneTextField.text = newValue.telephone
-                passwordField.text = newValue.password
+                passwordField.text = "********"
                 telephoneTextField.text = newValue.telephone
+                passportTextField.text = newValue.passport
                 val cal = newValue.birthDay
                 birthdayDatePicker.value =
                     LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH))
@@ -239,11 +243,11 @@ class EmployeeController: Initializable {
 
     class RoleStringConverter: StringConverter<Role>() {
         override fun toString(`object`: Role?): String {
-            return `object`?.name ?: "null"
+            return `object`?.name ?: "Select a Role"
         }
 
-        override fun fromString(string: String?): Role {
-            return Role()
+        override fun fromString(string: String?): Role? {
+            return null
         }
 
     }
@@ -251,6 +255,7 @@ class EmployeeController: Initializable {
     class SchedulerController(schedulers:List<ScheduleEntity>): Dialog<List<ScheduleEntity>>() {
         var scheduleLoader = FXMLLoader(HelloApplication.javaClass.getResource("view/scheduler.fxml"))
         init {
+            this.initOwner(HelloApplication.primary)
             scheduleLoader.setController(this)
             val buttonType = ButtonType("Ok", ButtonBar.ButtonData.OK_DONE)
             dialogPane = scheduleLoader.load()

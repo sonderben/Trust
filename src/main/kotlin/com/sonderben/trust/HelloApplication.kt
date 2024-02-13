@@ -1,12 +1,11 @@
 package com.sonderben.trust
 
+import Database
+import Factory
 import javafx.application.Application
-import javafx.application.Platform
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
-import javafx.scene.image.Image
 import javafx.stage.Stage
-import javafx.stage.StageStyle
 import org.scenicview.ScenicView
 
 class HelloApplication : Application() {
@@ -20,7 +19,7 @@ class HelloApplication : Application() {
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
         val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
 
-        //ScenicView.show( scene )
+        ScenicView.show( scene )
 
 
 

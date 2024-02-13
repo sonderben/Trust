@@ -233,8 +233,7 @@ class Sale :Initializable,MessageListener{
                    mCurrentCustomer?.let { CustomerDao.updatePoint(it.id,
                        (changeTextField.text.toDouble()/100.0).toLong()
                    ) }
-                   println("point: ${(cashTextField.text.toDouble()).toLong()}")
-                   println("point: ${(cashTextField.text.toDouble()/100.0).toLong()}")
+
                    ViewUtil.createAlert(Alert.AlertType.CONFIRMATION,"Payment","Pay with success").showAndWait()
                    clearAll()
                    customerCode.requestFocus()
@@ -262,12 +261,12 @@ class Sale :Initializable,MessageListener{
 
     @FXML
     fun onKeyReleasedCustomer(event: KeyEvent) {
-       // println("genial: "+event.code.name)
+
         if (event.code.equals( KeyCode.ENTER )){
 
             var code = (event.source as TextField).text
             code = code.padStart(12,'0')
-            println(code)
+
             mCurrentCustomer = CustomerDao.findByCode(code)
             mCurrentCustomer.let {
                 (event.source as TextField).text = mCurrentCustomer!!.fullName

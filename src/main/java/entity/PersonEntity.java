@@ -6,17 +6,17 @@ import java.util.Calendar;
 
 
 public class PersonEntity extends BaseEntity{
-    String code,passport, firstName, lastName, genre, direction, email, telephone;
+    String passport, firstName, lastName, genre, direction, email, telephone;
     Calendar birthDay;
 
     public PersonEntity() {
 
     }
 
-    public PersonEntity(Long id,String code, String firstName,String passport, String lastName, String genre, String direction, String email, String telephone, Calendar birthDay) {
+    public PersonEntity(Long id,/*String code,*/ String firstName,String passport, String lastName, String genre, String direction, String email, String telephone, Calendar birthDay) {
         super(id);
         this.passport = passport;
-        this.code = code;
+        //this.code = code;
         this.firstName = firstName;
         this.lastName = lastName;
         this.genre = genre;
@@ -28,20 +28,16 @@ public class PersonEntity extends BaseEntity{
 
     @Override
     public String toString() {
-        return "PersonEntity{code='%s', passport='%s', firstName='%s', lastName='%s', genre='%s', direction='%s', email='%s', telephone='%s', birthDay=%s, id=%d}".formatted(code, passport, firstName, lastName, genre, direction, email, telephone, birthDay, id);
+        return "PersonEntity{ passport='%s', firstName='%s', lastName='%s', genre='%s', direction='%s', email='%s', telephone='%s', birthDay=%s, id=%d}".formatted( passport, firstName, lastName, genre, direction, email, telephone, birthDay, id);
     }
 
-    public String getCode() {
-        return code;
-    }
+
 
     public String getFullName(){
         return firstName +" "+lastName;
     }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+
 
     public String getPassport() {
         return passport;

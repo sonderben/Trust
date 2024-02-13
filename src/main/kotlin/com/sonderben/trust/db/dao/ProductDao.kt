@@ -85,7 +85,6 @@ object ProductDao:CrudDao<ProductEntity> {
                             id = resultSet.getLong("id_employee")
                             userName = resultSet.getString("userName")
                         }
-                        println("empl;oye name: ${employee.userName}")
                         val category = CategoryEntity()
                         category.apply {
                             id = resultSet.getLong("id_category")
@@ -165,7 +164,7 @@ object ProductDao:CrudDao<ProductEntity> {
                     category,
                     employee)
                 prod.id = resultSet.getLong("id")
-                println(prod)
+
                 if (prod.code == null || prod.code.isBlank()){
                     return null
                 }
@@ -199,7 +198,7 @@ object ProductDao:CrudDao<ProductEntity> {
                             id = resultSet.getLong("id_employee")
                             userName = resultSet.getString("userName")
                         }
-                        println("empl;oye name: ${employee.userName}")
+
                         val category = CategoryEntity()
                         category.apply {
                             id = resultSet.getLong("id_category")

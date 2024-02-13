@@ -8,14 +8,14 @@ import java.util.List;
 
 
 public class EmployeeEntity extends PersonEntity {
-    String bankAccount,userName, password,passport ;
+    String bankAccount,userName, password ;
 
     Role role;
 
     List<ScheduleEntity> schedules;
 
-    public EmployeeEntity( String code,String firstName, String passport, String lastName, String genre, String direction, String email, String telephone, Calendar birthDay, String bankAccount, String userName, String password, Role role, List<ScheduleEntity> schedule) {
-        super(null, code,firstName,passport, lastName, genre, direction, email, telephone, birthDay);
+    public EmployeeEntity( String firstName, String passport, String lastName, String genre, String direction, String email, String telephone, Calendar birthDay, String bankAccount, String userName, String password, Role role, List<ScheduleEntity> schedule) {
+        super(null,firstName,passport, lastName, genre, direction, email, telephone, birthDay);
         this.bankAccount = bankAccount;
         this.userName = userName;
         this.password = password;
@@ -23,13 +23,8 @@ public class EmployeeEntity extends PersonEntity {
         this.schedules = schedule;
     }
 
-    public String getPassport() {
-        return passport;
-    }
 
-    public void setPassport(String passport) {
-        this.passport = passport;
-    }
+
 
     public EmployeeEntity() {
 

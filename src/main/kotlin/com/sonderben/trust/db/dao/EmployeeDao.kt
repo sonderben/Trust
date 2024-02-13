@@ -19,7 +19,7 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
             throw Exception("Role or Role.id can not be null")
         }
         val insertEmployee = buildString {
-            append("Insert into ${SqlCreateTables.employees} ")
+            append("Insert into ${SqlCreateTables.employees} ")//passport
             append("(bankAccount,direction,email,firstName,genre,lastName,passport,password,telephone,userName,birthDay,id_role) ")
             append("values (?,?,?,?,?,?,?,?,?,?,?,?) ")
         }
@@ -53,15 +53,6 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
                 if (rowCount>0){
                     lastIdEmployeeAdded = Database.getLastId()
                     entity.id = lastIdEmployeeAdded
-
-                       /* connection.prepareStatement(insertRoleEmployee).use {ps ->
-                            ps.setLong(1,entity.role.id)
-                            ps.setLong(2,lastIdEmployeeAdded)
-                             val rowCount2 = ps.executeUpdate()
-                            if (rowCount2<0){
-                                throw Exception(" unable to add relationship table (${SqlCreateTables.employeesRoles})")
-                            }
-                        }*/
 
                     for (schedule in entity.schedules){
                         connection.prepareStatement(insertIntoSchedule).use {ps ->
@@ -133,6 +124,9 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
                     while (resultSet.next()){
                         val id = resultSet.getLong("id")
                         val employee = EmployeeEntity()
+                        //String code,String firstName, String passport, String lastName, String genre, String direction,
+                        // String email, String telephone, Calendar birthDay, String bankAccount, String userName,
+                        // String password, Role role, List<ScheduleEntity> schedule)
                         employee.apply {
                             this.id = id
                             firstName = resultSet.getString("firstName")
@@ -150,22 +144,7 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
                             role = Database.findRolesByIdEmployee( resultSet.getLong("id_role") )
                             schedules =  Database.findScheduleByIdEmployee( id )
                         }
-                        /*val employee = EmployeeEntity(
-                            resultSet.getString("firstName"),
-                            resultSet.getString("passport"),
-                            resultSet.getString("lastName"),
-                            resultSet.getString("genre"),
-                            resultSet.getString("direction"),
-                            resultSet.getString("email"),
-                            resultSet.getString("telephone"),
-                            Util.timeStampToCalendar( resultSet.getTimestamp("birthDay") ),
-                            resultSet.getString("bankAccount"),
-                            resultSet.getString("userName"),
-                            resultSet.getString("password"),
-                            Database.findRolesByIdEmployee( resultSet.getLong("id_role") ),
-                            Database.findScheduleByIdEmployee( id )
-                        )*/
-                        //employee.id = id
+
                         tempEmployees.add( employee )
                     }
                     employees.addAll( tempEmployees )
