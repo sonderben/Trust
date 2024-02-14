@@ -8,10 +8,7 @@ import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.Scene
-import javafx.scene.control.Button
-import javafx.scene.control.Label
-import javafx.scene.control.PasswordField
-import javafx.scene.control.TextField
+import javafx.scene.control.*
 import java.net.URL
 import java.util.*
 
@@ -25,6 +22,9 @@ class LoginController : Initializable{
     private lateinit var userNameTextField: TextField
     @FXML
     private lateinit var infoLabel: Label
+    @FXML
+    private lateinit var enterpriseCB: ChoiceBox<Any>
+
 
     @FXML
     fun onLoginButtonClick(event: ActionEvent?) {
@@ -35,6 +35,7 @@ class LoginController : Initializable{
             val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
             HelloApplication.primary.scene = scene
         }else{
+            infoLabel.isVisible = true
             infoLabel.text = "username or password is wrong"
         }
 
@@ -52,6 +53,6 @@ class LoginController : Initializable{
     }
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-
+        HelloApplication.primary.isResizable = false
     }
 }

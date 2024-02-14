@@ -25,7 +25,7 @@ import java.util.*
 class MainController : Initializable {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
-
+        HelloApplication.primary.isResizable = true
         next = nextPage
         forward = forwardPage
 

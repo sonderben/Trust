@@ -3,6 +3,7 @@ package com.sonderben.trust.db
 
 
 object SqlCreateTables {
+    const val enterprise = "enterprise"
     const val categories = "Categories"
     const val screen = "Screens"
     const val roles = "Roles"
@@ -107,6 +108,23 @@ object SqlCreateTables {
     
     """
 
+    private val createEnterPrice ="""
+        CREATE TABLE IF NOT EXISTS $enterprise (
+        id integer primary key autoincrement,
+        name nvarchar not null,
+        direction nvarchar,
+        telephone varchar,
+        foundation timestamp,
+        website varchar,
+        category varchar,
+        invoiceTemplate nvarchar not null,
+        invoiceTemplateHtml nvarchar not null,
+        id_employee integer,
+        foreign key (id_employee)
+        references $employees(id)
+        )
+    """.trimIndent()
+
     private val createProductsTable = """
         CREATE TABLE IF NOT EXISTS $products( 
         id integer primary key autoincrement,  
@@ -161,7 +179,7 @@ object SqlCreateTables {
     val tables = listOf(createCategoryTable,
         createCustomerTable, createScreenTable, createRolesTable, createEmployeeTable, /*createRoleEmployee,*/
         createScheduleTable, createProductsTable, createInvoiceTable, createInvoiceProductTable,createProductSealed/*,
-        getFullName*/)
+        getFullName*/,createEnterPrice)
     var deleteCategoryTable = """
         drop table if exists ${categories};
     """.trimIndent()

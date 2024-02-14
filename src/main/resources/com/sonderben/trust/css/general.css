@@ -2,6 +2,15 @@
     /*-fx-background-color: #032d3b;*/
     -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #032d3b,#3498db);
 }
+
+.login{
+    -fx-background-color: rgba(255, 255, 255, 0.11);
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+.login > .label{
+    -fx-text-fill: #ee4c4c;
+}
 .text-field{
     -fxbackground-radius:10;
     -fx-border-color: #769cb6;

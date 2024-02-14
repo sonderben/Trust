@@ -41,12 +41,14 @@ class InvoiceController:Initializable {
 
         val first = htmlEditor.lookup(".tool-bar")
         val gridPane = htmlEditor.lookup(".grid") as GridPane
-        gridPane.children.clear()
+        //gridPane.children.clear()
         println(first !=null)
         if (first !=null){
             first.isVisible = false
             first.isManaged = false
         }
+
+
 
 
         readContent()

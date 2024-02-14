@@ -18,6 +18,7 @@ import java.util.*
 
 class ConfigurationController:Initializable, BaseController() {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        HelloApplication.primary.isResizable = true
         setFromLoginPage(false)
         pagination.pageCount = 3
         pagination.setPageFactory { index ->createPage(index) }
