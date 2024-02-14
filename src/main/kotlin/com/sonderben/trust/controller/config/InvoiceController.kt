@@ -11,6 +11,7 @@ import javafx.scene.control.ChoiceBox
 import javafx.scene.control.TextArea
 import javafx.scene.input.KeyEvent
 import javafx.scene.input.MouseEvent
+import javafx.scene.layout.GridPane
 import javafx.scene.layout.HBox
 import javafx.scene.web.HTMLEditor
 import org.scenicview.ScenicView
@@ -39,6 +40,8 @@ class InvoiceController:Initializable {
 
 
         val first = htmlEditor.lookup(".tool-bar")
+        val gridPane = htmlEditor.lookup(".grid") as GridPane
+        gridPane.children.clear()
         println(first !=null)
         if (first !=null){
             first.isVisible = false

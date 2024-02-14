@@ -48,7 +48,7 @@
                   <TextField fx:id="scheduleTextField" editable="false" onMouseClicked="#scheduleOnMOuseClick" promptText="Schedules" GridPane.rowIndex="5" />
                   <DatePicker fx:id="birthdayDatePicker" promptText="Birtday" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                   <PasswordField fx:id="passwordField" promptText="Password" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                  <ChoiceBox fx:id="choiceBoxGender" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="5">
+                  <ChoiceBox fx:id="choiceBoxGender" value="Select a gender" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="5">
                      <items>
                         <FXCollections fx:factory="observableArrayList">
                            <String fx:value="Male" />

@@ -1,5 +1,6 @@
 package com.sonderben.trust
 
+import com.sonderben.trust.controller.ConfigurationController
 import com.sonderben.trust.db.dao.EmployeeDao
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.ActionEvent
@@ -11,11 +12,10 @@ import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.control.PasswordField
 import javafx.scene.control.TextField
-import javafx.scene.input.MouseEvent
 import java.net.URL
 import java.util.*
 
-class HelloController : Initializable{
+class LoginController : Initializable{
     @FXML
     private lateinit var login: Button
     @FXML
@@ -42,9 +42,12 @@ class HelloController : Initializable{
     }
 
     @FXML
-    fun onCreateNewSystemMouseClicked(event: MouseEvent) {
-        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("sale.fxml"))
+    fun onCreateNewSystemMouseClicked() {
+        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/configuration.fxml"))
         val scene = Scene(fxmlLoader.load(), 920.0, 640.0)
+
+        val configurationController = fxmlLoader.getController<ConfigurationController>()
+        configurationController.setFromLoginPage(true)
         HelloApplication.primary.scene = scene
     }
 

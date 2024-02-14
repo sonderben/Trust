@@ -60,6 +60,13 @@
 .tool-bar{
     -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #032d3b,#3498db);
 }
+.label, .text{
+    -fx-text-fill: white;
+}
+
+.choice-box.label{
+ -fx-text-fill: white;
+}
 
 .choice-box,.combo-box-base, .date-picker{
 -fx-background-color:transparent;
