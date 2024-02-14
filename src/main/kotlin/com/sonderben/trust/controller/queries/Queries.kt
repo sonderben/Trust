@@ -1,5 +1,6 @@
 package com.sonderben.trust.controller.queries
 
+import com.sonderben.trust.controller.BaseController
 import com.sonderben.trust.controller.MainController
 import javafx.event.EventHandler
 import javafx.fxml.FXML
@@ -14,7 +15,7 @@ import javafx.scene.layout.VBox
 import java.net.URL
 import java.util.*
 
-class Queries : Initializable,EventHandler<MouseEvent> {
+class Queries :Initializable, BaseController(),EventHandler<MouseEvent> {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         MainController.next.onMouseClicked = this
         MainController.forward.onMouseClicked = this
@@ -97,6 +98,10 @@ class Queries : Initializable,EventHandler<MouseEvent> {
 
         }
 
+
+    }
+
+    override fun onDestroy() {
 
     }
 }

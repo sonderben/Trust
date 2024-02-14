@@ -19,7 +19,7 @@ class HelloApplication : Application() {
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
         val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
 
-        ScenicView.show( scene )
+        //ScenicView.show( scene )
 
 
 

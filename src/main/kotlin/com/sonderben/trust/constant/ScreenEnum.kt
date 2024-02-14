@@ -9,6 +9,7 @@ enum class ScreenEnum  {
     ROLE,
     EMPLOYEE,
     CONFIGURATION,
-    QUERIES
+    QUERIES,
+    CUSTOMER_SERVICE
 }
 

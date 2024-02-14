@@ -78,7 +78,8 @@ public class Database {
                         new Screen( ScreenEnum.PRODUCT,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
                         new Screen( ScreenEnum.EMPLOYEE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
                         new Screen( ScreenEnum.CONFIGURATION,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
-                        new Screen( ScreenEnum.QUERIES,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) )
+                        new Screen( ScreenEnum.QUERIES,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                        new Screen( ScreenEnum.CUSTOMER_SERVICE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) )
 
                 )
                 )

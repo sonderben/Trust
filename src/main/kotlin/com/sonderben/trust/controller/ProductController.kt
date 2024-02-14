@@ -27,11 +27,13 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
 
-class ProductController :Initializable,MessageListener {
-    private var socketMesageEvent = SocketMessageEvent(this)
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+class ProductController :Initializable,MessageListener,BaseController() {
 
-        socketMesageEvent.startingListening()
+    //private var socketMesageEvent = SocketMessageEvent(this)
+    override fun initialize(location: URL?, resources: ResourceBundle?) {
+        println("init productController")
+
+       // socketMesageEvent.startingListening()
 
         employeeTf.text = Context.currentEmployee.value.userName
 
@@ -229,5 +231,10 @@ class ProductController :Initializable,MessageListener {
     override fun onReceiveMessage(data: String) {
 
         codeTf.text = data
+    }
+
+    override fun onDestroy() {
+       // socketMesageEvent.removeListener()
+        println("clear productController")
     }
 }

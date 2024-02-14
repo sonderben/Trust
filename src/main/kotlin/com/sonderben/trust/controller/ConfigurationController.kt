@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox
 import java.net.URL
 import java.util.*
 
-class ConfigurationController:Initializable {
+class ConfigurationController:Initializable, BaseController() {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         pagination.pageCount = 3
         pagination.setPageFactory { index ->createPage(index) }
@@ -28,6 +28,10 @@ class ConfigurationController:Initializable {
         val vbox = VBox()
         vbox.children.add( Label("Chen") )
         return vbox
+
+    }
+
+    override fun onDestroy() {
 
     }
 }

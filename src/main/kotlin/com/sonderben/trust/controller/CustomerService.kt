@@ -1,11 +1,10 @@
-package com.sonderben.trust.controller.queries
+package com.sonderben.trust.controller
 
-import com.sonderben.trust.controller.BaseController
 import javafx.fxml.Initializable
 import java.net.URL
 import java.util.*
 
-class BestEmployee:Initializable, BaseController() {
+class CustomerService:Initializable,BaseController() {
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
 
     }

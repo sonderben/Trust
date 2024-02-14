@@ -13,20 +13,20 @@ class SocketMessageEvent(private var messageListener:MessageListener) {
     private lateinit var serverSocket: ServerSocket
     private var condition = false
 
-    init {
 
-    }
     fun startingListening(){
         condition = true
         Thread {
             try {
-                println("getIpAddress(): " + println("entrain d envoyer"))
                 serverSocket = ServerSocket(9005)
                 while (condition) {
-                    val socket = serverSocket.accept()
+
+                    var socket:Socket = serverSocket.accept()
                     println("Connected")
                     handlereceiveMessage(socket)
+
                 }
+
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -38,10 +38,11 @@ class SocketMessageEvent(private var messageListener:MessageListener) {
         Thread(Runnable {
             try {
                 val reader = BufferedReader( InputStreamReader(socket.getInputStream()) )
-                var data = reader.readLine()
+                val data = reader.readLine()
                 println(data)
                 messageListener.onReceiveMessage(data)
                 socket.close()
+
             }catch (e:IOException){
                 e.printStackTrace()
             }
@@ -49,32 +50,37 @@ class SocketMessageEvent(private var messageListener:MessageListener) {
     }
 
     fun removeListener(){
-        condition = false
-        serverSocket.close()
+       if (serverSocket!=null){
+           condition = false
+           serverSocket!!.close()
+           println("socketMessage close")
+       }
     }
-    private fun getIpAddress(): String? {
-        var ip = ""
-        try {
-            val enumNetworkInterfaces = NetworkInterface
-                .getNetworkInterfaces()
-            while (enumNetworkInterfaces.hasMoreElements()) {
-                val networkInterface = enumNetworkInterfaces
-                    .nextElement()
-                val enumInetAddress = networkInterface
-                    .inetAddresses
-                while (enumInetAddress.hasMoreElements()) {
-                    val inetAddress = enumInetAddress.nextElement()
-                    if (inetAddress.isSiteLocalAddress) {
-                        ip += ("SiteLocalAddress: "
-                                + inetAddress.hostAddress + "\n")
-                    }
-                }
-            }
-        } catch (ex: SocketException) {
-            //Logger.getLogger(JavaFX_Server::class.java.getName()).log(Level.SEVERE, null, ex)
-        }
-        return ip
-    }
+
 
 
 }
+
+/* private fun getIpAddress(): String? {
+       var ip = ""
+       try {
+           val enumNetworkInterfaces = NetworkInterface
+               .getNetworkInterfaces()
+           while (enumNetworkInterfaces.hasMoreElements()) {
+               val networkInterface = enumNetworkInterfaces
+                   .nextElement()
+               val enumInetAddress = networkInterface
+                   .inetAddresses
+               while (enumInetAddress.hasMoreElements()) {
+                   val inetAddress = enumInetAddress.nextElement()
+                   if (inetAddress.isSiteLocalAddress) {
+                       ip += ("SiteLocalAddress: "
+                               + inetAddress.hostAddress + "\n")
+                   }
+               }
+           }
+       } catch (ex: SocketException) {
+           //Logger.getLogger(JavaFX_Server::class.java.getName()).log(Level.SEVERE, null, ex)
+       }
+       return ip
+   }*/

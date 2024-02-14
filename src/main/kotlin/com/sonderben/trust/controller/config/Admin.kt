@@ -1,9 +1,13 @@
 package com.sonderben.trust.controller.config
 
+import com.sonderben.trust.controller.BaseController
 import javafx.event.ActionEvent
+import javafx.fxml.Initializable
 import javafx.scene.input.MouseEvent
+import java.net.URL
+import java.util.*
 
-class Admin {
+class Admin :Initializable {
     fun onUpdateButton(actionEvent: ActionEvent) {
 
     }
@@ -19,4 +23,10 @@ class Admin {
     fun scheduleOnMOuseClick(mouseEvent: MouseEvent) {
 
     }
+
+    override fun initialize(p0: URL?, p1: ResourceBundle?) {
+
+    }
+
+
 }

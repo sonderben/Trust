@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="borderpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.MainController">
+<BorderPane fx:id="borderpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.MainController">
    <center>
       <StackPane fx:id="stackPane" prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <padding>
@@ -147,6 +147,19 @@
                                  </HBox.margin>
                               </ImageView>
                               <Label text="Queries" />
+                           </children>
+                        </HBox>
+                        <HBox fx:id="customer_service" layoutX="10.0" layoutY="400.0" spacing="5.0" styleClass="lateral-button">
+                           <children>
+                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../image/process.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets left="5.0" />
+                                 </HBox.margin>
+                              </ImageView>
+                              <Label text="Customer Service" />
                            </children>
                         </HBox>
                      </children>

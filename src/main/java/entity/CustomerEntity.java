@@ -8,7 +8,8 @@ public class CustomerEntity extends PersonEntity{
     private String code;
     public CustomerEntity(){}
 
-    public CustomerEntity( String code, String firstName, String passport, String lastName, String genre, String direction, String email, String telephone, Calendar birthDay, Long point) {
+    public CustomerEntity( String code, String firstName, String passport, String lastName, String genre, String direction,
+                           String email, String telephone, Calendar birthDay, Long point) {
         super(null, firstName, passport, lastName, genre, direction, email, telephone, birthDay);
         this.point = point;
         this.code = code;

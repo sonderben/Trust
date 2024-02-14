@@ -87,6 +87,7 @@ class MainController : Initializable {
                         "inventory" -> changeView("view/inventory.fxml")
                         "role" -> changeView("view/role.fxml")
                         "queries" -> changeView("view/queries/queries.fxml")
+                        "customer_service"->changeView("view/customerService.fxml")
                     }
                 }
             }
@@ -96,9 +97,10 @@ class MainController : Initializable {
     private fun changeView(relativeUrl: String) {
         val a = SingletonView.get(relativeUrl)
         if (a != null && !stackPane.children.contains(a)) {
+            stackPane.children.clear()
             stackPane.children.add(a)
         }
-        a?.toFront()
+        //a?.toFront()
     }
 
     private fun screensByRole(){

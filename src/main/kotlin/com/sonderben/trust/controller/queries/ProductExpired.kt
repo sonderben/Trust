@@ -1,6 +1,7 @@
 package com.sonderben.trust.controller.queries
 
 import com.sonderben.trust.Util
+import com.sonderben.trust.controller.BaseController
 import com.sonderben.trust.db.dao.ProductDao
 import com.sonderben.trust.format
 import entity.ProductEntity
@@ -12,7 +13,7 @@ import javafx.scene.control.TableView
 import java.net.URL
 import java.util.*
 
-class ProductExpired:Initializable {
+class ProductExpired:Initializable, BaseController() {
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
 
         codeCol.setCellValueFactory { data-> SimpleStringProperty(data.value.code) }
@@ -41,4 +42,7 @@ class ProductExpired:Initializable {
     private lateinit var tableView: TableView<ProductEntity>
     @FXML
     lateinit var expirationCol: TableColumn<ProductEntity, String>
+    override fun onDestroy() {
+
+    }
 }

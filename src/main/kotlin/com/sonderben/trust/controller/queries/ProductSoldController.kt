@@ -1,5 +1,6 @@
 package com.sonderben.trust.controller.queries
 
+import com.sonderben.trust.controller.BaseController
 import com.sonderben.trust.db.dao.InvoiceDao
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ChangeListener
@@ -17,7 +18,7 @@ import javafx.scene.layout.AnchorPane
 import java.net.URL
 import java.util.*
 
-class ProductSoldController:Initializable {
+class ProductSoldController:Initializable, BaseController() {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         println(InvoiceDao.productSealed())
 
@@ -101,4 +102,7 @@ class ProductSoldController:Initializable {
 
     @FXML
     private lateinit var tableView: TableView<InvoiceDao.ProductSealed>
+    override fun onDestroy() {
+
+    }
 }

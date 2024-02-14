@@ -13,7 +13,7 @@ class RDButton( var name:ScreenEnum,var isChecked:Boolean = false):Pane(),EventH
     private var radius = 8.0
     private var outerCircle: Circle = Circle(radius)
     private var innerCircle: Circle
-    private val label = Label(name.name.toLowerCase().replaceFirstChar { it.uppercase() })
+    private val label = Label(name.name.toLowerCase().replace("_"," ").replaceFirstChar { it.uppercase() })
     init {
         label.style = "-fx-text-fill: white;"
 

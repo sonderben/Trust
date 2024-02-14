@@ -39,13 +39,26 @@ import java.util.*
 import kotlin.random.Random
 import kotlin.random.nextLong
 
-class Sale :Initializable,MessageListener{
-    private var socketMesageEvent = SocketMessageEvent(this)
+class Sale :Initializable,MessageListener,BaseController(){
+    //private var socketMesageEvent = SocketMessageEvent(this)
     private var mCurrentCustomer:CustomerEntity? = null
 
+    override fun onDestroy(){
+
+       /* if (socketMesageEvent.isListening()){
+            socketMesageEvent.removeListener()
+            println("clear Sale")
+        }*/
+        println("clear saleController")
+
+
+    }
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         //socketMesageEvent.startingListening()
+
+
+        println("init salecontrolador")
 
 
         qtyTotal.prefWidthProperty().bind( qtyCol.widthProperty() )

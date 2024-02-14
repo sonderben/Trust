@@ -1,21 +1,30 @@
 import com.sonderben.trust.HelloApplication;
+import com.sonderben.trust.controller.BaseController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 
 import java.io.IOException;
+import java.util.List;
 
 public class SingletonView {
 
-    private static Node employee, configuration, sale, user, product,
+    /*private static Node node,employee, configuration, sale, user, product,
             invoice, businessInfo, inventory, role, queries, productSold,
             productRemaining, bestEmployee, bestSellingProduct, frequentCustomer,
-            productExpired, returned,spendingCustomer,admin;
+            productExpired, returned,spendingCustomer,admin;*/
+    private final static List<String> pathList =List.of("view/sale.fxml","view/user.fxml","view/product.fxml","view/employee.fxml",
+            "view/config/admin.fxml","view/configuration.fxml","view/config/businessInfo.fxml","view/config/invoice.fxml",
+            "view/inventory.fxml","view/role.fxml", "view/queries/queries.fxml","view/queries/productSold.fxml",
+            "view/queries/bestEmployee.fxml","view/queries/bestSellingProduct.fxml","view/queries/frequentCustomers.fxml",
+            "view/queries/productExpired.fxml","view/queries/productRemaining.fxml","view/queries/productReturned.fxml",
+            "view/queries/spendingCustomers.fxml","view/customerService.fxml");
+    static BaseController controller = null;
 
 
     private SingletonView(){
 
     }
-    public static Node get(String path) throws IOException {
+    /*public static Node get(String path) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path));
         switch (path) {
             case "view/sale.fxml" -> {
@@ -142,6 +151,28 @@ public class SingletonView {
                 return null;
             }
         }
+    }*/
+    public static Node get(String path) throws IOException {
+        System.out.println(path);
+        if (pathList.contains(path)){
+            if (controller!=null){
+                controller.onDestroy();
+                controller = null;
+            }
+
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path));
+            Node node= fxmlLoader.load();
+            if (fxmlLoader.getController() instanceof BaseController){
+                controller = fxmlLoader.getController();
+            }
+
+            return node;
+        }
+
+
+        System.err.println("Error: Unknown view path");
+        return null;
+
     }
 
 }

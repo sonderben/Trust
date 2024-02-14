@@ -1,7 +1,6 @@
 package com.sonderben.trust.controller
 
 import com.sonderben.trust.HelloApplication
-import com.sonderben.trust.Util
 import com.sonderben.trust.db.dao.EmployeeDao
 import com.sonderben.trust.db.dao.RoleDao
 import com.sonderben.trust.format
@@ -10,8 +9,6 @@ import com.sonderben.trust.model.Role
 import entity.EmployeeEntity
 import entity.ScheduleEntity
 import javafx.beans.property.SimpleStringProperty
-import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
@@ -20,7 +17,6 @@ import javafx.fxml.Initializable
 import javafx.scene.control.*
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.VBox
-import javafx.stage.Modality
 import javafx.util.Callback
 import javafx.util.StringConverter
 import java.net.URL
@@ -29,7 +25,7 @@ import java.time.ZoneId
 import java.util.*
 
 
-class EmployeeController: Initializable {
+class EmployeeController:Initializable, BaseController() {
     var days = arrayListOf<String>("Lunes","Martes","Miercroles","Jueves","Viernes","Sabado","Domingo")
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
@@ -316,6 +312,10 @@ class EmployeeController: Initializable {
         @FXML
         fun onUpdate(event: ActionEvent?) {
         }
+
+    }
+
+    override fun onDestroy() {
 
     }
 }

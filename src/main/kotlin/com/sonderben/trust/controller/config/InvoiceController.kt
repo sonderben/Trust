@@ -1,6 +1,7 @@
 package com.sonderben.trust.controller.config
 
 //import com.gluonhq.richtextarea.RichTextArea
+import com.sonderben.trust.controller.BaseController
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
@@ -87,6 +88,8 @@ class InvoiceController:Initializable {
         }
 
     }
+
+
 
 
 }

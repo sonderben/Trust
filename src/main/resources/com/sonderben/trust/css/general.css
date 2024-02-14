@@ -72,15 +72,38 @@
     -fx-border-radius: 5;
     -fx-text-fill: white;
 }
-/*
-.combo-box-base, date-picker{
+.tab-header-background{
+    -fx-background-color:linear-gradient(from 25% 25% to 100% 100%, #032d3b,#3498db);
+}
+
+.tab{
+    -fx-background-color: rgba(255, 255, 255, 0.11);
+}
+.tab:selected{
+    -fx-background-color:transparent;
+}
+.tab-label{
+    -fx-text-fill:white;
+}
+
+
+.table-view{
+-fx-border-color:rgba(255, 255, 255, 0.11);
 -fx-background-color:transparent;
--fxbackground-radius:10;
-    -fx-border-color: #769cb6;
-    -fx-border-width: 1;
-    -fx-pref-height: 40;
-    -fx-prompt-text-fill: gray;
-    -fx-background-color: transparent;
-    -fx-border-radius: 5;
-    -fx-text-fill: white;
+}
+
+.table-view .column-header-background{
+ -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #032d3b,#3498db);
+}
+
+.table-view .column-header,.table-column{
+   -fx-background-color: rgba(255, 255, 255, 0.11);
+}
+
+/*.table-row-cell{
+    -fx-background-color:black;
 }*/
+.table-view .column-header .label{
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}

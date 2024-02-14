@@ -24,7 +24,7 @@ import javafx.scene.layout.VBox
 import java.net.URL
 import java.util.*
 
-class RoleController : Initializable,EventHandler<MouseEvent>{
+class RoleController :Initializable, BaseController(),EventHandler<MouseEvent>{
     private var roleSelectedOrToSave:Role? = null
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
@@ -57,7 +57,7 @@ class RoleController : Initializable,EventHandler<MouseEvent>{
             }
         //}
         nameCol.setCellValueFactory { data -> SimpleStringProperty(data.value.name) }
-        screensCol.setCellValueFactory { data->SimpleStringProperty(data.value.screens.joinToString(","){it.screen.name.toLowerCase().replaceFirstChar { it.uppercase() }}) }
+        screensCol.setCellValueFactory { data->SimpleStringProperty(data.value.screens.joinToString(","){it.screen.name.toLowerCase().replace("_"," ").replaceFirstChar { it.uppercase() }}) }
 
         tableView.items = RoleDao.roles
 
@@ -184,5 +184,9 @@ class RoleController : Initializable,EventHandler<MouseEvent>{
     @FXML
     fun hideBottomPanelOnMouseClicked(){
         bottomPanelVBOx.hide()
+    }
+
+    override fun onDestroy() {
+
     }
 }
