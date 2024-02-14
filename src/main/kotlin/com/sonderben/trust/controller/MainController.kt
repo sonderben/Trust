@@ -4,9 +4,11 @@ import SingletonView
 import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
 import javafx.fxml.FXML
+import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.geometry.Rectangle2D
 import javafx.scene.Node
+import javafx.scene.Scene
 import javafx.scene.control.MenuBar
 import javafx.scene.image.ImageView
 import javafx.scene.input.MouseEvent
@@ -61,6 +63,8 @@ class MainController : Initializable {
     private lateinit var nextPage:ImageView
     @FXML
     private lateinit var forwardPage: ImageView
+
+
 
     companion object {
 
@@ -147,6 +151,12 @@ class MainController : Initializable {
             borderpane.left.managedProperty().set(true)
         }
 
+    }
+
+    fun disconnectOnMouseClicked(mouseEvent: MouseEvent) {
+        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
+        val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
+        HelloApplication.primary.scene = scene
     }
 
 }

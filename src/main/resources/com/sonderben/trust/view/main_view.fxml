@@ -10,11 +10,12 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="borderpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.MainController">
+<BorderPane fx:id="borderpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.MainController">
    <center>
       <StackPane fx:id="stackPane" prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <padding>
@@ -48,26 +49,6 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                         </HBox>
-                        <HBox fx:id="inventory" alignment="CENTER_LEFT" spacing="5.0" styleClass="lateral-button">
-                           <children>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../image/track.png" />
-                                 </image>
-                                 <HBox.margin>
-                                    <Insets left="5.0" />
-                                 </HBox.margin>
-                              </ImageView>
-                              <Label text="Inventory">
-                                 <font>
-                                    <Font name="Didot" size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                           <VBox.margin>
-                              <Insets bottom="5.0" />
-                           </VBox.margin>
-                        </HBox>
                         <HBox fx:id="product" alignment="CENTER_LEFT" spacing="5.0" styleClass="lateral-button">
                            <children>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -92,7 +73,7 @@
                            <children>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../image/group.png" />
+                                    <Image url="@../image/employee.png" />
                                  </image>
                                  <HBox.margin>
                                     <Insets left="5.0" />
@@ -153,7 +134,7 @@
                            <children>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../image/process.png" />
+                                    <Image url="@../image/Customer_service.png" />
                                  </image>
                                  <HBox.margin>
                                     <Insets left="5.0" />
@@ -196,7 +177,7 @@
                   <Insets />
                </opaqueInsets>
                <VBox.margin>
-                  <Insets left="10.0" />
+                  <Insets left="10.0" right="10.0" />
                </VBox.margin>
                <children>
                   <ImageView fx:id="forwardPage" fitHeight="17.0" fitWidth="17.0" opacity="0.26" pickOnBounds="true" preserveRatio="true">
@@ -221,6 +202,12 @@
                      <HBox.margin>
                         <Insets left="9.0" />
                      </HBox.margin>
+                  </ImageView>
+                  <Pane maxWidth="1.7976931348623157E308" prefHeight="0.1" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <ImageView fitHeight="17.0" fitWidth="17.0" layoutX="100.0" layoutY="15.0" onMouseClicked="#disconnectOnMouseClicked" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/logout.PNG" />
+                     </image>
                   </ImageView>
                </children>
                <padding>
