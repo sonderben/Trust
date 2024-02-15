@@ -2,15 +2,22 @@ package com.sonderben.trust.db.dao
 
 import com.sonderben.trust.Util
 import com.sonderben.trust.db.SqlCreateTables
+import com.sonderben.trust.model.Role
+import entity.EmployeeEntity
 import entity.EnterpriseEntity
 import javafx.collections.FXCollections
 import java.sql.Timestamp
 
 object EnterpriseDao:CrudDao<EnterpriseEntity> {
     val enterprises = FXCollections.observableArrayList<EnterpriseEntity>()
+
+
+    init {
+        findAll()
+    }
     override fun save(entity: EnterpriseEntity): Boolean {
         val employee = entity.employee
-        if (employee.role == null || entity.employee.id == null){
+        if (employee.role == null || entity.employee.role.id == null){
             throw Exception("Role or Role.id can not be null")
         }
         val insertEmployee = buildString {
@@ -31,7 +38,7 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
         val insertEnterprise = buildString {
             append("Insert into ${SqlCreateTables.enterprise} ")//passport
             append("(name,direction,telephone,foundation,website,category,invoiceTemplate,invoiceTemplateHtml,id_employee) ")
-            append("values (?,?,?,?,?,?,?,?,?,) ")
+            append("values (?,?,?,?,?,?,?,?,?) ")
         }
         var lastIdEmployeeAdded = 0L
         Database.connect().use { connection ->
@@ -78,15 +85,15 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
                     throw Exception("cannot add employee")
 
                 connection.prepareStatement(insertEnterprise).use { ps2->
-                    ps2.setString(1,"name")
-                    ps2.setString(2,"direction")
-                    ps2.setString(3,"telephone")
-                    ps2.setString(4,"foundation")
-                    ps2.setString(5,"website")
-                    ps2.setString(6,"category")
-                    ps2.setString(7,"invoiceTemplate")
-                    ps2.setString(8,"invoiceTemplateHtml")
-                    ps2.setString(9,"id_employee")
+                    ps2.setString(1,entity.name)
+                    ps2.setString(2,entity.direction)
+                    ps2.setString(3,entity.telephone)
+                    ps2.setTimestamp(4,Timestamp(entity.foundation.time.time))
+                    ps2.setString(5,entity.website)
+                    ps2.setString(6,"PHARMACY")
+                    ps2.setString(7,entity.invoiceTemplate)
+                    ps2.setString(8,entity.invoiceTemplateHtml)
+                    ps2.setLong(9,lastIdEmployeeAdded)
                     if (ps2.executeUpdate()>0){
                         connection.commit()
                         connection.autoCommit = true
@@ -117,25 +124,66 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
     }
 
     override fun findAll(): Boolean {
+        val selectAll = """
+            SELECT enterprise.name as ne,enterprise.direction as ed,enterprise.telephone as et,enterprise.foundation as ef ,enterprise.website as ew,
+            enterprise.category as ec ,enterprise.invoiceTemplate as ei,enterprise.invoiceTemplateHtml as ein,
+            Employee.birthDay as empb,Employee.bankAccount as empbank,Employee.direction as empd,Employee.email as empe,Employee.firstName as empf,Employee.lastName as empl,
+            Employee.genre as empg,Employee.passport as empp,Employee.password as emppwd,Employee.telephone as emptel,Employee.userName as empu,
+            Roles.name as rm,Roles.id as ri
+            from enterprise
+            INNER JOIN Employee on enterprise.id_employee == Employee.id
+            INNER join Roles on Roles.id = Employee.id_role
+        """.trimIndent()
         Database.connect().use { connection ->
             connection.createStatement().use { statement ->
-               val result = statement.executeQuery("SELECT * from ${SqlCreateTables.enterprise}")
+               val result = statement.executeQuery(selectAll)
 
-                while (result.next()){
-                    enterprises.add(
-                        EnterpriseEntity(
-                            result.getString("name"),
-                            result.getString("direction"),
-                            result.getString("telephone"),
-                            Util.timeStampToCalendar( result.getTimestamp("foundation") ),
-                            result.getString("website"),
-                            result.getString("category"),
-                            EmployeeDao.findById(result.getLong("id_employee")),
-                            result.getString("invoiceTemplate"),
-                            result.getString("invoiceTemplateHtml"),
-                        )
-                    )
-                }
+
+                 Database.connect().use { connection->
+                     connection.createStatement().use { statement ->
+
+                         statement.executeQuery(selectAll).use { resultSet ->
+
+                             val role = Role()
+                             role.id = resultSet.getLong("ri")
+                             role.name = resultSet.getString("rm")
+
+                             val emp = EmployeeEntity(
+                                 resultSet.getString("empf"),
+                                 resultSet.getString("empp"),
+                                 resultSet.getString("empl"),
+                                 resultSet.getString("empg"),
+                                 resultSet.getString("empd"),
+                                 resultSet.getString("empe"),
+                                 resultSet.getString("emptel"),
+                                Util.timeStampToCalendar( resultSet.getTimestamp("empb")),
+                                 resultSet.getString("empbank"),
+                                 resultSet.getString("empu"),
+                                 resultSet.getString("emppwd"),
+                                 role,
+                                 listOf()
+                             )
+
+
+                             enterprises.add(
+                                 EnterpriseEntity(
+                                     result.getString("ne"),
+                                     result.getString("ed"),
+                                     result.getString("et"),
+                                     Util.timeStampToCalendar( result.getTimestamp("ef") ),
+                                     result.getString("ew"),
+                                     result.getString("ec"),
+                                     emp,
+                                     result.getString("ei"),
+                                     result.getString("ein"),
+                                 )
+                             )
+
+                         }
+
+                     }
+                 }
+
             }
         }
         return true

@@ -15,6 +15,10 @@ public class EnterpriseEntity extends BaseEntity{
         private String invoiceTemplate;
         private String invoiceTemplateHtml;
 
+        public String getCategoryString(){
+            return category.name();
+        }
+
     public String getName() {
         return name;
     }

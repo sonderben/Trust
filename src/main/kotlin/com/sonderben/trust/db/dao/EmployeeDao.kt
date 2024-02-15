@@ -112,7 +112,45 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
     }
 
     override fun findById(iEntity: Long): EmployeeEntity? {
-        return null
+        val selectAll = "SELECT * FROM ${SqlCreateTables.employees} where id = ?"
+
+        Database.connect().use {connection ->
+            connection.prepareStatement(selectAll).use {statement ->
+                statement.setLong(1,iEntity)
+
+                statement.executeQuery(selectAll).use {resultSet ->
+
+                        val id = resultSet.getLong("id")
+                        val employee = EmployeeEntity()
+
+                        employee.apply {
+                            this.id = id
+                            firstName = resultSet.getString("firstName")
+                            passport = resultSet.getString("passport")
+                            lastName = resultSet.getString("lastName")
+                            genre = resultSet.getString("genre")
+                            direction = resultSet.getString("direction")
+                            email = resultSet.getString("email")
+                            telephone = resultSet.getString("telephone")
+                            birthDay = Util.timeStampToCalendar( resultSet.getTimestamp("birthDay") )
+                            bankAccount = resultSet.getString("bankAccount")
+                            this.userName = resultSet.getString("userName")
+                            this.password = resultSet.getString("password")
+
+                            role = Database.findRolesByIdEmployee( resultSet.getLong("id_role") )
+                            schedules =  Database.findScheduleByIdEmployee( id )
+                        }
+
+                        if (employee.id == null) return null else employee
+
+
+                }
+
+
+            }
+
+        }
+       return null
     }
 
     override fun findAll(): Boolean {
@@ -124,9 +162,7 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
                     while (resultSet.next()){
                         val id = resultSet.getLong("id")
                         val employee = EmployeeEntity()
-                        //String code,String firstName, String passport, String lastName, String genre, String direction,
-                        // String email, String telephone, Calendar birthDay, String bankAccount, String userName,
-                        // String password, Role role, List<ScheduleEntity> schedule)
+
                         employee.apply {
                             this.id = id
                             firstName = resultSet.getString("firstName")
@@ -201,3 +237,15 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
         return false
     }
 }
+
+/*
+SELECT * from Employee
+
+SELECT enterprise.name,enterprise.direction,enterprise.telephone,enterprise.foundation,enterprise.website,
+enterprise.category,enterprise.invoiceTemplate,enterprise.invoiceTemplateHtml
+Employee.birthDay,Employee.bankAccount,Employee.direction,Employee.email,Employee.firstName,Employee.lastName,
+Employee.genre,Employee.passport,Employee.password,Employee.telephone,Employee.userName
+from enterprise
+INNER JOIN Employee on enterprise.id_employee == Employee.id
+INNER join Roles on Roles.id = Employee.ro
+ */

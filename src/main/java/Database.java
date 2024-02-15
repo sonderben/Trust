@@ -86,13 +86,13 @@ public class Database {
         );
         Role role = new Role();
         role.setId(1L);
-        EmployeeDao.INSTANCE.save(
-                new EmployeeEntity("Admin","12345","Admin","Male","Admin","admin@gmail.com","11111", Calendar.getInstance(),"1","root","1234",
-                        role,List.of( new ScheduleEntity(null,1,11.30f,1f) ))
-        );
 
-        EnterpriseDao.INSTANCE.save(new EnterpriseEntity("Acra motors","lascirie #1","509 340 5643",Calendar.getInstance(),"www.baw.com","PHARMACY",EmployeeDao.INSTANCE.findById(1L),"1","1" ));
+       /* EmployeeEntity emp =        new EmployeeEntity("Admin","12345","Admin","Male","Admin","admin@gmail.com","11111", Calendar.getInstance(),"1","root","1234",
+                        role,List.of( new ScheduleEntity(null,1,11.30f,1f) ));
 
+
+        EnterpriseDao.INSTANCE.save(new EnterpriseEntity("Acra motors","lascirie #1","509 340 5643",Calendar.getInstance(),"www.baw.com","PHARMACY",emp,"1","1" ));
+*/
         RoleDao.INSTANCE.save(
                 new Role("Saler",List.of(
                         new Screen(ScreenEnum.SALE,List.of(

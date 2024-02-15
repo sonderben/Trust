@@ -22,8 +22,8 @@ object SqlCreateTables {
         create table if not exists ${categories} (
         discount float default 0 check(discount >=0 and discount<100),
         id integer primary key autoincrement,
-        code nvarchar(255),
-        description nvarchar(255) unique
+        code nvarchar(50),
+        description nvarchar(50) unique
     );
     """
     private const val createScreenTable = """
