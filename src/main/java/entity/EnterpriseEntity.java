@@ -1,5 +1,7 @@
 package entity;
 
+import com.sonderben.trust.CategoryEnum;
+
 import java.util.Calendar;
 
 public class EnterpriseEntity extends BaseEntity{
@@ -10,7 +12,7 @@ public class EnterpriseEntity extends BaseEntity{
         private String telephone;
         private Calendar foundation;
         private String website;
-        private Category category;
+        private CategoryEnum category;
         EmployeeEntity employee;
         private String invoiceTemplate;
         private String invoiceTemplateHtml;
@@ -64,11 +66,11 @@ public class EnterpriseEntity extends BaseEntity{
         this.website = website;
     }
 
-    public Category getCategory() {
+    public CategoryEnum getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(CategoryEnum category) {
         this.category = category;
     }
 
@@ -89,6 +91,7 @@ public class EnterpriseEntity extends BaseEntity{
     }
 
     public String getInvoiceTemplateHtml() {
+
         return invoiceTemplateHtml;
     }
 
@@ -102,16 +105,13 @@ public class EnterpriseEntity extends BaseEntity{
         this.telephone = telephone;
         this.foundation = foundation;
         this.website = website;
-        this.category = Category.valueOf(category);
+        this.category = CategoryEnum.valueOf(category);
+
         this.employee = employee;
         this.invoiceTemplate = invoiceTemplate;
         this.invoiceTemplateHtml = invoiceTemplateHtml;
     }
 
-    enum Category{
-             SUPERMARKET,
-             HARDWARE_STORE,
-             PHARMACY
-        }
+
 
 }

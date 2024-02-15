@@ -16,6 +16,7 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
         findAll()
     }
     override fun save(entity: EnterpriseEntity): Boolean {
+        Database.connect().autoCommit = false
         val employee = entity.employee
         if (employee.role == null || entity.employee.role.id == null){
             throw Exception("Role or Role.id can not be null")
@@ -72,17 +73,22 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
                             ps.setLong(4,lastIdEmployeeAdded)
                             val rowCount2 = ps.executeUpdate()
                             if (rowCount2<0){
+                                connection.rollback()
+                                connection.autoCommit = true
                                 throw Exception(" unable to add  table: (${SqlCreateTables.schedules})")
                             }else{
                                 schedule.id = Database.getLastId()
                             }
                         }
                     }
+                }else{
+                    connection.rollback()
+                    connection.autoCommit = true
+                    throw Exception("cannot add employee")
                 }
 
 
-                if( rowCount<=0)
-                    throw Exception("cannot add employee")
+
 
                 connection.prepareStatement(insertEnterprise).use { ps2->
                     ps2.setString(1,entity.name)
@@ -98,19 +104,16 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
                         connection.commit()
                         connection.autoCommit = true
                         return true
-                    }else
-                        return false
+                    }else{
+                        connection.rollback()
+                        connection.autoCommit = false
+                        throw Exception("cannot add enterprise")
+                    }
                 }
-
-
-
 
 
             }
         }
-
-
-
 
 
     }
@@ -144,41 +147,41 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
 
                          statement.executeQuery(selectAll).use { resultSet ->
 
-                             val role = Role()
-                             role.id = resultSet.getLong("ri")
-                             role.name = resultSet.getString("rm")
+                             if (resultSet.next()){
+                                 val role = Role()
+                                 role.id = resultSet.getLong("ri")
+                                 role.name = resultSet.getString("rm")
 
-                             val emp = EmployeeEntity(
-                                 resultSet.getString("empf"),
-                                 resultSet.getString("empp"),
-                                 resultSet.getString("empl"),
-                                 resultSet.getString("empg"),
-                                 resultSet.getString("empd"),
-                                 resultSet.getString("empe"),
-                                 resultSet.getString("emptel"),
-                                Util.timeStampToCalendar( resultSet.getTimestamp("empb")),
-                                 resultSet.getString("empbank"),
-                                 resultSet.getString("empu"),
-                                 resultSet.getString("emppwd"),
-                                 role,
-                                 listOf()
-                             )
-
-
-                             enterprises.add(
-                                 EnterpriseEntity(
-                                     result.getString("ne"),
-                                     result.getString("ed"),
-                                     result.getString("et"),
-                                     Util.timeStampToCalendar( result.getTimestamp("ef") ),
-                                     result.getString("ew"),
-                                     result.getString("ec"),
-                                     emp,
-                                     result.getString("ei"),
-                                     result.getString("ein"),
+                                 val emp = EmployeeEntity(
+                                     resultSet.getString("empf"),
+                                     resultSet.getString("empp"),
+                                     resultSet.getString("empl"),
+                                     resultSet.getString("empg"),
+                                     resultSet.getString("empd"),
+                                     resultSet.getString("empe"),
+                                     resultSet.getString("emptel"),
+                                     Util.timeStampToCalendar( resultSet.getTimestamp("empb")),
+                                     resultSet.getString("empbank"),
+                                     resultSet.getString("empu"),
+                                     resultSet.getString("emppwd"),
+                                     role,
+                                     listOf()
                                  )
-                             )
-
+                                 enterprises.add(
+                                     EnterpriseEntity(
+                                         result.getString("ne"),
+                                         result.getString("ed"),
+                                         result.getString("et"),
+                                         Util.timeStampToCalendar( result.getTimestamp("ef") ),
+                                         result.getString("ew"),
+                                         result.getString("ec"),
+                                         emp,
+                                         result.getString("ei"),
+                                         result.getString("ein"),
+                                     )
+                                 )
+                                 //println("enterprise: "+enterprises)
+                             }
                          }
 
                      }

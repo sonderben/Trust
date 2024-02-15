@@ -18,8 +18,9 @@ class HelloApplication : Application() {
 
     override fun start(stage: Stage) {
         Database.createTable()
-        try {
-            /*val role = Role()
+        /*try {
+            Database.prepopulate()
+            val role = Role()
             role.id = 1L
             val emp = EmployeeEntity(
                 "Admin",
@@ -50,14 +51,14 @@ class HelloApplication : Application() {
                     "1",
                     "1"
                 )
-            )*/
+            )
 
-             Database.prepopulate()
+
 
         }catch (e:Exception){
            // throw e
-           // println(e.message)
-        }
+            println(e.message)
+        }*/
         primary = stage
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
         val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
