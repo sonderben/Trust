@@ -204,6 +204,8 @@ class Sale :Initializable,MessageListener,BaseController(){
 
     @FXML lateinit var customerCode:TextField
 
+    @FXML lateinit var descriptionProductTf:TextField
+
 
 
     @FXML
@@ -243,9 +245,11 @@ class Sale :Initializable,MessageListener,BaseController(){
                    InvoiceEntity(mProducts.map { ProductSaled(it,false) },Context.currentEmployee.value,mCurrentCustomer,codeBar.toString(), Calendar.getInstance())
                )
                if (isPayed){
-                   mCurrentCustomer?.let { CustomerDao.updatePoint(it.id,
-                       (changeTextField.text.toDouble()/100.0).toLong()
-                   ) }
+                   mCurrentCustomer?.let {
+                       val point = (grandTotal.text.toDouble()/100.0).toLong()
+                      val success =  CustomerDao.updatePoint(it.id, point)
+                       println("update point: ${point} "+success)
+                   }
 
                    ViewUtil.createAlert(Alert.AlertType.CONFIRMATION,"Payment","Pay with success").showAndWait()
                    clearAll()
@@ -336,9 +340,37 @@ class Sale :Initializable,MessageListener,BaseController(){
         })
     }
 
-    private fun findProductBy(code:String){
+    /*private fun findProductBy(code:String){
         val tempCode = code.padStart(12,'0')
         val productFind = mProducts.find { it.code == tempCode }
+        if (qtyTextField.text.isBlank()){
+            qtyTextField.text = "1"
+        }
+        if (productFind!=null){
+            val index = mProducts.indexOf( productFind )
+            productFind.quantity += qtyTextField.text.toInt()
+            mProducts[index] = productFind
+            clearTextS()
+            beep()
+        }else{
+            val product = ProductDao.findProductByCode( codeProductTextField.text )
+            if (product !=null){
+                product.quantity = qtyTextField.text.toInt()
+                mProducts.add( product )
+                clearTextS()
+                beep()
+            }else{
+                ViewUtil.createAlert(
+                    Alert.AlertType.WARNING,
+                    "Product not found",
+                    "code prod. : $tempCode"
+                ).showAndWait()
+            }
+        }
+    }*/
+    private fun findProductBy(code:String){
+        val tempCode = code.padStart(12,'0')
+        val productFind:ProductEntity? = mProducts.find { it.code == tempCode }
         if (qtyTextField.text.isBlank()){
             qtyTextField.text = "1"
         }
