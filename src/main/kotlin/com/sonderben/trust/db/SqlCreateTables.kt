@@ -180,7 +180,21 @@ object SqlCreateTables {
         createCustomerTable, createScreenTable, createRolesTable, createEmployeeTable, /*createRoleEmployee,*/
         createScheduleTable, createProductsTable, createInvoiceTable, createInvoiceProductTable,createProductSealed/*,
         getFullName*/,createEnterPrice)
+
+
     var deleteCategoryTable = """
         drop table if exists ${categories};
     """.trimIndent()
+
+
+
+     val trustEnterpriseInfo = "trustEnterpriseInfo"
+    val createTrustEnterpriseInfo = """
+        CREATE TABLE IF NOT EXISTS $trustEnterpriseInfo(
+        id integer primary key autoincrement,
+        path varchar not null,
+        name nvarchar not null
+        )
+    """.trimIndent()
+    val trustTables = listOf(createTrustEnterpriseInfo)
 }

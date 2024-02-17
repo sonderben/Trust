@@ -1,10 +1,8 @@
 package com.sonderben.trust.controller
 
-import com.sonderben.trust.HelloApplication
+import com.sonderben.trust.*
 import com.sonderben.trust.db.dao.EmployeeDao
 import com.sonderben.trust.db.dao.RoleDao
-import com.sonderben.trust.format
-import com.sonderben.trust.hide
 import com.sonderben.trust.model.Role
 import entity.EmployeeEntity
 import entity.ScheduleEntity
@@ -70,9 +68,10 @@ class EmployeeController:Initializable, BaseController() {
                 passwordField.text = "********"
                 telephoneTextField.text = newValue.telephone
                 passportTextField.text = newValue.passport
-                val cal = newValue.birthDay
-                birthdayDatePicker.value =
-                    LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH))
+
+                birthdayDatePicker.value = newValue.birthDay.toLocalDate()
+
+
                 scheduleTextField.text = newValue.schedules.joinToString(separator = ", ") { scheduleEntity ->
                     days[scheduleEntity.workDay].substring(
                         0,
@@ -194,7 +193,7 @@ class EmployeeController:Initializable, BaseController() {
              direction = directionField.text
              email = emailTextField.text
              telephone = telephoneTextField.text
-             birthDay = GregorianCalendar.from(birthdayDatePicker.value.atStartOfDay(ZoneId.systemDefault()))
+             birthDay = birthdayDatePicker.value.toCalendar()
              bankAccount = accountNumberTextField.text
              userName = userNameTextField.text
              password = passwordField.text

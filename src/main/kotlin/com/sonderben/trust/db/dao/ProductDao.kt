@@ -1,5 +1,6 @@
 package com.sonderben.trust.db.dao
 
+import Database.DATABASE_NAME
 import com.sonderben.trust.Util
 import com.sonderben.trust.db.SqlCreateTables
 import entity.CategoryEntity
@@ -22,7 +23,7 @@ object ProductDao:CrudDao<ProductEntity> {
             (discount, itbis, purchasePrice, quantity, sellingPrice,id_category, dateAdded, id_employee, expirationDate, code, description,quantityRemaining ) 
             values(?,?,?,?,?,?,?,?,?,?,?,?)
         """.trimIndent()
-        Database.connect().use { connection ->
+        Database.connect(DATABASE_NAME).use { connection ->
             connection.prepareStatement(insertProduct).use {preparedStatement ->
                 preparedStatement.setDouble(1,entity.discount)
                 preparedStatement.setDouble(2,entity.itbis)
@@ -76,7 +77,7 @@ object ProductDao:CrudDao<ProductEntity> {
             INNER JOIN Categories on 
             products.id_category = Categories.id
         """.trimIndent()
-        Database.connect().use { connection ->
+        Database.connect(DATABASE_NAME).use { connection ->
             connection.createStatement().use { statement ->
                 statement.executeQuery(selectAll).use { resultSet ->
                     while (resultSet.next()){
@@ -134,7 +135,7 @@ object ProductDao:CrudDao<ProductEntity> {
         """.trimIndent()
 
 
-        Database.connect().use { connection ->
+        Database.connect(DATABASE_NAME).use { connection ->
             connection.prepareStatement(selectByCode).use { preparedStatement ->
                 preparedStatement.setString(1,code.padStart(12,'0'))
                 val resultSet = preparedStatement.executeQuery()
@@ -189,7 +190,7 @@ object ProductDao:CrudDao<ProductEntity> {
             products.id_category = Categories.id
             WHERE products.quantityRemaining > 0 and Date(expirationDate/1000,'unixepoch') <= date('now')
         """.trimIndent()
-        Database.connect().use { connection ->
+        Database.connect(DATABASE_NAME).use { connection ->
             connection.createStatement().use { statement ->
                 statement.executeQuery(selectAll).use { resultSet ->
                     while (resultSet.next()){

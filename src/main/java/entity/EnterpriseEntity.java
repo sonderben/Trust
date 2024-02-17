@@ -1,8 +1,13 @@
 package entity;
 
 import com.sonderben.trust.CategoryEnum;
+import com.sonderben.trust.constant.Action;
+import com.sonderben.trust.constant.ScreenEnum;
+import com.sonderben.trust.model.Role;
+import com.sonderben.trust.model.Screen;
 
 import java.util.Calendar;
+import java.util.List;
 
 public class EnterpriseEntity extends BaseEntity{
 
@@ -111,7 +116,43 @@ public class EnterpriseEntity extends BaseEntity{
         this.invoiceTemplate = invoiceTemplate;
         this.invoiceTemplateHtml = invoiceTemplateHtml;
     }
+    public EnterpriseEntity() {
+        this.name = "";
+        this.direction = "";
+        this.telephone = "";
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR,2018);
+        this.foundation = calendar;
+        this.website = "";
+        this.category = null;
 
+        this.employee = createEmployee();
+        this.invoiceTemplate = "";
+        this.invoiceTemplateHtml = "";
+    }
+
+    private EmployeeEntity createEmployee(){
+        Role role =new Role(
+                "Admin",List.of(
+                new Screen( ScreenEnum.LOGIN,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                //new Screen( ScreenEnum.INVENTORY,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                new Screen( ScreenEnum.ROLE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                new Screen( ScreenEnum.USER,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                new Screen( ScreenEnum.SALE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                new Screen( ScreenEnum.PRODUCT,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                new Screen( ScreenEnum.EMPLOYEE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                new Screen( ScreenEnum.CONFIGURATION,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                new Screen( ScreenEnum.QUERIES,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
+                new Screen( ScreenEnum.CUSTOMER_SERVICE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) )
+
+        ));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR,2006);
+
+            return   new EmployeeEntity("","","",null,"","","", calendar,"","root","",
+                role, List.of( new ScheduleEntity(null,1,11.30f,1f) ));
+    }
 
 
 }

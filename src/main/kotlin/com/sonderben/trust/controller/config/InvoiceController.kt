@@ -2,6 +2,7 @@ package com.sonderben.trust.controller.config
 
 //import com.gluonhq.richtextarea.RichTextArea
 import com.sonderben.trust.controller.BaseController
+import entity.EnterpriseEntity
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
@@ -24,6 +25,7 @@ import java.nio.file.Paths
 import java.util.*
 
 class InvoiceController:Initializable {
+     var enterprise: EnterpriseEntity?=null
     /*@FXML
     private lateinit var textArea: TextArea*/
 

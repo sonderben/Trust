@@ -1,6 +1,7 @@
 package com.sonderben.trust.db.dao
 
 import Database
+import Database.DATABASE_NAME
 import com.sonderben.trust.db.SqlCreateTables
 import com.sonderben.trust.model.Role
 import javafx.collections.FXCollections
@@ -27,7 +28,7 @@ object RoleDao:CrudDao<Role> {
 
     override fun save(entity:Role):Boolean{
         var tempRole = entity
-        Database.connect().use { connection ->
+        Database.connect(DATABASE_NAME).use { connection ->
             var roleId:Long
 
             connection.autoCommit = false
@@ -76,7 +77,7 @@ object RoleDao:CrudDao<Role> {
 
     override fun delete(idEntity: Long): Boolean {
 
-        Database.connect().use { connection ->
+        Database.connect(DATABASE_NAME).use { connection ->
             connection.prepareStatement("delete from ${SqlCreateTables.roles} where id = ?").use { preparedStatement ->
                 preparedStatement.setLong(1,idEntity)
                 val rowCount = preparedStatement.executeUpdate()
@@ -97,7 +98,7 @@ object RoleDao:CrudDao<Role> {
     override fun findAll():Boolean {
 
         val tempRoleList = mutableListOf<Role>()
-        Database.connect().use { connection ->
+        Database.connect(DATABASE_NAME).use { connection ->
             connection.autoCommit = true
             connection.createStatement().use { statement ->
 

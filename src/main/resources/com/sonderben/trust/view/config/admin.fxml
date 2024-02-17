@@ -16,8 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.config.Admin">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.config.Admin">
    <children>
       <VBox fx:id="bottomPanelVBOx" layoutX="10.0" layoutY="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -39,16 +38,16 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <TextField fx:id="firstNameTextField" promptText="First Name" GridPane.rowIndex="1" />
-                  <TextField fx:id="lastNameTextField" promptText="Last name" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <TextField fx:id="emailTextField" promptText="Email" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextField fx:id="accountNumberTextField" promptText="Account number" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                  <TextField fx:id="telephoneTextField" promptText="Telephone" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                  <TextField fx:id="userNameTextField" promptText="User name" GridPane.rowIndex="3" />
+                  <TextField fx:id="firstNameTextField" promptText="First Name" text="Ben" GridPane.rowIndex="1" />
+                  <TextField fx:id="lastNameTextField" promptText="Last name" text="Pha" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <TextField fx:id="emailTextField" promptText="Email" text="ben@gmail.com" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="accountNumberTextField" promptText="Account number" text="23123" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                  <TextField fx:id="telephoneTextField" promptText="Telephone" text="123465" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                  <TextField fx:id="userNameTextField" editable="false" promptText="User name" text="root" GridPane.rowIndex="3" />
                   <TextField fx:id="scheduleTextField" editable="false" onMouseClicked="#scheduleOnMOuseClick" promptText="Schedules" GridPane.rowIndex="5" />
                   <DatePicker fx:id="birthdayDatePicker" promptText="Birtday" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <PasswordField fx:id="passwordField" promptText="Password" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                  <ChoiceBox fx:id="choiceBoxGender" value="Select a gender" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="5">
+                  <PasswordField fx:id="passwordField" promptText="Password" text="1234" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                  <ChoiceBox fx:id="choiceBoxGender" prefWidth="150.0" value="Select a gender" GridPane.columnIndex="3" GridPane.rowIndex="5">
                      <items>
                         <FXCollections fx:factory="observableArrayList">
                            <String fx:value="Male" />
@@ -57,8 +56,8 @@
                         </FXCollections>
                      </items>
                   </ChoiceBox>
-                  <TextField fx:id="directionField" promptText="Direction" GridPane.rowIndex="7" />
-                  <TextField fx:id="passportTextField" promptText="Passport" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <TextField fx:id="directionField" promptText="Direction" text="lascirie" GridPane.rowIndex="7" />
+                  <TextField fx:id="passportTextField" promptText="Passport" text="12345" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <ChoiceBox fx:id="choiceBoxRole" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <Label text="First name" textFill="WHITE" />
                   <Label text="Last name" textFill="WHITE" GridPane.columnIndex="2" />

@@ -13,38 +13,50 @@ import javafx.scene.input.MouseEvent
 import javafx.scene.layout.VBox
 import java.net.URL
 import java.time.LocalDate
+import java.time.ZoneId
 import java.util.*
 
 class Admin :Initializable {
-    private val enterprise: ObservableList<EnterpriseEntity> = EnterpriseDao.enterprises
+     var enterprise: EnterpriseEntity?=null
+         set(value) {
+             field=value
+             setEnterprise()
+         }
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
 
         setEnterprise()
 
-        enterprise.addListener(ListChangeListener { setEnterprise() })
+
 
     }
 
-    private fun setEnterprise() {
-        if (enterprise.size>0){
-            val emp = enterprise[0].employee
-            accountNumberTextField.text = emp.bankAccount
-            val cal = emp.birthDay
-            birthdayDatePicker.value = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH))
 
-            choiceBoxGender.selectionModel.select( choiceBoxGender.items.indexOf( emp.genre.lowercase().replaceFirstChar { it.uppercase() } ) )
-            choiceBoxRole.items.add(emp.role.name)
-            choiceBoxGender.selectionModel.select(emp.role.name)
-            userNameTextField.text = emp.userName
-            directionField.text = emp.direction
-            emailTextField.text = emp.email
-            firstNameTextField.text = emp.firstName
-            lastNameTextField.text = emp.lastName
-            passportTextField.text = emp.passport
-            passwordField.text = emp.password
-            telephoneTextField.text = emp.telephone
-            scheduleTextField.text = "Mon-Mon"
-        }
+
+    private fun setEnterprise() {
+       if (enterprise!=null){
+           val emp = enterprise!!.employee
+           accountNumberTextField.text = emp.bankAccount
+           val cal = emp.birthDay
+           birthdayDatePicker.value = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH))
+
+           if (emp.genre!=null){
+               choiceBoxGender.selectionModel.select( choiceBoxGender.items.indexOf( emp.genre.lowercase().replaceFirstChar { it.uppercase() } ) )
+
+           }
+           choiceBoxRole.items.add(emp.role.name)
+           choiceBoxRole.selectionModel.select(0)
+           choiceBoxRole.isDisable = true
+           userNameTextField.text = emp.userName
+           directionField.text = emp.direction
+           emailTextField.text = emp.email
+           firstNameTextField.text = emp.firstName
+           lastNameTextField.text = emp.lastName
+           passportTextField.text = emp.passport
+           passwordField.text = emp.password
+           telephoneTextField.text = emp.telephone
+           scheduleTextField.text = "Mon-Mon"
+       }
+
     }
 
     fun onUpdateButton(actionEvent: ActionEvent) {
@@ -67,53 +79,53 @@ class Admin :Initializable {
 
 
     @FXML
-    private lateinit var accountNumberTextField: TextField
+     lateinit var accountNumberTextField: TextField
 
     @FXML
-    private lateinit var birthdayDatePicker: DatePicker
+     lateinit var birthdayDatePicker: DatePicker
 
     @FXML
-    private lateinit var bottomPanelVBOx: VBox
+     lateinit var bottomPanelVBOx: VBox
 
     @FXML
-    private lateinit var choiceBoxGender: ChoiceBox<String>
+     lateinit var choiceBoxGender: ChoiceBox<String>
 
     @FXML
-    private lateinit var choiceBoxRole: ChoiceBox<String>
+     lateinit var choiceBoxRole: ChoiceBox<String>
 
     @FXML
-    private lateinit var deleteButton: Button
+     lateinit var deleteButton: Button
 
     @FXML
-    private lateinit var directionField: TextField
+     lateinit var directionField: TextField
 
     @FXML
-    private lateinit var emailTextField: TextField
+     lateinit var emailTextField: TextField
 
     @FXML
-    private lateinit var firstNameTextField: TextField
+     lateinit var firstNameTextField: TextField
 
     @FXML
-    private lateinit var lastNameTextField: TextField
+     lateinit var lastNameTextField: TextField
 
     @FXML
-    private lateinit var passportTextField: TextField
+     lateinit var passportTextField: TextField
 
     @FXML
-    private lateinit var passwordField: PasswordField
+     lateinit var passwordField: PasswordField
 
     @FXML
-    private lateinit var saveButton: Button
+     lateinit var saveButton: Button
 
     @FXML
-    private lateinit var scheduleTextField: TextField
+     lateinit var scheduleTextField: TextField
 
     @FXML
-    private lateinit var telephoneTextField: TextField
+     lateinit var telephoneTextField: TextField
 
     @FXML
-    private lateinit var updateButton: Button
+     lateinit var updateButton: Button
 
     @FXML
-    private lateinit var userNameTextField: TextField
+     lateinit var userNameTextField: TextField
 }

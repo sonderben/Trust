@@ -37,12 +37,10 @@ class ProductController :Initializable,MessageListener,BaseController() {
 
         employeeTf.text = Context.currentEmployee.value.userName
 
-        categories = FXCollections.observableArrayList( CategoryDao.categories )
-        CategoryDao.categories.addListener(object :ListChangeListener<CategoryEntity>{
-            override fun onChanged(c: ListChangeListener.Change<out CategoryEntity>?) {
-                categories = FXCollections.observableArrayList( CategoryDao.categories )
-            }
-        })
+        categories =  CategoryDao.categories
+
+
+
 
 
 
@@ -193,7 +191,6 @@ class ProductController :Initializable,MessageListener,BaseController() {
            )
 
            ProductDao.save(pro)
-           //produtcs.add(pro)
 
        }
     }
@@ -201,8 +198,10 @@ class ProductController :Initializable,MessageListener,BaseController() {
     @FXML
     fun goToCategoryOnMouseClicked(event: MouseEvent) {
         val cc = CategoryDialog()
+
         cc.initOwner(HelloApplication.primary)
         cc.showAndWait()
+
     }
 
     @FXML

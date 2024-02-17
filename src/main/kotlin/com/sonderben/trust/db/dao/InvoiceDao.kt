@@ -1,11 +1,14 @@
 package com.sonderben.trust.db.dao
 
 import Database
+import Database.DATABASE_NAME
 import com.sonderben.trust.db.SqlCreateTables
+import com.sonderben.trust.toCalendar
 import entity.InvoiceEntity
 import entity.ProductSaled
 import javafx.collections.FXCollections
 import java.sql.Timestamp
+import java.util.Calendar
 import kotlin.collections.List
 
 object InvoiceDao:CrudDao<InvoiceEntity> {
@@ -23,7 +26,7 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
         val insertInvoiceProductSealed = "Insert into  ${SqlCreateTables.invoiceProduct} (id_invoice,id_product_sealed) values(?,?);"
 
 
-        Database.connect().use { connection ->
+        Database.connect(DATABASE_NAME).use { connection ->
             connection.autoCommit = false
             var idInvoice = 0L
             connection.prepareStatement(insertInvoice).use { statement ->
@@ -130,7 +133,7 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
             GROUP BY ps.code;
 
         """.trimIndent()
-       Database.connect().use { connection ->
+       Database.connect(DATABASE_NAME).use { connection ->
            connection.createStatement().use { statement ->
                statement.executeQuery(ps).use { resultSet ->
                    while (resultSet.next()){
@@ -152,14 +155,42 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
            }
        }
     }
-//select ps.code ,ps.description,ps.price,ps.quantity,ip.id_invoice,iv.dateCreated   from productSealed as ps
-//            INNER JOIN invoiceProduct as ip on
-//            ip.id_product_sealed = ps.id
-//            INNER JOIN  invoices as iv on
-//            iv.id =  ip.id_invoice
-//            INNER JOIN Employee as emp on
-//            emp.id = iv.id_employee
-//            WHERE Date(iv.dateCreated/1000,'unixepoch') = date('now')
+
+    fun findByInvoiceCode(invoiceCode: String):List<ProductReturned> {
+        val list = mutableListOf<ProductReturned>()
+        val select = """
+            SELECT ps.code,
+            ps.description,
+			ps.price,ps.quantity,
+			(ps.price * ps.quantity) as total_price,
+            ps.category,
+            iv.dateCreated
+            FROM productSealed as ps
+            INNER JOIN invoiceProduct as ip ON ip.id_product_sealed = ps.id
+            INNER JOIN invoices as iv ON iv.id = ip.id_invoice
+            WHERE iv.codeBar = ?
+        """.trimIndent()
+        Database.connect("").use { connection ->
+            connection.prepareStatement(select).use { preparedStatement ->
+                preparedStatement.setString(1,"49957371")
+                preparedStatement.executeQuery().use { resultSet ->
+                    while(resultSet.next()){
+                        val productReturned = ProductReturned(
+                            resultSet.getString("code"),
+                            resultSet.getString("description"),
+                            resultSet.getDouble("price"),
+                            resultSet.getFloat("quantity"),
+                            resultSet.getDouble("total_price"),
+                            resultSet.getString("category"),
+                            resultSet.getTimestamp("dateCreated").toCalendar())
+                        list.add( productReturned )
+                    }
+                    return list;
+                }
+            }
+        }
+    }
+
 
     data class ProductSealed(var code:String,
              var description:String,
@@ -167,6 +198,25 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
              var totalQuantity:String,
              var dateCreated:String,
              var category:String){
+
+    }
+    /*
+    ps.code,
+            ps.description,
+			ps.price,ps.quantity,
+			(ps.price * ps.quantity) as total_price,
+            ps.category,
+            iv.dateCreated
+     */
+
+    data class ProductReturned(
+        var code:String,
+        var description:String,
+        var price:Double,
+        var quantity:Float,
+        var totalPrice:Double,
+        var category:String,
+        var dateCreated:Calendar){
 
     }
 

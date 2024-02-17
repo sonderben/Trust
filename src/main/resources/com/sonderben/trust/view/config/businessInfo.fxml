@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.config.BusinessInfoController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../../css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.config.BusinessInfoController">
    <children>
       <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -36,10 +36,10 @@
                   <Label text="Foundation date" textFill="WHITE" GridPane.rowIndex="2" />
                   <Label text="Website" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label text="Category" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                  <TextField fx:id="nameTextField" GridPane.rowIndex="1" />
-                  <TextField fx:id="directionTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextField fx:id="telephoneTextField" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <TextField fx:id="websiteTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <TextField fx:id="nameTextField" text="Acra" GridPane.rowIndex="1" />
+                  <TextField fx:id="directionTextField" text="haiti" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="telephoneTextField" text="509" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <TextField fx:id="websiteTextField" text="www.acra.com" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <ChoiceBox fx:id="categoryChoiceBox" maxWidth="1.7976931348623157E308" prefWidth="150.0" value="Select what looks most like your company" GridPane.columnIndex="2" GridPane.rowIndex="3">
                       <items>
                           <FXCollections fx:factory="observableArrayList">

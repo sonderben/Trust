@@ -13,7 +13,7 @@ public class SingletonView {
             productRemaining, bestEmployee, bestSellingProduct, frequentCustomer,
             productExpired, returned,spendingCustomer,admin;*/
     private final static List<String> pathList =List.of("view/sale.fxml","view/user.fxml","view/product.fxml","view/employee.fxml",
-            "view/config/admin.fxml","view/configuration.fxml","view/config/businessInfo.fxml","view/config/invoice.fxml",
+            /*"view/config/admin.fxml",*/"view/configuration.fxml",/*"view/config/businessInfo.fxml","view/config/invoice.fxml",*/
             "view/inventory.fxml","view/role.fxml", "view/queries/queries.fxml","view/queries/productSold.fxml",
             "view/queries/bestEmployee.fxml","view/queries/bestSellingProduct.fxml","view/queries/frequentCustomers.fxml",
             "view/queries/productExpired.fxml","view/queries/productRemaining.fxml","view/queries/productReturned.fxml",

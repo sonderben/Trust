@@ -1,10 +1,12 @@
 package com.sonderben.trust.db.dao
 
+import Database.DATABASE_NAME
 import com.sonderben.trust.Util
 import com.sonderben.trust.db.SqlCreateTables
 import entity.CustomerEntity
 import entity.EmployeeEntity
 import javafx.collections.FXCollections
+import java.sql.SQLException
 import java.sql.Timestamp
 
 
@@ -13,7 +15,7 @@ object CustomerDao : CrudDao<CustomerEntity> {
 
    var customers = FXCollections.observableArrayList<CustomerEntity>()
     init {
-        //findAll()
+        findAll()
     }
     override fun save(entity: CustomerEntity): Boolean {
         val insertEmployee = buildString {
@@ -22,8 +24,8 @@ object CustomerDao : CrudDao<CustomerEntity> {
             append("values (?,?,?,?,?,?,?,?,?,?) ")
         }
 
-        Database.connect().use { connection ->
-            connection.autoCommit = false
+        Database.connect(DATABASE_NAME).use { connection ->
+
             connection.prepareStatement(insertEmployee).use {preparedStatement ->
                 preparedStatement.setTimestamp(1,Timestamp(entity.birthDay.time.time))
                 val tempCode = entity.code.padStart(12,'0')
@@ -39,6 +41,7 @@ object CustomerDao : CrudDao<CustomerEntity> {
 
 
                 val rowCount = preparedStatement.executeUpdate()
+                entity.id = Database.getLastId()
 
                 if (rowCount<=0){
                     connection.rollback()
@@ -47,7 +50,7 @@ object CustomerDao : CrudDao<CustomerEntity> {
 
 
                 customers.add( entity )
-                connection.commit()
+
 
                 return rowCount>0
 
@@ -58,43 +61,60 @@ object CustomerDao : CrudDao<CustomerEntity> {
     }
 
     override fun delete(idEntity: Long): Boolean {
-        Database.connect().autoCommit = false
-        val deleteEmployee = "delete from ${SqlCreateTables.employees} where id = ?"
-        val deleteSchedule = "delete from ${SqlCreateTables.schedules} where id_employee = ?"
-        Database.connect().prepareStatement(deleteEmployee).use { ps ->
-            ps.setLong(1,idEntity)
-            val rowCount = ps.executeUpdate()
-            if (rowCount>0){
-                Database.connect().prepareStatement( deleteSchedule ).use {preparedStatement ->
-                    preparedStatement.setLong(1,idEntity)
-                    if (preparedStatement.executeUpdate()>0){
-                        Database.connect().commit()
-                        Database.connect().autoCommit = true
-                        customers.removeIf { it.id==idEntity }
-                        return true
-                    }else{
-                        Database.connect().rollback()
-                        Database.connect().autoCommit = true
-
-                    }
-                }
-            }else{
-
-                Database.connect().rollback()
-                Database.connect().autoCommit = true
+        Database.connect("").use { connection ->
+            connection.prepareStatement("DELETE FROM ${SqlCreateTables.customers} WHERE id = ?").use { preparedStatement ->
+                preparedStatement.setLong(1,idEntity)
+                customers.removeIf { it.id==idEntity }
+                return preparedStatement.execute()
             }
+
         }
-        return false
     }
 
+
+
     override fun findById(iEntity: Long): CustomerEntity? {
+        val selectAll = "SELECT * FROM ${SqlCreateTables.customers} WHERE id = ?"
+        Database.connect(DATABASE_NAME).use {connection ->
+            connection.prepareStatement(selectAll).use {statement ->
+                statement.setLong(1,iEntity)
+                statement.executeQuery().use {resultSet ->
+                    if (resultSet.next()){
+
+                        val customer = CustomerEntity()
+                        customer.apply {
+                            this.id = iEntity
+                            firstName = resultSet.getString("firstName")
+                            passport = resultSet.getString("passport")
+                            lastName = resultSet.getString("lastName")
+                            genre = resultSet.getString("genre")
+                            direction = resultSet.getString("direction")
+                            email = resultSet.getString("email")
+                            telephone = resultSet.getString("telephone")
+                            birthDay = Util.timeStampToCalendar( resultSet.getTimestamp("birthDay") )
+                            code = resultSet.getString("code")
+                            point = resultSet.getLong("point")
+
+                        }
+
+                        return customer
+                    }
+                    //return null
+
+                }
+                println("findAll: "+customers)
+
+
+            }
+
+        }
         return null
     }
 
     override fun findAll(): Boolean {
         val selectAll = "SELECT * FROM ${SqlCreateTables.customers}"
         val tempEmployees = mutableListOf<CustomerEntity>()
-        Database.connect().use {connection ->
+        Database.connect(DATABASE_NAME).use {connection ->
             connection.createStatement().use {statement ->
                 statement.executeQuery(selectAll).use {resultSet ->
                     while (resultSet.next()){
@@ -131,11 +151,64 @@ object CustomerDao : CrudDao<CustomerEntity> {
 
 
     override fun update(entity: CustomerEntity): Boolean {
-        return false
+        if (entity.id==null)
+            throw SQLException("id entity can not be null")
+
+        if (findById(entity.id)==null)
+            throw SQLException("id entity don't exist")
+        val updateCustomer = """
+            update  ${SqlCreateTables.customers}
+             set birthDay =   ?,
+             direction = ? ,
+             email = ? ,
+             firstName = ? ,
+             genre = ? ,
+             lastName = ? ,
+             passport = ? ,
+             telephone = ? 
+             where id = ?
+        """.trimIndent()
+
+
+        Database.connect(DATABASE_NAME).use { connection ->
+
+
+            connection.prepareStatement(updateCustomer).use { preparedStatement ->
+                preparedStatement.setTimestamp(1, Timestamp(entity.birthDay.time.time))
+
+
+                preparedStatement.setString(2, entity.direction)
+
+                preparedStatement.setString(3, entity.email)
+                preparedStatement.setString(4, entity.firstName)
+                preparedStatement.setString(5, entity.genre)
+                preparedStatement.setString(6, entity.lastName)
+                preparedStatement.setString(7, entity.passport)
+                preparedStatement.setString(8, entity.telephone)
+                preparedStatement.setLong(9, entity.id)
+
+
+                val rowCount = preparedStatement.executeUpdate()
+
+
+
+
+
+                if (rowCount>0)
+                customers[ customers.indexOf( entity ) ] = entity
+
+
+                return rowCount>0
+
+
+            }
+
+
+        }
     }
 
     fun findByCode(code: String):CustomerEntity?{
-        Database.connect().use {connection ->
+        Database.connect(DATABASE_NAME).use {connection ->
             connection.prepareStatement("select * from ${SqlCreateTables.customers} where code = ?").use { preparedStatement ->
                 preparedStatement.setString(1,code.padStart(12,'0'))
                 preparedStatement.executeQuery().use { resultSet ->
@@ -174,7 +247,7 @@ object CustomerDao : CrudDao<CustomerEntity> {
     fun updatePoint(id:Long,point: Long): Boolean {
         val updateEmployee = "update  ${SqlCreateTables.customers} set point = point + ? where id = ?"
 
-        Database.connect().use { connection ->
+        Database.connect(DATABASE_NAME).use { connection ->
 
             connection.prepareStatement(updateEmployee).use {preparedStatement ->
 

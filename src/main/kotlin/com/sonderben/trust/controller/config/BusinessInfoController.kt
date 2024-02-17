@@ -1,5 +1,6 @@
 package com.sonderben.trust.controller.config
 
+import com.sonderben.trust.CategoryEnum
 import com.sonderben.trust.controller.BaseController
 import com.sonderben.trust.db.dao.EnterpriseDao
 import entity.EnterpriseEntity
@@ -11,46 +12,60 @@ import javafx.scene.control.DatePicker
 import javafx.scene.control.TextField
 import java.net.URL
 import java.time.LocalDate
+import java.time.ZoneId
 import java.util.*
 
 class BusinessInfoController : Initializable {
-    private val enterprise: ObservableList<EnterpriseEntity> = EnterpriseDao.enterprises
+     var enterprise: EnterpriseEntity? = null
+         set(value) {
+             field=value
+             setBusiness()
+             println(" li kouri: "+value)
+         }
+
+
 
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
         setBusiness()
     }
 
-    private fun setBusiness() {
-        if (enterprise.size>0){
-            val e = enterprise[0]
-            directionTextField.text = e.direction
-            val cal = e.foundation
-            foundationDatePicker.value = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH))
 
-            val cat = e.category.name.toLowerCase().replaceFirstChar { it.toUpperCase() }
-            categoryChoiceBox.selectionModel.select( categoryChoiceBox.items.indexOf( cat ) )
-            nameTextField.text = e.name
-            telephoneTextField.text = e.telephone
-            websiteTextField.text = e.website
-        }
+
+    private fun setBusiness() {
+
+            if (enterprise!=null){
+                directionTextField.text = enterprise!!.direction
+                val cal = enterprise!!.foundation
+                foundationDatePicker.value = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH))
+
+                if (enterprise!!.category!=null){
+                    val cat = enterprise!!.category.name.toLowerCase().replaceFirstChar { it.toUpperCase() }
+                    categoryChoiceBox.selectionModel.select( categoryChoiceBox.items.indexOf( cat ) )
+                }
+
+                nameTextField.text = enterprise!!.name
+                telephoneTextField.text = enterprise!!.telephone
+                websiteTextField.text = enterprise!!.website
+            }
+
     }
 
     @FXML
-    private lateinit var categoryChoiceBox: ChoiceBox<String>
+     lateinit var categoryChoiceBox: ChoiceBox<String>
 
     @FXML
-    private lateinit var directionTextField: TextField
+     lateinit var directionTextField: TextField
 
     @FXML
-    private lateinit var foundationDatePicker: DatePicker
+     lateinit var foundationDatePicker: DatePicker
 
     @FXML
-    private lateinit var nameTextField: TextField
+     lateinit var nameTextField: TextField
 
     @FXML
-    private lateinit var telephoneTextField: TextField
+     lateinit var telephoneTextField: TextField
 
     @FXML
-    private lateinit var websiteTextField: TextField
+     lateinit var websiteTextField: TextField
 
 }

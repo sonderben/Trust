@@ -15,18 +15,27 @@ import java.util.stream.Collectors;
 
 public class Database {
     private static Connection connection;
+    public static String DATABASE_NAME = "trust.db";
+    public static String TRUST_DB = "trust.db";
+    //midb.db
 
     private Database(){}
 
-    public static synchronized Connection connect(){
+    public static synchronized Connection connect(String dbName){
         try {
+
             if (connection==null || connection.isClosed()){
+
+                DATABASE_NAME = dbName;
+
+
                 Class.forName( "org.sqlite.JDBC" );
                 connection = DriverManager.getConnection("jdbc:sqlite:data/midb.db"/*,"",""*/);
-                System.out.println(" connection open");
-
                 return connection;
+
+
             }
+
              return connection;
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -35,29 +44,52 @@ public class Database {
 
 
     public static void createTable() throws SQLException {
-        Statement statement = null;
+        DATABASE_NAME = "midb.db";
+        Statement statement;
         String tableError = "";
-        try {
-            Database.connect().setAutoCommit(false);
-            statement = Database.connect().createStatement();
+        try(Connection connection1 = Database.connect(DATABASE_NAME)) {
+            connection1.setAutoCommit(false);
+            statement = connection1.createStatement();
 
             List<String> tables = SqlCreateTables.INSTANCE.getTables();
             for (String table : tables) {
                 tableError = table;
                 statement.execute(table);
             }
-            Database.connect().commit();
+            connection1.commit();
+            connection1.setAutoCommit(true);
+            statement.close();
             System.out.println("Tables create successfully");
+
         } catch (SQLException e) {
-            Database.connect().rollback();
+
             System.out.println("can not create tables");
             System.out.println("error on "+tableError);
             System.err.println( e.getMessage() );
             throw new RuntimeException(e);
-        }finally {
-            Database.connect().setAutoCommit(true);
         }
 
+
+    }
+    public static void createTrustTables()throws SQLException{
+        String tableError = "";
+        try(Connection conn = Database.connect(TRUST_DB)) {
+            conn.setAutoCommit(false);
+            Statement st = conn.createStatement();
+            List<String> tables = SqlCreateTables.INSTANCE.getTrustTables();
+            for (String table : tables){
+                tableError = table;
+                st.execute( table );
+            }
+            conn.commit();
+            conn.setAutoCommit(true);
+            st.close();
+        }catch (SQLException e){
+            System.out.println("can not create trust tables");
+            System.out.println("error on "+tableError);
+            System.err.println( e.getMessage() );
+            throw new RuntimeException(e);
+        }
     }
     public static void prepopulate(){
         CategoryDao.INSTANCE.save(
@@ -135,7 +167,7 @@ public class Database {
 
     }
     public static Long getLastId() throws SQLException {
-            Statement statement = Database.connect().createStatement();
+            Statement statement = Database.connect(DATABASE_NAME).createStatement();
             ResultSet resultSet = statement.executeQuery(" SELECT last_insert_rowid() as last_id ");
             return resultSet.getLong( "last_id" );
 
@@ -143,7 +175,7 @@ public class Database {
 
     public static List<Screen> findScreenByIdRole(  Long roleId)  {
 
-        Connection connection1 = Database.connect();
+        Connection connection1 = Database.connect(DATABASE_NAME);
         List<Screen> screens = new ArrayList<>();
         try(PreparedStatement ps = connection1.prepareStatement("SELECT * FROM "+SqlCreateTables.screen+" WHERE id_role = ?")){
             ps.setLong(1, roleId);
@@ -172,7 +204,7 @@ public class Database {
 
 
         List<ScheduleEntity> schedules = new ArrayList<>();
-        try(PreparedStatement ps = Database.connect().prepareStatement("SELECT * FROM "+SqlCreateTables.schedules+" WHERE id_employee = ?")){
+        try(PreparedStatement ps = Database.connect(DATABASE_NAME).prepareStatement("SELECT * FROM "+SqlCreateTables.schedules+" WHERE id_employee = ?")){
             ps.setLong(1, employeeId);
             ResultSet resultSet = ps.executeQuery();
 
@@ -203,7 +235,7 @@ public class Database {
                 where id = ? 
                 """;
         try {
-            PreparedStatement ps = Database.connect().prepareStatement(selectAllIdRole);
+            PreparedStatement ps = Database.connect(DATABASE_NAME).prepareStatement(selectAllIdRole);
             ps.setLong(1,roleId);
             ResultSet resultSet =  ps.executeQuery();
 

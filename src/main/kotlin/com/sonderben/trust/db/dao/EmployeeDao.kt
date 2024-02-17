@@ -1,9 +1,11 @@
 package com.sonderben.trust.db.dao
 
+import Database.DATABASE_NAME
 import com.sonderben.trust.Util
 import com.sonderben.trust.db.SqlCreateTables
 import entity.EmployeeEntity
 import javafx.collections.FXCollections
+import java.sql.SQLException
 import java.sql.Timestamp
 
 
@@ -12,7 +14,9 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
 
    var employees = FXCollections.observableArrayList<EmployeeEntity>()
     init {
+
         findAll()
+
     }
     override fun save(entity: EmployeeEntity): Boolean {
         if (entity.role == null || entity.role.id == null){
@@ -31,7 +35,7 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
             append(" values( ?,?,?,?);")
         }
         var lastIdEmployeeAdded = 0L
-        Database.connect().use { connection ->
+        Database.connect(DATABASE_NAME).use { connection ->
             connection.autoCommit = false
             connection.prepareStatement(insertEmployee).use {preparedStatement ->
                 preparedStatement.setString(1,entity.bankAccount)
@@ -81,31 +85,31 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
     }
 
     override fun delete(idEntity: Long): Boolean {
-        Database.connect().autoCommit = false
+        Database.connect(DATABASE_NAME).autoCommit = false
         val deleteEmployee = "delete from ${SqlCreateTables.employees} where id = ?"
         val deleteSchedule = "delete from ${SqlCreateTables.schedules} where id_employee = ?"
-        Database.connect().prepareStatement(deleteEmployee).use { ps ->
+        Database.connect(DATABASE_NAME).prepareStatement(deleteEmployee).use { ps ->
             ps.setLong(1,idEntity)
             val rowCount = ps.executeUpdate()
             if (rowCount>0){
-                Database.connect().prepareStatement( deleteSchedule ).use {preparedStatement ->
+                Database.connect(DATABASE_NAME).prepareStatement( deleteSchedule ).use {preparedStatement ->
                     preparedStatement.setLong(1,idEntity)
                     if (preparedStatement.executeUpdate()>0){
-                        Database.connect().commit()
-                        Database.connect().autoCommit = true
+                        Database.connect(DATABASE_NAME).commit()
+                        Database.connect(DATABASE_NAME).autoCommit = true
                         employees.removeIf { it.id==idEntity }
                         println("li delete")
                         return true
                     }else{
-                        Database.connect().rollback()
-                        Database.connect().autoCommit = true
+                        Database.connect(DATABASE_NAME).rollback()
+                        Database.connect(DATABASE_NAME).autoCommit = true
                         println("li pa delete")
                     }
                 }
             }else{
                 println("can not delete employee")
-                Database.connect().rollback()
-                Database.connect().autoCommit = true
+                Database.connect(DATABASE_NAME).rollback()
+                Database.connect(DATABASE_NAME).autoCommit = true
             }
         }
         return false
@@ -114,7 +118,7 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
     override fun findById(iEntity: Long): EmployeeEntity? {
         val selectAll = "SELECT * FROM ${SqlCreateTables.employees} where id = ?"
 
-        Database.connect().use {connection ->
+        Database.connect(DATABASE_NAME).use {connection ->
             connection.prepareStatement(selectAll).use {statement ->
                 statement.setLong(1,iEntity)
 
@@ -156,7 +160,7 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
     override fun findAll(): Boolean {
          val selectAll = "SELECT * FROM ${SqlCreateTables.employees}"
         val tempEmployees = mutableListOf<EmployeeEntity>()
-        Database.connect().use {connection ->
+        Database.connect(DATABASE_NAME).use {connection ->
             connection.createStatement().use {statement ->
                 statement.executeQuery(selectAll).use {resultSet ->
                     while (resultSet.next()){
@@ -195,7 +199,7 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
     }
 
     fun login(userName:String,password:String):EmployeeEntity?{
-        Database.connect().use {connection ->
+        Database.connect(DATABASE_NAME).use {connection ->
             connection.prepareStatement("select * from ${SqlCreateTables.employees} where userName= ? and password =? ;").use { preparedStatement ->
                 preparedStatement.setString(1,userName)
                 preparedStatement.setString(2,password)

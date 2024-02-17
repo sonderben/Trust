@@ -1,5 +1,8 @@
 package com.sonderben.trust.db.dao
 
+
+import Database
+import Database.DATABASE_NAME
 import com.sonderben.trust.Util
 import com.sonderben.trust.db.SqlCreateTables
 import com.sonderben.trust.model.Role
@@ -10,39 +13,38 @@ import java.sql.Timestamp
 
 object EnterpriseDao:CrudDao<EnterpriseEntity> {
     val enterprises = FXCollections.observableArrayList<EnterpriseEntity>()
+    //var DATABASE_NAME = ""
 
 
     init {
-        findAll()
+       try {
+           findAll()
+       }catch (e:Exception){}
     }
     override fun save(entity: EnterpriseEntity): Boolean {
-        Database.connect().autoCommit = false
+        Database.connect(DATABASE_NAME).autoCommit = false
+
         val employee = entity.employee
-        if (employee.role == null || entity.employee.role.id == null){
-            throw Exception("Role or Role.id can not be null")
+        if (employee.role == null ){
+            throw Exception("Role can not be null")
         }
         val insertEmployee = buildString {
             append("Insert into ${SqlCreateTables.employees} ")//passport
             append("(bankAccount,direction,email,firstName,genre,lastName,passport,password,telephone,userName,birthDay,id_role) ")
             append("values (?,?,?,?,?,?,?,?,?,?,?,?) ")
         }
-
-
         val insertIntoSchedule = buildString {
             append("INSERT INTO ${SqlCreateTables.schedules }")
             append(" (workDay,start_hour,end_hour,id_employee) ")
             append(" values( ?,?,?,?);")
         }
-
-
-
         val insertEnterprise = buildString {
-            append("Insert into ${SqlCreateTables.enterprise} ")//passport
+            append("Insert into ${SqlCreateTables.enterprise} ")
             append("(name,direction,telephone,foundation,website,category,invoiceTemplate,invoiceTemplateHtml,id_employee) ")
             append("values (?,?,?,?,?,?,?,?,?) ")
         }
         var lastIdEmployeeAdded = 0L
-        Database.connect().use { connection ->
+        Database.connect(DATABASE_NAME).use { connection ->
             connection.autoCommit = false
             connection.prepareStatement(insertEmployee).use {preparedStatement ->
                 preparedStatement.setString(1,employee.bankAccount)
@@ -56,7 +58,7 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
                 preparedStatement.setString(9,employee.telephone)
                 preparedStatement.setString(10,employee.userName)
                 preparedStatement.setTimestamp(11, Timestamp(employee.birthDay.time.time))
-                preparedStatement.setLong(12,employee.role.id)
+                preparedStatement.setLong(12,saveRole(employee.role) )
 
                 val rowCount = preparedStatement.executeUpdate()
 
@@ -115,6 +117,18 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
             }
         }
 
+        /*val insertTrustEnterpriseInfo = "insert into ${SqlCreateTables.trustEnterpriseInfo} (name, path) values (?,?)"
+
+        Database.connect( Database.TRUST_DB ).use { connection ->
+            connection.prepareStatement( insertTrustEnterpriseInfo ).use { preparedStatement ->
+                preparedStatement.setString(1, entity.name)
+                preparedStatement.setString(2,entity.name)
+                val rowCount = preparedStatement.executeUpdate()
+                if (rowCount<=0) throw Exception("can not add enterpriseEnfo")
+            }
+
+        }*/
+
 
     }
 
@@ -124,6 +138,46 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
 
     override fun findById(iEntity: Long): EnterpriseEntity? {
         return null
+    }
+
+    private fun saveRole(role:Role):Long{
+          val insertRole = buildString {
+            append("INSERT INTO ")
+            append(SqlCreateTables.roles)
+            append(" (name) values (?)")
+    }
+          val insertScreen = buildString {
+            append(" INSERT INTO ")
+            append(SqlCreateTables.screen)
+            append(" (screenEnum,actions,id_role) values (?,?,?)")
+        }
+        val con = Database.connect(DATABASE_NAME)
+        val ps = con.prepareStatement(insertRole)
+        ps.setString(1,role.name)
+        val rowCount = ps.executeUpdate()
+        if (rowCount<=0) {
+            con.rollback()
+            con.autoCommit = true
+            throw Exception(" can not add role")
+        }
+        val roleId = Database.getLastId()
+        role.id = roleId
+
+        for (screen in role.screens){
+            val ps2=con.prepareStatement(insertScreen)
+            ps2.setString(1,screen.screen.name)
+            ps2.setString(2,screen.actions.map { it.name }.joinToString ("," ) )
+            ps2.setLong(3,roleId)
+
+            val rowCount2 = ps2.executeUpdate()
+            if (rowCount2<=0) {
+                con.rollback()
+                con.autoCommit = true
+                throw Exception("can't add screen: $screen")
+            }
+
+        }
+        return roleId
     }
 
     override fun findAll(): Boolean {
@@ -137,12 +191,12 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
             INNER JOIN Employee on enterprise.id_employee == Employee.id
             INNER join Roles on Roles.id = Employee.id_role
         """.trimIndent()
-        Database.connect().use { connection ->
+        Database.connect(DATABASE_NAME).use { connection ->
             connection.createStatement().use { statement ->
                val result = statement.executeQuery(selectAll)
 
 
-                 Database.connect().use { connection->
+                 Database.connect(DATABASE_NAME).use { connection->
                      connection.createStatement().use { statement ->
 
                          statement.executeQuery(selectAll).use { resultSet ->

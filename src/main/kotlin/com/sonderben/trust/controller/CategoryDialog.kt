@@ -19,17 +19,15 @@ import java.io.IOException
 import java.net.URL
 import java.util.*
 
-class CategoryDialog : Dialog<CategoryEntity>(), Initializable {
+class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
     private var categories:ObservableList<CategoryEntity> = CategoryDao.categories
+
+    private var categoriesChanged:List<CategoryEntity> = mutableListOf()
 
     private var categorySelected:CategoryEntity?=null
     init {
 
-        //RoleDao.roles
-       // var rol = Role()
-       // rol.id = 1
 
-        //RoleDao.save( Role("Admin", mutableListOf(Screen(ScreenEnum.SALE, mutableListOf(Action.ADD)))) )
 
 
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/GoToCategoryDialog.fxml"))

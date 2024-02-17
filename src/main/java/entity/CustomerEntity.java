@@ -2,6 +2,7 @@ package entity;
 
 
 import java.util.Calendar;
+import java.util.Objects;
 
 public class CustomerEntity extends PersonEntity{
     private Long point;
@@ -34,5 +35,18 @@ public class CustomerEntity extends PersonEntity{
 
     public void setPoint(Long point) {
         this.point = point;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CustomerEntity that = (CustomerEntity) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

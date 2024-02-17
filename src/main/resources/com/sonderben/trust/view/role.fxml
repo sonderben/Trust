@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.RoleController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.RoleController">
    <children>
       <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -46,15 +46,18 @@
             </HBox>
             <VBox fx:id="bottomPanelVBOx" VBox.vgrow="NEVER">
                <children>
-                  <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" spacing="40.0" VBox.vgrow="NEVER">
+                  <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="200.0" spacing="100.0" VBox.vgrow="NEVER">
                      <children>
-                        <VBox alignment="CENTER_LEFT">
+                        <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
                            <children>
                               <Label text="Name" textFill="WHITE" />
-                              <TextField fx:id="nameTf" />
+                              <TextField fx:id="nameTf" maxWidth="150.0" />
                            </children>
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
                         </VBox>
-                        <GridPane fx:id="gridPaneScreen" hgap="10.0" vgap="10.0" HBox.hgrow="SOMETIMES">
+                        <GridPane fx:id="gridPaneScreen" hgap="10.0" vgap="10.0" HBox.hgrow="NEVER">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />

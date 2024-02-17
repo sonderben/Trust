@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.LoginController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.LoginController">
    <center>
       <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="300.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" spacing="30.0" styleClass="login" BorderPane.alignment="CENTER">
          <children>
@@ -21,14 +21,14 @@
             </ChoiceBox>
             <TextField fx:id="userNameTextField" focusTraversable="false" minHeight="45.0" promptText="Username" text="root" />
             <PasswordField fx:id="password" promptText="Password" text="1234" />
-            <Button maxWidth="1.7976931348623157E308" minHeight="45.0" mnemonicParsing="false" onAction="#onLoginButtonClick" text="Sign In" />
+            <Button fx:id="login" disable="true" maxWidth="1.7976931348623157E308" minHeight="45.0" mnemonicParsing="false" onAction="#onLoginButtonClick" text="Sign In" />
             <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" text="Label" visible="false">
                <VBox.margin>
                   <Insets top="-25.0" />
                </VBox.margin></Label>
             <HBox alignment="CENTER_RIGHT" prefWidth="200.0">
                <children>
-                  <Label onMouseClicked="#onCreateNewSystemMouseClicked" text="Create new system" textFill="#25392d" underline="true">
+                  <Label fx:id="newSystemLabel" onMouseClicked="#onCreateNewSystemMouseClicked" text="Create new system" textFill="#25392d" underline="true">
                      <padding>
                         <Insets bottom="5.0" />
                      </padding>
