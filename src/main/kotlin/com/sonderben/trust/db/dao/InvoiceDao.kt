@@ -7,6 +7,7 @@ import com.sonderben.trust.toCalendar
 import entity.InvoiceEntity
 import entity.ProductSaled
 import javafx.collections.FXCollections
+import java.sql.SQLException
 import java.sql.Timestamp
 import java.util.Calendar
 import kotlin.collections.List
@@ -23,7 +24,7 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
         val insertProductSealed = "Insert into ${SqlCreateTables.productSealed}" +
                 " (code,description,price,quantity,discount,itbis,total,wasDiscountCategory,category)  values(?,?,?,?,?,?,?,?,?);"
 
-        val insertInvoiceProductSealed = "Insert into  ${SqlCreateTables.invoiceProduct} (id_invoice,id_product_sealed) values(?,?);"
+        val insertInvoiceProductSealed = "Insert into  ${SqlCreateTables.invoiceProductSealed} (id_invoice,id_product_sealed) values(?,?);"
 
 
         Database.connect(DATABASE_NAME).use { connection ->
@@ -60,9 +61,18 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
                         preparedStatement.setDouble(7,productSale.total)
                         preparedStatement.setBoolean(8,productSale.isWasDiscountCategory)
                         preparedStatement.setString(9,productSale.category)
-                        val rowCount = preparedStatement.executeUpdate()
+                        val rc = preparedStatement.executeUpdate()
+                        if (rc>0){
+                            val r = ProductDao.updateQuantityRemaining(productSale.code,productSale.qty)
 
-                        if (rowCount<=0){
+                            if (r<0){
+                                connection.rollback()
+                                connection.autoCommit = true
+                                throw SQLException("can not update qty remaining product")
+                            }
+                        }
+
+                        if (rc<=0){
                             println("error al insert ProductSealed")
                             connection.rollback()
                             connection.autoCommit = true
@@ -84,6 +94,8 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
                             }
                         }
                     }
+
+
 
                     connection.commit()
 
@@ -125,10 +137,10 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
             ps.category,
             ip.id_invoice,
             iv.dateCreated
-            FROM productSealed as ps
-            INNER JOIN invoiceProduct as ip ON ip.id_product_sealed = ps.id
-            INNER JOIN invoices as iv ON iv.id = ip.id_invoice
-            INNER JOIN Employee as emp ON emp.id = iv.id_employee
+            FROM ${SqlCreateTables.productSealed} as ps
+            INNER JOIN ${SqlCreateTables.invoiceProductSealed}  as ip ON ip.id_product_sealed = ps.id
+            INNER JOIN ${SqlCreateTables.invoices} as iv ON iv.id = ip.id_invoice
+            INNER JOIN ${SqlCreateTables.employees} as emp ON emp.id = iv.id_employee
             /*WHERE Date(iv.dateCreated/1000,'unixepoch') = date('now')*/
             GROUP BY ps.code;
 
@@ -165,9 +177,9 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
 			(ps.price * ps.quantity) as total_price,
             ps.category,
             iv.dateCreated
-            FROM productSealed as ps
-            INNER JOIN invoiceProduct as ip ON ip.id_product_sealed = ps.id
-            INNER JOIN invoices as iv ON iv.id = ip.id_invoice
+            FROM ${SqlCreateTables.productSealed} as ps
+            INNER JOIN ${SqlCreateTables.invoiceProductSealed} as ip ON ip.id_product_sealed = ps.id
+            INNER JOIN ${SqlCreateTables.invoices} as iv ON iv.id = ip.id_invoice
             WHERE iv.codeBar = ?
         """.trimIndent()
         Database.connect("").use { connection ->

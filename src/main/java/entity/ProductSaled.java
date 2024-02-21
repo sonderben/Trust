@@ -8,6 +8,16 @@ public class ProductSaled extends BaseEntity{
     private double total;
     private boolean wasDiscountCategory;
 
+    public int getQtyRemaining() {
+        return qtyRemaining;
+    }
+
+    public void setQtyRemaining(int qtyRemaining) {
+        this.qtyRemaining = qtyRemaining;
+    }
+
+    private int qtyRemaining; // dont will save in db
+
     public ProductSaled(){}
     public ProductSaled( ProductEntity p,boolean wasDiscountCategory ){
         this.id = p.id;
@@ -109,4 +119,5 @@ public class ProductSaled extends BaseEntity{
     public String toString() {
         return "ProductSaled{code='%s', description='%s', price=%s, qty=%s, discount=%s, itbis=%s, total=%s, wasDiscountCategory=%s, description=%s}".formatted(code, description, price, qty, discount, itbis, total, wasDiscountCategory, description);
     }
+
 }

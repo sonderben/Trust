@@ -18,7 +18,7 @@ public class InvoiceEntity extends BaseEntity {
     private Calendar date;
     public InvoiceEntity(){}
 
-    public InvoiceEntity(List<ProductSaled> products, EmployeeEntity employee, CustomerEntity customer, String codeBar, Calendar date) {
+    public InvoiceEntity( List<ProductSaled> products, EmployeeEntity employee, CustomerEntity customer, String codeBar, Calendar date) {
 
         this.products = products;
         this.employee = employee;

@@ -6,8 +6,8 @@ import com.sonderben.trust.db.dao.CustomerDao
 import com.sonderben.trust.db.dao.InvoiceDao
 import com.sonderben.trust.db.dao.ProductDao
 import com.sonderben.trust.hide
+import com.sonderben.trust.onlyInt
 import com.sonderben.trust.qr_code.MessageListener
-import com.sonderben.trust.qr_code.SocketMessageEvent
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.CustomerEntity
 import entity.InvoiceEntity
@@ -24,7 +24,6 @@ import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.*
-import javafx.scene.input.InputMethodEvent
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.VBox
@@ -58,7 +57,10 @@ class Sale :Initializable,MessageListener,BaseController(){
         //socketMesageEvent.startingListening()
 
 
-        println("init salecontrolador")
+        //customerCode.onlyInt()
+        codeProductTextField.onlyInt()
+        qtyTextField.onlyInt()
+        cashTextField.onlyInt()
 
 
         qtyTotal.prefWidthProperty().bind( qtyCol.widthProperty() )
@@ -66,23 +68,23 @@ class Sale :Initializable,MessageListener,BaseController(){
 
 
         tableView.setOnKeyReleased { event ->
-            val tableViewSelectedItems: ObservableList<ProductEntity> = tableView.selectionModel.selectedItems
+            val tableViewSelectedItems: ObservableList<ProductSaled> = tableView.selectionModel.selectedItems
             if (event.code==KeyCode.DELETE && tableViewSelectedItems.size>0){
                 mProducts.removeAll( tableViewSelectedItems )
                 clearAll()
             }
         }
         tableView.selectionModel.selectionMode = SelectionMode.MULTIPLE
-        tableView.selectionModel.selectedItemProperty().addListener( object: ChangeListener<ProductEntity> {
-            override fun changed(observable: ObservableValue<out ProductEntity>?, oldValue: ProductEntity?, newValue: ProductEntity?) {
+        tableView.selectionModel.selectedItemProperty().addListener( object: ChangeListener<ProductSaled> {
+            override fun changed(observable: ObservableValue<out ProductSaled>?, oldValue: ProductSaled?, newValue: ProductSaled?) {
                 if (newValue != null){
 
                     if (! bottomPanelVBOx.isVisible ){
                         bottomPanelVBOx.hide()
                     }
 
-                    mProductSelected = newValue
-                    qtyTextField.text = newValue.quantity.toString()
+                    mProductSaledSelected = newValue
+                    qtyTextField.text = newValue.qty.toString()
                     codeProductTextField.text = newValue.code
                 }
             }
@@ -91,42 +93,34 @@ class Sale :Initializable,MessageListener,BaseController(){
 
 
 
-
-
-
-
-
-
         codeCol.setCellValueFactory{data-> SimpleStringProperty( data.value.code ) }
         itbisCol.setCellValueFactory{data-> SimpleStringProperty( data.value.itbis.toString()) }
         discountCol.setCellValueFactory{data-> SimpleStringProperty( data.value.discount.toString() ) }
-        priceCol.setCellValueFactory{data-> SimpleStringProperty( data.value.sellingPrice.toString() ) }
-        qtyCol.setCellValueFactory{data-> SimpleStringProperty( data.value.quantity.toString()) }
+        priceCol.setCellValueFactory{data-> SimpleStringProperty( data.value.price.toString() ) }
+        qtyCol.setCellValueFactory{data-> SimpleStringProperty( data.value.qty.toString()) }
         descriptionCol.setCellValueFactory{data-> SimpleStringProperty( data.value.description.replaceFirstChar { it.uppercase() } ) }
         totalCol.setCellValueFactory {
-            SimpleStringProperty( it.value.total().toCurrency() )
+            SimpleStringProperty( it.value.total.toCurrency() )
         }
 
         tableView.items = mProducts
 
-        mProducts.addListener(object :ListChangeListener<ProductEntity>{
-            override fun onChanged(c: ListChangeListener.Change<out ProductEntity>?) {
-                if (c !=null){
-                    var totalItbis = 0.0
-                    var totalQty = 0.0
-                    var bigTotal = 0.0
-                    var totaldiscount =0.0
-                    for (prod in mProducts){
-                        totalItbis += prod.itbis
-                        totalQty += prod.quantity
-                        totaldiscount += prod.discount
-                        bigTotal += prod.total()
-                    }
-
-                    qtyTotal.text = totalQty.toString()
-                    grandTotal.text = bigTotal.toString()
-
+        mProducts.addListener(ListChangeListener<ProductSaled> { c ->
+            if (c !=null){
+                var totalItbis = 0.0
+                var totalQty = 0.0
+                var bigTotal = 0.0
+                var totaldiscount =0.0
+                for (prod in mProducts){
+                    totalItbis += prod.itbis
+                    totalQty += prod.qty
+                    totaldiscount += prod.discount
+                    bigTotal += prod.total
                 }
+
+                qtyTotal.text = totalQty.toString()
+                grandTotal.text = bigTotal.toString()
+
             }
         })
 
@@ -151,13 +145,13 @@ class Sale :Initializable,MessageListener,BaseController(){
     private lateinit var changeTextField: TextField
 
     @FXML
-    private lateinit var codeCol: TableColumn<ProductEntity, String>
+    private lateinit var codeCol: TableColumn<ProductSaled, String>
 
     @FXML
     private lateinit var codeProductTextField: TextField
 
     @FXML
-    private lateinit var descriptionCol: TableColumn<ProductEntity, String>
+    private lateinit var descriptionCol: TableColumn<ProductSaled, String>
 
     @FXML
     private lateinit var payBtn:Button
@@ -165,21 +159,21 @@ class Sale :Initializable,MessageListener,BaseController(){
     private lateinit var mainNode: VBox
 
     @FXML
-    private lateinit var discountCol: TableColumn<ProductEntity, String>
+    private lateinit var discountCol: TableColumn<ProductSaled, String>
 
     @FXML
     private lateinit var hour: Text
 
     @FXML
-    private lateinit var itbisCol: TableColumn<ProductEntity, String>
+    private lateinit var itbisCol: TableColumn<ProductSaled, String>
 
 
 
     @FXML
-    private lateinit var priceCol: TableColumn<ProductEntity, String>
+    private lateinit var priceCol: TableColumn<ProductSaled, String>
 
     @FXML
-    private lateinit var qtyCol: TableColumn<ProductEntity, String>
+    private lateinit var qtyCol: TableColumn<ProductSaled, String>
 
     //
 
@@ -197,10 +191,10 @@ class Sale :Initializable,MessageListener,BaseController(){
     private lateinit var qtyTextField: TextField
 
     @FXML
-    private lateinit var tableView: TableView<ProductEntity>
+    private lateinit var tableView: TableView<ProductSaled>
 
     @FXML
-    private lateinit var totalCol: TableColumn<ProductEntity, String>
+    private lateinit var totalCol: TableColumn<ProductSaled, String>
 
     @FXML lateinit var customerCode:TextField
 
@@ -210,7 +204,7 @@ class Sale :Initializable,MessageListener,BaseController(){
 
     @FXML
     fun onDeleteProductButtonClick(event: ActionEvent) {
-        mProducts.remove(mProductSelected)
+        mProducts.remove(mProductSaledSelected)
         clearTextS()
     }
 
@@ -228,9 +222,13 @@ class Sale :Initializable,MessageListener,BaseController(){
 
     @FXML
     fun onKeyTypedCash(event: KeyEvent) {
-        changeTextField.text = (cashTextField.text.toDouble()-grandTotal.text.toDouble()).toString()
-        if (/*event.code == KeyCode.ENTER &&*/ changeTextField.text.toDouble()>-1){
-            payBtn.requestFocus()
+
+        if(cashTextField.text.isNotEmpty()){
+            changeTextField.text = (cashTextField.text.toDouble()-grandTotal.text.toDouble()).toString()
+            println(" ${event.code.equals( KeyCode.ENTER )} && ${changeTextField.text.toDouble()>=0} ${event.code}")
+            if ( event.code.equals( KeyCode.ENTER ) && changeTextField.text.toDouble()>=0 ){
+                payBtn.requestFocus()
+            }
         }
     }
     @FXML
@@ -242,7 +240,7 @@ class Sale :Initializable,MessageListener,BaseController(){
            if (cashTextField.text.toDouble()>=grandTotal.text.toDouble()){
                val codeBar = Random.nextLong(LongRange(10_000_000,99_999_999))
               val isPayed = InvoiceDao.save(
-                   InvoiceEntity(mProducts.map { ProductSaled(it,false) },Context.currentEmployee.value,mCurrentCustomer,codeBar.toString(), Calendar.getInstance())
+                   InvoiceEntity(mProducts, Context.currentEmployee.value, mCurrentCustomer, codeBar.toString(), Calendar.getInstance())
                )
                if (isPayed){
                    mCurrentCustomer?.let {
@@ -306,8 +304,8 @@ class Sale :Initializable,MessageListener,BaseController(){
 
         return format.format(this)
     }
-    var mProducts: ObservableList<ProductEntity> = FXCollections.observableArrayList(  )
-    var mProductSelected:ProductEntity?=null
+    var mProducts: ObservableList<ProductSaled> = FXCollections.observableArrayList(  )
+    var mProductSaledSelected:ProductSaled?=null
 
     private fun createTimeLine(text:Text){
         val timer = Timer()
@@ -370,23 +368,33 @@ class Sale :Initializable,MessageListener,BaseController(){
     }*/
     private fun findProductBy(code:String){
         val tempCode = code.padStart(12,'0')
-        val productFind:ProductEntity? = mProducts.find { it.code == tempCode }
+        val productFind:ProductSaled? = mProducts.find { it.code == tempCode }
         if (qtyTextField.text.isBlank()){
             qtyTextField.text = "1"
         }
-        if (productFind!=null){
-            val index = mProducts.indexOf( productFind )
-            productFind.quantity += qtyTextField.text.toInt()
-            mProducts[index] = productFind
-            clearTextS()
-            beep()
-        }else{
-            val product = ProductDao.findProductByCode( codeProductTextField.text )
-            if (product !=null){
-                product.quantity = qtyTextField.text.toInt()
-                mProducts.add( product )
+
+
+
+        if (productFind!=null ){
+            if ( isEnough(qtyWantBye = qtyTextField.text.toInt(), productQty = productFind.qtyRemaining, codeProduct = tempCode) ){
+                val index = mProducts.indexOf( productFind )
+                productFind.qty += qtyTextField.text.toInt()
+                mProducts[index] = productFind
                 clearTextS()
                 beep()
+            }
+        }
+        else{
+            val product:ProductEntity? = ProductDao.findProductByCode( codeProductTextField.text )
+            if ( product != null ){
+                if ( isEnough(qtyWantBye = qtyTextField.text.toInt(), productQty = product.quantityRemaining, codeProduct = tempCode) ){
+                    product.quantity = qtyTextField.text.toInt()
+                    val t = ProductSaled( product,false )
+                    t.qtyRemaining = product.quantityRemaining
+                    mProducts.add( t )
+                    clearTextS()
+                    beep()
+                }
             }else{
                 ViewUtil.createAlert(
                     Alert.AlertType.WARNING,
@@ -395,10 +403,27 @@ class Sale :Initializable,MessageListener,BaseController(){
                 ).showAndWait()
             }
         }
+
     }
 
     fun hideBottomPanelOnMouseClicked(){
         bottomPanelVBOx.hide()
+    }
+
+    private fun isEnough(qtyWantBye:Int, productQty:Int, codeProduct:String):Boolean{
+
+        val qtyBought = mProducts.filtered { it.code.equals( codeProduct ) }.sumOf { it.qty.toInt() }
+
+        if (productQty<qtyBought+qtyWantBye){
+            ViewUtil.createAlert(
+                Alert.AlertType.INFORMATION,
+                "Quantity don't enough",
+                "There is only: $productQty and you already bought $qtyBought"
+            ).showAndWait()
+            return false
+        }
+
+        return true
     }
 
 }

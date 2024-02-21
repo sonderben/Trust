@@ -1,12 +1,14 @@
 package com.sonderben.trust
 
 import javafx.scene.control.TextField
+import javafx.scene.control.TextFormatter
 import javafx.scene.layout.VBox
 import java.sql.Timestamp
 import java.text.DateFormat
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
+import java.util.function.UnaryOperator
 
 fun VBox.hide(){
     if (this.isVisible){
@@ -42,6 +44,8 @@ fun Timestamp.toCalendar():Calendar{
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = this.time
         return calendar
+}
 
-
+fun TextField.onlyInt(){
+    this.textFormatter = Factory.createFilterTextField()
 }

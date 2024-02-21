@@ -10,12 +10,13 @@ import javafx.collections.FXCollections
 import java.sql.Timestamp
 import java.util.Calendar
 
-object ProductDao:CrudDao<ProductEntity> {
+object ProductDao : CrudDao<ProductEntity> {
     var products = FXCollections.observableArrayList<ProductEntity>()
 
     init {
         findAll()
     }
+
     override fun save(entity: ProductEntity): Boolean {
 
         var insertProduct = """
@@ -24,30 +25,30 @@ object ProductDao:CrudDao<ProductEntity> {
             values(?,?,?,?,?,?,?,?,?,?,?,?)
         """.trimIndent()
         Database.connect(DATABASE_NAME).use { connection ->
-            connection.prepareStatement(insertProduct).use {preparedStatement ->
-                preparedStatement.setDouble(1,entity.discount)
-                preparedStatement.setDouble(2,entity.itbis)
-                preparedStatement.setDouble(3,entity.purchasePrice)
-                preparedStatement.setInt(4,entity.quantity)
-                preparedStatement.setDouble(5,entity.sellingPrice)
-                preparedStatement.setLong(6,entity.category.id)
-                preparedStatement.setTimestamp(7,Timestamp(Calendar.getInstance().timeInMillis))
-                preparedStatement.setLong(8,entity.employee.id)
-                preparedStatement.setTimestamp(9,Timestamp(entity.expirationDate.timeInMillis) )
-                val tempCode = entity.code.padStart(12,'0')
-                preparedStatement.setString(10,tempCode)
-                preparedStatement.setString(11,entity.description)
-                preparedStatement.setInt(12,entity.quantity)
+            connection.prepareStatement(insertProduct).use { preparedStatement ->
+                preparedStatement.setDouble(1, entity.discount)
+                preparedStatement.setDouble(2, entity.itbis)
+                preparedStatement.setDouble(3, entity.purchasePrice)
+                preparedStatement.setInt(4, entity.quantity)
+                preparedStatement.setDouble(5, entity.sellingPrice)
+                preparedStatement.setLong(6, entity.category.id)
+                preparedStatement.setTimestamp(7, Timestamp(Calendar.getInstance().timeInMillis))
+                preparedStatement.setLong(8, entity.employee.id)
+                preparedStatement.setTimestamp(9, Timestamp(entity.expirationDate.timeInMillis))
+                val tempCode = entity.code.padStart(12, '0')
+                preparedStatement.setString(10, tempCode)
+                preparedStatement.setString(11, entity.description)
+                preparedStatement.setInt(12, entity.quantity)
                 val rowCount = preparedStatement.executeUpdate()
                 val lastId = Database.getLastId()
                 entity.id = lastId
 
 
 
-                if (rowCount>0 && lastId != null){
-                    products.add( entity )
+                if (rowCount > 0 && lastId != null) {
+                    products.add(entity)
                     return true
-                }else{
+                } else {
                     println("rowCount: $rowCount , last id: $lastId")
                 }
                 return false
@@ -80,7 +81,7 @@ object ProductDao:CrudDao<ProductEntity> {
         Database.connect(DATABASE_NAME).use { connection ->
             connection.createStatement().use { statement ->
                 statement.executeQuery(selectAll).use { resultSet ->
-                    while (resultSet.next()){
+                    while (resultSet.next()) {
                         val employee = EmployeeEntity()
                         employee.apply {
                             id = resultSet.getLong("id_employee")
@@ -102,13 +103,14 @@ object ProductDao:CrudDao<ProductEntity> {
                             resultSet.getDouble("itbis"),
                             resultSet.getInt("quantity"),
                             resultSet.getInt("quantityRemaining"),
-                            Util.timeStampToCalendar( resultSet.getTimestamp( "dateAdded") ),
-                            Util.timeStampToCalendar( resultSet.getTimestamp( "expirationDate") ),
+                            Util.timeStampToCalendar(resultSet.getTimestamp("dateAdded")),
+                            Util.timeStampToCalendar(resultSet.getTimestamp("expirationDate")),
                             category,
-                            employee)
-                        tempProduct.add( prod )
+                            employee
+                        )
+                        tempProduct.add(prod)
                     }
-                    products.addAll( tempProduct)
+                    products.addAll(tempProduct)
                 }
             }
         }
@@ -122,7 +124,7 @@ object ProductDao:CrudDao<ProductEntity> {
         return false
     }
 
-    fun findProductByCode(code:String):ProductEntity?{
+    fun findProductByCode(code: String): ProductEntity? {
 
         val selectByCode = """
             SELECT  products.id,products.quantityRemaining,products.discount as discount_product,quantity,itbis,sellingPrice,purchaseprice,
@@ -137,7 +139,7 @@ object ProductDao:CrudDao<ProductEntity> {
 
         Database.connect(DATABASE_NAME).use { connection ->
             connection.prepareStatement(selectByCode).use { preparedStatement ->
-                preparedStatement.setString(1,code.padStart(12,'0'))
+                preparedStatement.setString(1, code.padStart(12, '0'))
                 val resultSet = preparedStatement.executeQuery()
 
                 //
@@ -160,25 +162,26 @@ object ProductDao:CrudDao<ProductEntity> {
                     resultSet.getDouble("itbis"),
                     resultSet.getInt("quantity"),
                     resultSet.getInt("quantityRemaining"),
-                    Util.timeStampToCalendar( resultSet.getTimestamp( "dateAdded") ),
-                    Util.timeStampToCalendar( resultSet.getTimestamp( "expirationDate") ),
+                    Util.timeStampToCalendar(resultSet.getTimestamp("dateAdded")),
+                    Util.timeStampToCalendar(resultSet.getTimestamp("expirationDate")),
                     category,
-                    employee)
+                    employee
+                )
                 prod.id = resultSet.getLong("id")
 
-                if (prod.code == null || prod.code.isBlank()){
+                if (prod.code == null || prod.code.isBlank()) {
                     return null
                 }
                 return prod
             }
-                //
-
-            }
+            //
 
         }
 
+    }
 
-     fun findProductsExpired(): MutableList<ProductEntity> {
+
+    fun findProductsExpired(): MutableList<ProductEntity> {
         val tempProduct = mutableListOf<ProductEntity>()
         val selectAll = """
             SELECT products.quantityRemaining,products.id,products.discount as discount_product,quantity,itbis,sellingPrice,purchaseprice,
@@ -193,7 +196,7 @@ object ProductDao:CrudDao<ProductEntity> {
         Database.connect(DATABASE_NAME).use { connection ->
             connection.createStatement().use { statement ->
                 statement.executeQuery(selectAll).use { resultSet ->
-                    while (resultSet.next()){
+                    while (resultSet.next()) {
                         val employee = EmployeeEntity()
                         employee.apply {
                             id = resultSet.getLong("id_employee")
@@ -216,11 +219,12 @@ object ProductDao:CrudDao<ProductEntity> {
                             resultSet.getDouble("itbis"),
                             resultSet.getInt("quantity"),
                             resultSet.getInt("quantityRemaining"),
-                            Util.timeStampToCalendar( resultSet.getTimestamp( "dateAdded") ),
-                            Util.timeStampToCalendar( resultSet.getTimestamp( "expirationDate") ),
+                            Util.timeStampToCalendar(resultSet.getTimestamp("dateAdded")),
+                            Util.timeStampToCalendar(resultSet.getTimestamp("expirationDate")),
                             category,
-                            employee)
-                        tempProduct.add( prod )
+                            employee
+                        )
+                        tempProduct.add(prod)
                     }
                     return tempProduct
                 }
@@ -228,11 +232,29 @@ object ProductDao:CrudDao<ProductEntity> {
         }
 
 
+    }
+
+
+    fun updateQuantityRemaining(codeProduct: String, qtyBought: Float): Int {
+        val updateEmployee =
+            "update  ${SqlCreateTables.products} set quantityRemaining = quantityRemaining - ? where id = ?"
+
+        val connection = Database.connect(DATABASE_NAME)
+
+        connection.prepareStatement(updateEmployee).use { preparedStatement ->
+
+            preparedStatement.setFloat(1, qtyBought)
+            preparedStatement.setString(2, codeProduct)
+
+            return preparedStatement.executeUpdate()
+
+
+        }
 
 
     }
 
-    }
+}
 
 
 

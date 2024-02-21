@@ -12,7 +12,7 @@ object SqlCreateTables {
     const val products = "products"
     const val customers = "customers"
     const val invoices = "invoices"
-    const val invoiceProduct = "invoiceProduct"
+    const val invoiceProductSealed = "invoiceProductSealed"
     const val productSealed = "productSealed"
 
 
@@ -75,7 +75,7 @@ object SqlCreateTables {
     
     """
     public var createInvoiceProductTable = """
-        create table if not exists $invoiceProduct(
+        create table if not exists $invoiceProductSealed(
         id integer primary key autoincrement,
                 id_invoice integer not null,
                 id_product_sealed integer not null,

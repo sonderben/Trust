@@ -218,7 +218,7 @@ class CustomerService:Initializable,BaseController() {
             email = cEmailTf.textTrim()
             direction = cDirectionTtf.textTrim()
             passport = cPassportTf.textTrim()
-            code =  "${cal.get(Calendar.MONTH)+1}-${cal.get(Calendar.YEAR)}-${cTelTf.textTrim()}"
+            code =  "${cal.get(Calendar.MONTH)+1}${cal.get(Calendar.YEAR)}${cTelTf.textTrim()}"
             point = 0
             CustomerDao.save(this)
         }

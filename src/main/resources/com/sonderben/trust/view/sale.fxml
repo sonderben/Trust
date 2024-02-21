@@ -124,7 +124,7 @@
                   <Button fx:id="payBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onPay" text="Pay" GridPane.columnIndex="5" GridPane.rowIndex="5" />
                   <CheckBox mnemonicParsing="false" selected="true" text="Print invoice" textFill="WHITE" GridPane.columnIndex="4" GridPane.rowIndex="5" />
                   <TextField fx:id="changeTextField" editable="false" prefHeight="25.0" prefWidth="114.0" promptText="345,67" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <TextField fx:id="cashTextField" onKeyTyped="#onKeyTypedCash" prefHeight="25.0" prefWidth="114.0" promptText="1 000" GridPane.rowIndex="5" />
+                  <TextField fx:id="cashTextField" onKeyReleased="#onKeyTypedCash" prefHeight="25.0" prefWidth="114.0" promptText="1 000" GridPane.rowIndex="5" />
                   <Label text="Quantity" textFill="WHITE" GridPane.columnIndex="5" />
                   <Label text="Code" textFill="WHITE" GridPane.columnIndex="3" />
                   <Label text="Cash" textFill="WHITE" GridPane.rowIndex="3" />
