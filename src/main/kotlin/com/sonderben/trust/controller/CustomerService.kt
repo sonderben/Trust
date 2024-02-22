@@ -1,11 +1,9 @@
 package com.sonderben.trust.controller
 
+import com.sonderben.trust.*
 import com.sonderben.trust.db.dao.CustomerDao
 import com.sonderben.trust.db.dao.InvoiceDao
-import com.sonderben.trust.format
-import com.sonderben.trust.textTrim
-import com.sonderben.trust.toCalendar
-import com.sonderben.trust.toLocalDate
+import com.sonderben.trust.viewUtil.ViewUtil
 import entity.CustomerEntity
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ChangeListener
@@ -15,14 +13,32 @@ import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.*
+import javafx.util.Callback
 import java.net.URL
 import java.util.*
+import kotlin.collections.List
 
 class CustomerService:Initializable,BaseController() {
     private  var customers = CustomerDao.customers
     private var selectedCustomer:CustomerEntity?=null
     private var customerToChangePoint:CustomerEntity?=null
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
+
+
+        rTableview.selectionModel.selectionMode = SelectionMode.MULTIPLE
+
+        rTableview.rowFactory = Callback<TableView<InvoiceDao.ProductReturned>,TableRow<InvoiceDao.ProductReturned>>{tablevieww ->
+            object :TableRow<InvoiceDao.ProductReturned>(){
+                override fun updateItem(p0: InvoiceDao.ProductReturned?, p1: Boolean) {
+                    super.updateItem(p0, p1)
+                    if (p0!=null && p0.isReturned){
+                        isDisable = true
+                        style = "-fx-background-color:#FF000018;"
+                    }
+                }
+            }
+        }
+
 
         cBirthdayCol.setCellValueFactory { data -> SimpleStringProperty(data.value.birthDay.format()) }
         cCodeCol.setCellValueFactory { d -> SimpleStringProperty(d.value.code) }
@@ -167,7 +183,11 @@ class CustomerService:Initializable,BaseController() {
     private lateinit var rReasonTf: TextField
 
     @FXML
+    private lateinit var toggleGroup:ToggleGroup
+
+    @FXML
     private lateinit var rTotal: TableColumn<InvoiceDao.ProductReturned, String>
+    var productsReturned: List<InvoiceDao.ProductReturned> = mutableListOf()
 
     @FXML
     fun cpOnsearch(event: ActionEvent) {
@@ -264,13 +284,27 @@ class CustomerService:Initializable,BaseController() {
 
     @FXML
     fun rOnSave(event: ActionEvent) {
+        val itemSelected = rTableview.selectionModel.selectedItems
 
+        if (itemSelected.isNotEmpty()){
+            val action = if( ( toggleGroup.selectedToggle as RadioButton).id.equals("changeRbtn") ) "CHANGE" else "MONEY"
+            val idProductsSold  = itemSelected.map { it.productSoldId }
+            val isSave = InvoiceDao.saveProductReturned(productsReturned[0].invoiceId,idProductsSold,Context.currentEmployee.value.id,rReasonTf.textTrim(),action)
+            if (isSave){
+                ViewUtil.createAlert(Alert.AlertType.INFORMATION,"Saved","Product return with success").showAndWait()
+            }else{
+                ViewUtil.createAlert(Alert.AlertType.WARNING,"Error","Product don't return.").showAndWait()
+            }
+        }else{
+            ViewUtil.createAlert(Alert.AlertType.WARNING,"NO item selected","You must select some items first").showAndWait()
+        }
     }
 
     @FXML
     fun rOnSearch(event: ActionEvent) {
-        val cc =InvoiceDao.findByInvoiceCode("")
-        if (cc.isNotEmpty()){
+         productsReturned =InvoiceDao.findByInvoiceCode(rInvoiceTf.textTrim())
+
+        if (productsReturned.isNotEmpty()){
 
             rTotal.setCellValueFactory { d->SimpleStringProperty( d.value.totalPrice.toString() ) }
             rCodeCol.setCellValueFactory { d->SimpleStringProperty( d.value.code ) }
@@ -283,7 +317,7 @@ class CustomerService:Initializable,BaseController() {
             rTotal.setCellValueFactory { d->SimpleStringProperty() }*/
 
 
-            rTableview.items = FXCollections.observableArrayList( cc )
+            rTableview.items = FXCollections.observableArrayList( productsReturned )
         }
     }
 

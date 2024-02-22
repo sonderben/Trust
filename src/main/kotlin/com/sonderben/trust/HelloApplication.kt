@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader
 import javafx.print.Printer
 import javafx.scene.Scene
 import javafx.stage.Stage
+import org.scenicview.ScenicView
 
 class HelloApplication : Application() {
 
@@ -21,10 +22,11 @@ class HelloApplication : Application() {
 
         println("printer: ${Printer.getDefaultPrinter()}" )
 
+        primary.centerOnScreen()
+
 
         //ScenicView.show( scene )
-
-
+        
 
         primary.icons.add(
             Factory.createImage("image/shield.png")

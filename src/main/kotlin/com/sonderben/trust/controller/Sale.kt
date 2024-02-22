@@ -7,6 +7,7 @@ import com.sonderben.trust.db.dao.InvoiceDao
 import com.sonderben.trust.db.dao.ProductDao
 import com.sonderben.trust.hide
 import com.sonderben.trust.onlyInt
+import com.sonderben.trust.printer.TPrinter
 import com.sonderben.trust.qr_code.MessageListener
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.CustomerEntity
@@ -252,6 +253,7 @@ class Sale :Initializable,MessageListener,BaseController(){
                    ViewUtil.createAlert(Alert.AlertType.CONFIRMATION,"Payment","Pay with success").showAndWait()
                    clearAll()
                    customerCode.requestFocus()
+
                }
 
            }else{

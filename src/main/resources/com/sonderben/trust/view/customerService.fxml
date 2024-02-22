@@ -13,6 +13,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -113,7 +114,7 @@
                      <children>
                         <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <GridPane minWidth="100.0" VBox.vgrow="SOMETIMES">
+                              <GridPane minHeight="50.0" VBox.vgrow="SOMETIMES">
                                  <columnConstraints>
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -130,7 +131,7 @@
                                  </children>
                               </GridPane>
                               <Pane opacity="0.32" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #aaa;" />
-                              <TableView fx:id="rTableview" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="SOMETIMES">
+                              <TableView fx:id="rTableview" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                 <columns>
                                   <TableColumn fx:id="rCodeCol" prefWidth="75.0" text="Code" />
                                   <TableColumn fx:id="rDescriptionCol" prefWidth="75.0" text="Description" />
@@ -143,7 +144,7 @@
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                  </columnResizePolicy>
                               </TableView>
-                              <VBox>
+                              <VBox minHeight="150.0" VBox.vgrow="SOMETIMES">
                                  <children>
                                     <GridPane>
                                       <columnConstraints>
@@ -162,8 +163,11 @@
                                           <Label text="Action" textFill="WHITE" GridPane.rowIndex="2" />
                                           <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.rowIndex="3">
                                              <children>
-                                                <RadioButton mnemonicParsing="false" text="Change" />
-                                                <RadioButton mnemonicParsing="false" text="Return money" />
+                                                <RadioButton fx:id="changeRbtn" mnemonicParsing="false" selected="true" text="Change">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="toggleGroup" />
+                                                   </toggleGroup></RadioButton>
+                                                <RadioButton fx:id="moneyRbtn" mnemonicParsing="false" text="Return money" toggleGroup="$toggleGroup" />
                                              </children>
                                           </HBox>
                                        </children>

@@ -176,15 +176,20 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
 			ps.price,ps.quantity,
 			(ps.price * ps.quantity) as total_price,
             ps.category,
-            iv.dateCreated
-            FROM ${SqlCreateTables.productSealed} as ps
-            INNER JOIN ${SqlCreateTables.invoiceProductSealed} as ip ON ip.id_product_sealed = ps.id
-            INNER JOIN ${SqlCreateTables.invoices} as iv ON iv.id = ip.id_invoice
-            WHERE iv.codeBar = ?
+            iv.dateCreated,
+			ps.id as productSoldId,
+			iv.id as invoicesId,
+            ps.isReturned
+			
+            FROM productSealed as ps
+            INNER JOIN invoiceProductSealed as ip ON ip.id_product_sealed = ps.id
+            INNER JOIN invoices as iv ON iv.id = ip.id_invoice
+			
+			WHERE  iv.codeBar = ?
         """.trimIndent()
         Database.connect("").use { connection ->
             connection.prepareStatement(select).use { preparedStatement ->
-                preparedStatement.setString(1,"49957371")
+                preparedStatement.setString(1,invoiceCode)
                 preparedStatement.executeQuery().use { resultSet ->
                     while(resultSet.next()){
                         val productReturned = ProductReturned(
@@ -194,13 +199,55 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
                             resultSet.getFloat("quantity"),
                             resultSet.getDouble("total_price"),
                             resultSet.getString("category"),
-                            resultSet.getTimestamp("dateCreated").toCalendar())
+                            resultSet.getTimestamp("dateCreated").toCalendar(),
+                            resultSet.getLong("productSoldId"),
+                            resultSet.getLong("invoicesId"),
+                            resultSet.getBoolean("isReturned")
+                        )
                         list.add( productReturned )
                     }
                     return list;
                 }
             }
         }
+    }
+
+    fun saveProductReturned(idInvoice:Long, idProductSealed:List<Long>, idEmployee:Long, reason:String, action:String):Boolean{
+
+        val insert = "insert into ${SqlCreateTables.productReturned} (id_invoice,id_employee,reason,action) values(?,?,?,?)"
+        Database.connect("").use { connection ->
+            connection.autoCommit = false
+            connection.prepareStatement(insert).use { preparedStatement ->
+                preparedStatement.setLong(1,idInvoice)
+                preparedStatement.setLong(2,idEmployee)
+                preparedStatement.setString(3,reason)
+                preparedStatement.setString(4,action)
+                val rowCount = preparedStatement.executeUpdate()
+
+                for (id in idProductSealed){
+                    productSoldReturned(id=id)
+                }
+                if (rowCount>0){
+                    connection.commit()
+                }else{
+                    connection.rollback()
+                }
+                connection.autoCommit = false
+                return rowCount>0
+            }
+        }
+    }
+
+    private fun productSoldReturned(id: Long) {
+        val updateIsReturned = "update ${SqlCreateTables.productSealed} set isReturned = 1 where id = ?"
+
+        Database.connect("").prepareStatement(updateIsReturned).use { preparedStatement ->
+            preparedStatement.setLong(1,id)
+           val rowCount =  preparedStatement.executeUpdate()
+            if (rowCount<=0)
+                throw SQLException("can not set isReturned in ${SqlCreateTables.productSealed} table")
+        }
+
     }
 
 
@@ -212,14 +259,7 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
              var category:String){
 
     }
-    /*
-    ps.code,
-            ps.description,
-			ps.price,ps.quantity,
-			(ps.price * ps.quantity) as total_price,
-            ps.category,
-            iv.dateCreated
-     */
+
 
     data class ProductReturned(
         var code:String,
@@ -228,7 +268,10 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
         var quantity:Float,
         var totalPrice:Double,
         var category:String,
-        var dateCreated:Calendar){
+        var dateCreated:Calendar,
+        var productSoldId:Long,
+        var invoiceId:Long,
+        var isReturned:Boolean){
 
     }
 

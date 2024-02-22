@@ -254,6 +254,55 @@ object ProductDao : CrudDao<ProductEntity> {
 
     }
 
+    fun bestSellers(qty:Float,frequency:Int,benefit:Float):List<BestSeller>{
+        val bestSellers:MutableList<BestSeller> = mutableListOf()
+        val selectBestSeller = """
+            SELECT code,description,quantity,frequency  ,benefit,( (frequency * ?) + (benefit * ?) + (quantity * ?) ) as points  from
+	            (SELECT ps.code,ps.description,ps.quantity,count(ps.code) as frequency,( (sellingPrice-purchasePrice)*ps.quantity ) as benefit from 
+                    ${SqlCreateTables.productSealed} as ps 
+	                INNER JOIN ${SqlCreateTables.products} as p on ps.code = p.code
+	            GROUP by ps.code) ORDER by points DESC LIMIT 100
+        """.trimIndent()
+
+        Database.connect("").use { connection ->
+            connection.prepareStatement(selectBestSeller).use { preparedStatement ->
+                preparedStatement.setInt(1,frequency)
+                preparedStatement.setFloat(2,benefit)
+                preparedStatement.setFloat(3,qty)
+
+                preparedStatement.executeQuery().use { resultSet ->
+                    while (resultSet.next()){
+                        println(resultSet.getDouble("points"))
+                        bestSellers.add(
+                            BestSeller(
+                                resultSet.getString("code"),
+                                resultSet.getString("description"),
+                                resultSet.getFloat("quantity"),
+                                resultSet.getInt("frequency"),
+                                resultSet.getDouble("benefit"),
+                                resultSet.getDouble("points"))
+                        )
+                    }
+                    return bestSellers
+                }
+            }
+        }
+    }
+
+    /*
+    code,description,quantity,frequency  ,benefit,(?*3 + ?*2 + ?*2) as points
+     */
+
+
+    data class BestSeller (
+        val code:String,
+        val description:String,
+        val quantity:Float,
+        val frequency:Int,
+        val benefit: Double,
+        val points:Double)
+
+
 }
 
 

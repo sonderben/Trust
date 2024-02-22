@@ -14,6 +14,7 @@ object SqlCreateTables {
     const val invoices = "invoices"
     const val invoiceProductSealed = "invoiceProductSealed"
     const val productSealed = "productSealed"
+    const val productReturned = "productReturned"
 
 
 
@@ -172,14 +173,30 @@ object SqlCreateTables {
         discount float,
         itbis float,
         total float,
-        wasDiscountCategory boolean
+        wasDiscountCategory boolean,
+        isReturned boolean default false
         )
+    """.trimIndent()
+
+    val createProductReturnedTable = """
+        CREATE TABLE IF NOT EXISTS $productReturned (
+        id integer primary key autoincrement,
+        id_invoice integer not null,
+        id_employee integer not null,
+        reason nvarchar,
+        action varchar,
+        dateCreate timestamp not null default CURRENT_TIMESTAMP,
+        foreign key(id_invoice)
+        references $invoices (id),
+        foreign key(id_employee)
+        references $employees (id)
+        );
     """.trimIndent()
 
     val tables = listOf(createCategoryTable,
         createCustomerTable, createScreenTable, createRolesTable, createEmployeeTable, /*createRoleEmployee,*/
         createScheduleTable, createProductsTable, createInvoiceTable, createInvoiceProductTable,createProductSealed/*,
-        getFullName*/,createEnterPrice)
+        getFullName*/,createEnterPrice,createProductReturnedTable)
 
 
     var deleteCategoryTable = """

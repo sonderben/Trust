@@ -4,7 +4,9 @@ import com.itextpdf.text.List
 import com.sonderben.trust.controller.ConfigurationController
 import com.sonderben.trust.db.dao.EmployeeDao
 import com.sonderben.trust.db.dao.enterprise.EnterpriseInfoDao
+import entity.EmployeeEntity
 import entity.enterprise.EnterpriseInfo
+import io.reactivex.rxjavafx.sources.ListChange
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
@@ -34,6 +36,8 @@ class LoginController : Initializable{
 
     @FXML
     private lateinit var newSystemLabel: Label
+    val employees = EmployeeDao.employees
+
 
 
     @FXML
@@ -67,20 +71,26 @@ class LoginController : Initializable{
         enterpriseCB.isVisible = false
         enterpriseCB.isManaged = false
         HelloApplication.primary.isResizable = false
-        val employees = EmployeeDao.employees
+
+        employees.addListener(ListChangeListener<EmployeeEntity> {
+            if (employees.size>0){
+                login.isDisable = false
+                newSystemLabel.isDisable = true
+            }
+        })
 
         if (employees.size>0){
             login.isDisable = false
             newSystemLabel.isDisable = true
         }
 
-        enterpriseCB.selectionModel.selectedItemProperty().addListener(object :ChangeListener<EnterpriseInfo>{
-            override fun changed(p0: ObservableValue<out EnterpriseInfo>?, p1: EnterpriseInfo?, newValue: EnterpriseInfo?) {
-                if (newValue != null){
-                    login.isDisable = false
-                }
+
+
+        enterpriseCB.selectionModel.selectedItemProperty().addListener { p0, p1, newValue ->
+            if (newValue != null) {
+                login.isDisable = false
             }
-        })
+        }
 
         enterpriseCB.converter = EnterpriseStringConverter()
         //enterpriseCB.items = enterPrisesInfos

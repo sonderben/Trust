@@ -9,7 +9,10 @@ import javafx.fxml.Initializable
 import javafx.geometry.Rectangle2D
 import javafx.scene.Node
 import javafx.scene.Scene
+import javafx.scene.control.Label
+import javafx.scene.control.Menu
 import javafx.scene.control.MenuBar
+import javafx.scene.control.MenuItem
 import javafx.scene.image.ImageView
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderPane
@@ -42,6 +45,15 @@ class MainController : Initializable {
             onSelect()
         }
 
+        for (items in vboxLateral.children){
+            val r = (items as HBox).children[1] as Label
+            menuView.items.addAll(
+                MenuItem(r.text)
+            )
+        }
+
+
+
 
 
 
@@ -64,6 +76,9 @@ class MainController : Initializable {
     @FXML
     private lateinit var forwardPage: ImageView
 
+    @FXML
+    private lateinit var menuView:Menu
+
 
 
     companion object {
@@ -79,7 +94,7 @@ class MainController : Initializable {
 
 
     private fun onSelect() {
-        vboxLateral.children.forEachIndexed { index, it ->
+        vboxLateral.children.forEachIndexed { _, it ->
             it.setOnMouseClicked { event ->
                 if (event != null) {
                     onClickLateralButton(event.source as Node)

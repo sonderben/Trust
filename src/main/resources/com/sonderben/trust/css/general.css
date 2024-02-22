@@ -73,6 +73,10 @@
     -fx-text-fill: white;
 }
 
+.bg-menubar{
+-fx-background-color:#032d3b;
+}
+
 .choice-box.label{
  -fx-text-fill: white;
 }
