@@ -1,12 +1,9 @@
 package com.sonderben.trust.controller
 
-import com.sonderben.trust.Context
-import com.sonderben.trust.HelloApplication
+import com.sonderben.trust.*
 import com.sonderben.trust.db.dao.CustomerDao
 import com.sonderben.trust.db.dao.InvoiceDao
 import com.sonderben.trust.db.dao.ProductDao
-import com.sonderben.trust.hide
-import com.sonderben.trust.onlyInt
 import com.sonderben.trust.printer.TPrinter
 import com.sonderben.trust.qr_code.MessageListener
 import com.sonderben.trust.viewUtil.ViewUtil
@@ -31,6 +28,8 @@ import javafx.scene.layout.VBox
 import javafx.scene.media.Media
 import javafx.scene.media.MediaPlayer
 import javafx.scene.text.Text
+import javafx.scene.web.HTMLEditor
+import org.jsoup.Jsoup
 import java.net.URL
 import java.text.NumberFormat
 import java.time.LocalDateTime
@@ -253,6 +252,11 @@ class Sale :Initializable,MessageListener,BaseController(){
                    ViewUtil.createAlert(Alert.AlertType.CONFIRMATION,"Payment","Pay with success").showAndWait()
                    clearAll()
                    customerCode.requestFocus()
+
+                   val htmlEditor = HTMLEditor()
+                   htmlEditor.htmlText = Util.readContent()
+                   TPrinter.printNode( htmlEditor )
+
 
                }
 

@@ -169,6 +169,7 @@ object SqlCreateTables {
         description nvarchar,
         category varchar,
         price float,
+        expirationDate timestamp,
         quantity float,
         discount float,
         itbis float,

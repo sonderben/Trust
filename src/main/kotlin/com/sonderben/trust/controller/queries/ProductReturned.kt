@@ -1,7 +1,11 @@
 package com.sonderben.trust.controller.queries
 
 import com.sonderben.trust.controller.BaseController
+import com.sonderben.trust.db.dao.InvoiceDao
+import com.sonderben.trust.format
 import javafx.beans.property.SimpleStringProperty
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.TableColumn
@@ -10,16 +14,24 @@ import java.net.URL
 import java.util.*
 
 class ProductReturned:Initializable, BaseController() {
+    private lateinit var productsReturned: ObservableList<InvoiceDao.ProductReturned>
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
-        categoryCol.setCellValueFactory { d->SimpleStringProperty() }
-        codCol.setCellValueFactory { d->SimpleStringProperty() }
-        desciptionCol.setCellValueFactory { d->SimpleStringProperty() }
-        dateExpiredCol.setCellValueFactory { d->SimpleStringProperty() }
-        quantityCol.setCellValueFactory { d->SimpleStringProperty() }
-        totalCol.setCellValueFactory { d->SimpleStringProperty() }
-        customerCodeCol.setCellValueFactory { d->SimpleStringProperty() }
-        employeeFullNameCol.setCellValueFactory { d->SimpleStringProperty() }
-        dateReturnecol.setCellValueFactory { d->SimpleStringProperty() }
+        productsReturned =FXCollections.observableArrayList( InvoiceDao.getProductReturned() )
+
+        invoiceCol.setCellValueFactory { d->SimpleStringProperty( d.value.invoiceCodeBar ) }
+        codCol.setCellValueFactory { d->SimpleStringProperty( d.value.productCode ) }
+        desciptionCol.setCellValueFactory { d->SimpleStringProperty(d.value.description) }
+        dateExpiredCol.setCellValueFactory { d->SimpleStringProperty( d.value.expirationDate.format() ) }
+        quantityCol.setCellValueFactory { d->SimpleStringProperty( d.value.quantity.toString() ) }
+        totalCol.setCellValueFactory { d->SimpleStringProperty (d.value.totalPrice.toString() ) }
+        //customerCodeCol.setCellValueFactory { d->SimpleStringProperty( d.value.customerCode ) }
+        employeeFullNameCol.setCellValueFactory { d->SimpleStringProperty( d.value.employee ) }
+        dateReturnecol.setCellValueFactory { d->SimpleStringProperty( d.value.dateReturned.format() ) }
+        reasonCol.setCellValueFactory { d->SimpleStringProperty(d.value.reson) }
+        actionCol.setCellValueFactory { d->SimpleStringProperty(d.value.action) }
+        dateBoughtCol.setCellValueFactory {d->SimpleStringProperty(d.value.dateBought.format())}
+
+        tableView.items = productsReturned
 
     }
 
@@ -28,32 +40,39 @@ class ProductReturned:Initializable, BaseController() {
     }
 
     @FXML
-    private lateinit var categoryCol: TableColumn<Any, String>
+    private lateinit var invoiceCol: TableColumn<InvoiceDao.ProductReturned, String>
 
     @FXML
-    private lateinit var codCol: TableColumn<Any, String>
+    private lateinit var codCol: TableColumn<InvoiceDao.ProductReturned, String>
+
+   // @FXML
+   // private lateinit var customerCodeCol: TableColumn<InvoiceDao.ProductReturned, String>
 
     @FXML
-    private lateinit var customerCodeCol: TableColumn<Any, String>
+    private lateinit var dateExpiredCol: TableColumn<InvoiceDao.ProductReturned, String>
 
     @FXML
-    private lateinit var dateExpiredCol: TableColumn<Any, String>
+    private lateinit var reasonCol:TableColumn<InvoiceDao.ProductReturned,String>
+    @FXML
+    private lateinit var actionCol:TableColumn<InvoiceDao.ProductReturned,String>
+    @FXML
+    private lateinit var dateBoughtCol:TableColumn<InvoiceDao.ProductReturned,String>
 
     @FXML
-    private lateinit var dateReturnecol: TableColumn<Any, String>
+    private lateinit var dateReturnecol: TableColumn<InvoiceDao.ProductReturned, String>
 
     @FXML
-    private lateinit var desciptionCol: TableColumn<Any, String>
+    private lateinit var desciptionCol: TableColumn<InvoiceDao.ProductReturned, String>
 
     @FXML
-    private lateinit var employeeFullNameCol: TableColumn<Any, String>
+    private lateinit var employeeFullNameCol: TableColumn<InvoiceDao.ProductReturned, String>
 
     @FXML
-    private lateinit var quantityCol: TableColumn<Any, String>
+    private lateinit var quantityCol: TableColumn<InvoiceDao.ProductReturned, String>
 
     @FXML
-    private lateinit var tableView: TableView<Any>
+    private lateinit var tableView: TableView<InvoiceDao.ProductReturned>
 
     @FXML
-    private lateinit var totalCol: TableColumn<Any, String>
+    private lateinit var totalCol: TableColumn<InvoiceDao.ProductReturned, String>
 }

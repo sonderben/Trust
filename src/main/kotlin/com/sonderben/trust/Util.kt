@@ -1,7 +1,13 @@
 package com.sonderben.trust
 
+import javafx.scene.web.HTMLEditor
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
 import java.net.InetAddress
 import java.net.NetworkInterface
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
@@ -46,6 +52,32 @@ object Util {
 
         return "No se pudo obtener la dirección IP"
     }
+
+
+    fun saveContent(htmlEditor:HTMLEditor) {
+        val file = File("data/invoice.html")
+        try {
+            val fileWritter = FileWriter(file)
+            fileWritter.use {
+                fileWritter.write(htmlEditor.htmlText)
+            }
+
+        }catch (ex: IOException){
+            ex.printStackTrace()
+        }
+    }
+    fun readContent():String {
+        try {
+            return String( Files.readAllBytes( Paths.get( "data/invoice.html" ) ) )
+
+
+        }catch (ex: IOException){
+            ex.printStackTrace()
+        }
+        return ""
+    }
+
+
 
 
 }

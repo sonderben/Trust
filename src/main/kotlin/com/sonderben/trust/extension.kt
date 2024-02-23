@@ -46,6 +46,10 @@ fun Timestamp.toCalendar():Calendar{
         return calendar
 }
 
+fun Calendar.toTimestamp():Timestamp{
+    return Timestamp(this.timeInMillis)
+}
+
 fun TextField.onlyInt(){
     this.textFormatter = Factory.createFilterTextField()
 }

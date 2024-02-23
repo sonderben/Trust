@@ -5,22 +5,23 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../../css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.queries.ProductReturned">
    <children>
       <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0">
               <columns>
+                  <TableColumn fx:id="invoiceCol" prefWidth="75.0" text="Invoice" />
+                  <TableColumn fx:id="dateBoughtCol" prefWidth="75.0" text="Date bought" />
+                  <TableColumn fx:id="dateReturnecol" prefWidth="75.0" text="Date returned" />
+                  <TableColumn fx:id="reasonCol" prefWidth="75.0" text="Reason" />
+                  <TableColumn fx:id="actionCol" prefWidth="75.0" text="Action" />
                 <TableColumn fx:id="codCol" prefWidth="75.0" text="Code" />
                 <TableColumn fx:id="desciptionCol" prefWidth="75.0" text="Description" />
-                  <TableColumn fx:id="categoryCol" prefWidth="75.0" text="Category" />
-                  <TableColumn fx:id="dateExpiredCol" prefWidth="75.0" text="Date expired" />
                   <TableColumn fx:id="quantityCol" prefWidth="75.0" text="Qty" />
                   <TableColumn fx:id="totalCol" prefWidth="75.0" text="Total" />
-                  <TableColumn fx:id="customerCodeCol" prefWidth="75.0" text="Customer code" />
+                  <TableColumn fx:id="dateExpiredCol" prefWidth="75.0" text="Date expired" />
                   <TableColumn fx:id="employeeFullNameCol" prefWidth="75.0" text="Employee" />
-                  <TableColumn fx:id="dateReturnecol" prefWidth="75.0" text="Date returned" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

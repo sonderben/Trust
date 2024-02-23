@@ -4,6 +4,7 @@ import Database
 import Database.DATABASE_NAME
 import com.sonderben.trust.db.SqlCreateTables
 import com.sonderben.trust.toCalendar
+import com.sonderben.trust.toTimestamp
 import entity.InvoiceEntity
 import entity.ProductSaled
 import javafx.collections.FXCollections
@@ -22,7 +23,7 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
         val insertInvoice = "insert into ${SqlCreateTables.invoices} (dateCreated, codeBar, id_employee, id_customer) values (?,?,?,?)"
 
         val insertProductSealed = "Insert into ${SqlCreateTables.productSealed}" +
-                " (code,description,price,quantity,discount,itbis,total,wasDiscountCategory,category)  values(?,?,?,?,?,?,?,?,?);"
+                " (code,description,price,quantity,discount,itbis,total,wasDiscountCategory,category,expirationDate)  values(?,?,?,?,?,?,?,?,?,?);"
 
         val insertInvoiceProductSealed = "Insert into  ${SqlCreateTables.invoiceProductSealed} (id_invoice,id_product_sealed) values(?,?);"
 
@@ -61,6 +62,7 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
                         preparedStatement.setDouble(7,productSale.total)
                         preparedStatement.setBoolean(8,productSale.isWasDiscountCategory)
                         preparedStatement.setString(9,productSale.category)
+                        preparedStatement.setTimestamp(10,productSale.expirationDate.toTimestamp())
                         val rc = preparedStatement.executeUpdate()
                         if (rc>0){
                             val r = ProductDao.updateQuantityRemaining(productSale.code,productSale.qty)
@@ -168,8 +170,8 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
        }
     }
 
-    fun findByInvoiceCode(invoiceCode: String):List<ProductReturned> {
-        val list = mutableListOf<ProductReturned>()
+    fun findByInvoiceCode(invoiceCode: String):List<ProductToReturned> {
+        val list = mutableListOf<ProductToReturned>()
         val select = """
             SELECT ps.code,
             ps.description,
@@ -192,7 +194,7 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
                 preparedStatement.setString(1,invoiceCode)
                 preparedStatement.executeQuery().use { resultSet ->
                     while(resultSet.next()){
-                        val productReturned = ProductReturned(
+                        val productToReturned = ProductToReturned(
                             resultSet.getString("code"),
                             resultSet.getString("description"),
                             resultSet.getDouble("price"),
@@ -204,7 +206,7 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
                             resultSet.getLong("invoicesId"),
                             resultSet.getBoolean("isReturned")
                         )
-                        list.add( productReturned )
+                        list.add( productToReturned )
                     }
                     return list;
                 }
@@ -237,6 +239,44 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
             }
         }
     }
+    fun getProductReturned():List<ProductReturned>{
+        val select = """
+            SELECT iv.codeBar as invoice_codebar, iv.dateCreated as dateBought,pr.dateCreate as dateReturned,pr.reason,pr.action,emp.firstName || ' ' || emp.lastName as employee,
+            customers.code as customerCode,ps.code as productCode,ps.description,ps.quantity,ps.total/*,ps.expirationDate*/
+            from productReturned as pr
+            INNER JOIN Employee as emp on pr.id_employee = emp.id
+            INNER join invoices as iv on pr.id_invoice
+            INNER join invoiceProductSealed as ips on ips.id_invoice = iv.id
+            inner JOIN  productSealed as ps on ps.id = ips.id_product_sealed
+            INNER join  customers on iv.id_customer = customers.id
+            where ps.isReturned = true
+        """.trimIndent()
+        val productsReturned = mutableListOf<ProductReturned>()
+        Database.connect("").use { connection ->
+            connection.prepareStatement(select).use { preparedStatement ->
+                preparedStatement.executeQuery().use { resultSet ->
+                    while (resultSet.next()){
+                        val pr = ProductReturned(
+                            resultSet.getString("productCode"),
+                            resultSet.getString("description"),
+                            resultSet.getFloat("quantity"),
+                            resultSet.getDouble("total"),
+                            resultSet.getTimestamp("dateReturned").toCalendar(),
+                            resultSet.getTimestamp("dateBought").toCalendar(),
+                            resultSet.getString("reason"),
+                            resultSet.getString("action"),
+                            resultSet.getTimestamp("expirationDate").toCalendar(),
+                            resultSet.getString("customerCode"),
+                            resultSet.getString("employee"),
+                            resultSet.getString("invoice_codebar")
+                        )
+                        productsReturned.add(pr)
+                    }
+                    return productsReturned
+                }
+            }
+        }
+    }
 
     private fun productSoldReturned(id: Long) {
         val updateIsReturned = "update ${SqlCreateTables.productSealed} set isReturned = 1 where id = ?"
@@ -261,7 +301,7 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
     }
 
 
-    data class ProductReturned(
+    data class ProductToReturned(
         var code:String,
         var description:String,
         var price:Double,
@@ -274,5 +314,23 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
         var isReturned:Boolean){
 
     }
+    /*
+    SELECT ,, ,,, ,
+ ,,ps.expirationDate
+
+     */
+    data class ProductReturned(
+        var productCode:String,
+        var description:String,
+        var quantity:Float,
+        var totalPrice:Double,
+        var dateReturned:Calendar,
+        var dateBought:Calendar,
+        var reson:String,
+        var action:String,
+        var expirationDate:Calendar,
+        var customerCode:String,
+        var employee:String,
+        var invoiceCodeBar:String)
 
 }

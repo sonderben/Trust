@@ -4,8 +4,8 @@ import Database.DATABASE_NAME
 import com.sonderben.trust.Util
 import com.sonderben.trust.db.SqlCreateTables
 import entity.CustomerEntity
-import entity.EmployeeEntity
 import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import java.sql.SQLException
 import java.sql.Timestamp
 
@@ -263,4 +263,44 @@ object CustomerDao : CrudDao<CustomerEntity> {
         }
 
     }
+
+    fun spendingOrFrequentCustomer(orderBy:String="totalSpend"):List<SpendingOrFrequentCustomer>{
+        val sfc = mutableListOf<SpendingOrFrequentCustomer>()
+        val select = """
+            SELECT  c.code as customerCode,c.point,sum(ps.quantity) as totalProductBought,sum(ps.total) as totalSpend ,count(iv.id) as frequency
+            from customers as c
+            INNER JOIN invoices as iv on c.id = iv.id_customer
+            INNER join invoiceProductSealed as ips on ips.id_invoice = iv.id
+            INNER join productSealed as ps on ps.id = ips.id_product_sealed
+            GROUP BY customerCode
+            ORDER by ? DESC limit 100
+        """.trimIndent()
+        Database.connect("").use { connection ->
+            connection.prepareStatement(select).use { preparedStatement ->
+                preparedStatement.setString(1,orderBy)
+                preparedStatement.executeQuery().use { resultSet ->
+                    while (resultSet.next()){
+                        val temp = SpendingOrFrequentCustomer(
+                            resultSet.getString("customerCode"),
+                            resultSet.getLong("point"),
+                            resultSet.getInt("totalProductBought"),
+                            resultSet.getDouble("totalSpend"),
+                            resultSet.getInt("frequency")
+                        )
+                        sfc.add( temp )
+                    }
+                    return sfc
+                }
+            }
+        }
+    }
+
+    data class SpendingOrFrequentCustomer(
+        var cusomerCode:String,
+        var point:Long,
+        var totalProductBought:Int,
+        var totalSpend:Double,
+        var frequency:Int
+    )
+
 }

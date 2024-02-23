@@ -1,6 +1,7 @@
 package com.sonderben.trust.controller.config
 
 //import com.gluonhq.richtextarea.RichTextArea
+import com.sonderben.trust.Util
 import com.sonderben.trust.controller.BaseController
 import entity.EnterpriseEntity
 import javafx.event.ActionEvent
@@ -53,7 +54,7 @@ class InvoiceController:Initializable {
 
 
 
-        readContent()
+        readContent(htmlEditor)
         htmlEditor.addEventFilter(KeyEvent.KEY_TYPED){ event->
             //ScenicView.show(htmlEditor)
             /*val caretPosition = textArea.caretPosition
@@ -61,7 +62,7 @@ class InvoiceController:Initializable {
             if (currentLine.length >= MAX_COLUMN){
                 event.consume()
             }*/
-            saveContent()
+            saveContent(htmlEditor)
         }
 
 
@@ -73,7 +74,7 @@ class InvoiceController:Initializable {
 
 
 
-    private fun saveContent() {
+    fun saveContent(htmlEditor:HTMLEditor) {
         val file = File("data/invoice.html")
         try {
             val fileWritter = FileWriter(file)
@@ -81,19 +82,19 @@ class InvoiceController:Initializable {
                 fileWritter.write(htmlEditor.htmlText)
             }
 
-        }catch (ex:IOException){
+        }catch (ex: IOException){
             ex.printStackTrace()
         }
     }
-    private fun readContent() {
+    fun readContent(htmlEditor: HTMLEditor):String {
         try {
-            val temp = String( Files.readAllBytes( Paths.get( "data/invoice.html" ) ) )
-            htmlEditor.htmlText = temp
+            val t= String( Files.readAllBytes( Paths.get( "data/invoice.html" ) ) )
+            htmlEditor.htmlText = t
 
         }catch (ex: IOException){
             ex.printStackTrace()
         }
-
+        return ""
     }
 
 

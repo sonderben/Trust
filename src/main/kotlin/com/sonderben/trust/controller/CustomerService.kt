@@ -27,9 +27,9 @@ class CustomerService:Initializable,BaseController() {
 
         rTableview.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
-        rTableview.rowFactory = Callback<TableView<InvoiceDao.ProductReturned>,TableRow<InvoiceDao.ProductReturned>>{tablevieww ->
-            object :TableRow<InvoiceDao.ProductReturned>(){
-                override fun updateItem(p0: InvoiceDao.ProductReturned?, p1: Boolean) {
+        rTableview.rowFactory = Callback<TableView<InvoiceDao.ProductToReturned>,TableRow<InvoiceDao.ProductToReturned>>{ tablevieww ->
+            object :TableRow<InvoiceDao.ProductToReturned>(){
+                override fun updateItem(p0: InvoiceDao.ProductToReturned?, p1: Boolean) {
                     super.updateItem(p0, p1)
                     if (p0!=null && p0.isReturned){
                         isDisable = true
@@ -79,7 +79,7 @@ class CustomerService:Initializable,BaseController() {
     private lateinit var cTableview:TableView<CustomerEntity>
 
     @FXML
-    private lateinit var rTableview:TableView<InvoiceDao.ProductReturned>
+    private lateinit var rTableview:TableView<InvoiceDao.ProductToReturned>
 
     @FXML
     private lateinit var cBirthdayCol: TableColumn<CustomerEntity, String>
@@ -162,22 +162,22 @@ class CustomerService:Initializable,BaseController() {
     private lateinit var cpPointTfConversion: TextField
 
     @FXML
-    private lateinit var rCategoryCol: TableColumn<InvoiceDao.ProductReturned, String>
+    private lateinit var rCategoryCol: TableColumn<InvoiceDao.ProductToReturned, String>
 
     @FXML
-    private lateinit var rCodeCol: TableColumn<InvoiceDao.ProductReturned, String>
+    private lateinit var rCodeCol: TableColumn<InvoiceDao.ProductToReturned, String>
 
     @FXML
-    private lateinit var rDateExpiredCol: TableColumn<InvoiceDao.ProductReturned, String>
+    private lateinit var rDateExpiredCol: TableColumn<InvoiceDao.ProductToReturned, String>
 
     @FXML
-    private lateinit var rDescriptionCol: TableColumn<InvoiceDao.ProductReturned, String>
+    private lateinit var rDescriptionCol: TableColumn<InvoiceDao.ProductToReturned, String>
 
     @FXML
     private lateinit var rInvoiceTf: TextField
 
     @FXML
-    private lateinit var rQuantityCol: TableColumn<InvoiceDao.ProductReturned, String>
+    private lateinit var rQuantityCol: TableColumn<InvoiceDao.ProductToReturned, String>
 
     @FXML
     private lateinit var rReasonTf: TextField
@@ -186,8 +186,8 @@ class CustomerService:Initializable,BaseController() {
     private lateinit var toggleGroup:ToggleGroup
 
     @FXML
-    private lateinit var rTotal: TableColumn<InvoiceDao.ProductReturned, String>
-    var productsReturned: List<InvoiceDao.ProductReturned> = mutableListOf()
+    private lateinit var rTotal: TableColumn<InvoiceDao.ProductToReturned, String>
+    var productsReturned: List<InvoiceDao.ProductToReturned> = mutableListOf()
 
     @FXML
     fun cpOnsearch(event: ActionEvent) {

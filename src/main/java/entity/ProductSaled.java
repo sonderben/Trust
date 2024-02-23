@@ -1,11 +1,23 @@
 package entity;
 
+import java.util.Calendar;
+
 // i create this class because a product can change, tomorrow the price.... can change
 // thats why i create a separate class
 public class ProductSaled extends BaseEntity{
     private String code, description,category;
     private float price, qty, discount, itbis;
     private double total;
+    private Calendar expirationDate;
+
+    public Calendar getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(Calendar expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
     private boolean wasDiscountCategory;
 
     public int getQtyRemaining() {
@@ -30,8 +42,9 @@ public class ProductSaled extends BaseEntity{
         this.total = p.total();
         this.wasDiscountCategory = wasDiscountCategory;
         this.category = p.getCategory().getDescription();
+        this.expirationDate = p.getExpirationDate();
     }
-    public ProductSaled(String code, String description, float price, float qty, float discount, float itbis, double total,boolean wasDiscountCategory,String category) {
+    public ProductSaled(String code, String description, float price, float qty, float discount, float itbis, double total,boolean wasDiscountCategory,String category,Calendar expirationDate) {
         this.code = code;
         this.description = description;
         this.price = price;
@@ -41,6 +54,7 @@ public class ProductSaled extends BaseEntity{
         this.total = total;
         this.wasDiscountCategory = wasDiscountCategory;
         this.category = category;
+        this.expirationDate = expirationDate;
     }
 
     public String getCode() {
