@@ -67,7 +67,7 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
                         if (rc>0){
                             val r = ProductDao.updateQuantityRemaining(productSale.code,productSale.qty)
 
-                            if (r<0){
+                            if (r<=0){
                                 connection.rollback()
                                 connection.autoCommit = true
                                 throw SQLException("can not update qty remaining product")

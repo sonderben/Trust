@@ -14,6 +14,9 @@ import javafx.scene.control.Menu
 import javafx.scene.control.MenuBar
 import javafx.scene.control.MenuItem
 import javafx.scene.image.ImageView
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCodeCombination
+import javafx.scene.input.KeyCombination
 import javafx.scene.input.MouseEvent
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
@@ -26,14 +29,22 @@ import java.util.*
 
 
 class MainController : Initializable {
+    private fun selecttAppropriateView(idNode: String) {
+        val selected = vboxLateral.children.filter { it.id.lowercase() == idNode }
+        if (selected.isNotEmpty())
+            onClickLateralButton( selected[0] )
+    }
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
         HelloApplication.primary.isResizable = true
         next = nextPage
         forward = forwardPage
 
+        editMenu = menuEdit
 
-        menuBar.useSystemMenuBarProperty().set(true)
+
+        //menuBar.useSystemMenuBarProperty().set(true)
         screensByRole()
         if (vboxLateral.children.size ==1 ){
             borderpane.left = null
@@ -47,14 +58,75 @@ class MainController : Initializable {
 
         for (items in vboxLateral.children){
             val r = (items as HBox).children[1] as Label
+
+            val menuItem = MenuItem(r.text)
+            menuItem.id = "${items.id}_"
+
+
+
+            when ( menuItem.id.lowercase() ) {
+                "sale_" -> {
+                    menuItem.accelerator = KeyCodeCombination(KeyCode.F1,KeyCombination.CONTROL_DOWN)
+                    menuItem.setOnAction {
+                        changeView("view/sale.fxml")
+                        selecttAppropriateView( "sale" )
+                    }
+                }
+                "product_" -> {
+                    menuItem.accelerator = KeyCodeCombination(KeyCode.F2,KeyCombination.CONTROL_DOWN)
+                    menuItem.setOnAction {
+                        changeView("view/product.fxml")
+                        selecttAppropriateView( "product" )
+                    }
+                }
+                "employee_" -> {
+                    menuItem.accelerator = KeyCodeCombination(KeyCode.F3,KeyCombination.CONTROL_DOWN)
+                    menuItem.setOnAction {
+                        changeView("view/employee.fxml")
+                        selecttAppropriateView( "employee" )
+                    }
+                }
+                "configuration_" -> {
+                    menuItem.accelerator = KeyCodeCombination(KeyCode.F5,KeyCombination.CONTROL_DOWN)
+                    menuItem.setOnAction {
+                        changeView("view/configuration.fxml")
+                        selecttAppropriateView( "configuration" )
+                    }
+                }
+                "inventory_" -> {
+                   /* menuItem.accelerator = KeyCodeCombination(KeyCode.F5,KeyCombination.CONTROL_DOWN)
+                    menuItem.setOnAction {
+                        changeView("view/inventory.fxml")
+                        selecttAppropriateView( "inventory" )
+                    }*/
+                }
+                "role_" -> {
+                    menuItem.accelerator = KeyCodeCombination(KeyCode.F4,KeyCombination.CONTROL_DOWN)
+                    menuItem.setOnAction {
+                        changeView("view/role.fxml")
+                        selecttAppropriateView( "role" )
+                    }
+                }
+                "queries_" -> {
+                    menuItem.accelerator = KeyCodeCombination(KeyCode.F6,KeyCombination.CONTROL_DOWN)
+                    menuItem.setOnAction {
+                        changeView("view/queries/queries.fxml")
+                        selecttAppropriateView( "queries" )
+                    }
+                }
+                "customer_service_"->{
+                    menuItem.accelerator = KeyCodeCombination(KeyCode.F7,KeyCombination.CONTROL_DOWN)
+                    menuItem.setOnAction {
+                        changeView("view/customerService.fxml")
+                        selecttAppropriateView( "customer_service" )
+                    }
+                }
+            }
+
             menuView.items.addAll(
-                MenuItem(r.text)
+                menuItem
             )
         }
-
-
-
-
 
 
     }
@@ -70,6 +142,8 @@ class MainController : Initializable {
     private lateinit var menuBar: MenuBar
     @FXML
     private lateinit var topBarHBox: HBox
+    @FXML
+    private lateinit var menuEdit: Menu
 
     @FXML
     private lateinit var nextPage:ImageView
@@ -82,11 +156,9 @@ class MainController : Initializable {
 
 
     companion object {
-
         lateinit var next:ImageView
         lateinit var forward:ImageView
-
-
+        lateinit var editMenu: Menu
     }
 
 
@@ -129,11 +201,8 @@ class MainController : Initializable {
 
 
     private fun onClickLateralButton(node:Node ){
-
-
         vboxLateral.children.forEach {
             if (node === it){
-                //032D3BFF
                 it.style = "-fx-background-color: #FFFFFF35"
             }else{
                 it.style = ""

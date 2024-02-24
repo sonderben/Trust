@@ -127,3 +127,10 @@
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
+ .context-menu{
+-fx-background-color:#3498db;
+}
+
+.calendar-grid{
+-fx-background-color:#3498db;
+}

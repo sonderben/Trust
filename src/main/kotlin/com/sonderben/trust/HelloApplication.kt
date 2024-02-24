@@ -28,7 +28,6 @@ class HelloApplication : Application() {
         //ScenicView.show( scene )
 
 
-        
 
         primary.icons.add(
             Factory.createImage("image/shield.png")

@@ -56,6 +56,26 @@ class Sale :Initializable,MessageListener,BaseController(){
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         //socketMesageEvent.startingListening()
 
+        MainController.editMenu.items.clear()
+
+
+        val saveMenuItem =  MenuItem("Pay")
+        saveMenuItem.setOnAction {
+            pay()
+        }
+        val clearMenuItems =  MenuItem("Clear")
+        clearMenuItems.setOnAction {
+            clearTextS()
+        }
+
+        val cancelMenuItems =  MenuItem("Cancel")
+        clearMenuItems.setOnAction {
+            clearAll()
+        }
+
+
+        MainController.editMenu.items.addAll(  saveMenuItem,/*updateMenuItem,deleteMenuItem,*/clearMenuItems,cancelMenuItems  )
+
 
         //customerCode.onlyInt()
         codeProductTextField.onlyInt()
@@ -233,41 +253,43 @@ class Sale :Initializable,MessageListener,BaseController(){
     }
     @FXML
     fun onPay(event: ActionEvent) {
-       if(mProducts.size>0){
-           if (cashTextField.text.isBlank()){
-               cashTextField.text = "0.0"
-           }
-           if (cashTextField.text.toDouble()>=grandTotal.text.toDouble()){
-               val codeBar = Random.nextLong(LongRange(10_000_000,99_999_999))
-              val isPayed = InvoiceDao.save(
-                   InvoiceEntity(mProducts, Context.currentEmployee.value, mCurrentCustomer, codeBar.toString(), Calendar.getInstance())
-               )
-               if (isPayed){
-                   mCurrentCustomer?.let {
-                       val point = (grandTotal.text.toDouble()/100.0).toLong()
-                      val success =  CustomerDao.updatePoint(it.id, point)
-                       println("update point: ${point} "+success)
-                   }
+       pay()
 
-                   ViewUtil.createAlert(Alert.AlertType.CONFIRMATION,"Payment","Pay with success").showAndWait()
-                   clearAll()
-                   customerCode.requestFocus()
+    }
 
-                   val htmlEditor = HTMLEditor()
-                   htmlEditor.htmlText = Util.readContent()
-                   TPrinter.printNode( htmlEditor )
+    private fun pay(){
+        if(mProducts.size>0){
+            if (cashTextField.text.isBlank()){
+                cashTextField.text = "0.0"
+            }
+            if (cashTextField.text.toDouble()>=grandTotal.text.toDouble()){
+                val codeBar = Random.nextLong(LongRange(10_000_000,99_999_999))
+                val isPayed = InvoiceDao.save(
+                    InvoiceEntity(mProducts, Context.currentEmployee.value, mCurrentCustomer, codeBar.toString(), Calendar.getInstance())
+                )
+                if (isPayed){
+                    mCurrentCustomer?.let {
+                        val point = (grandTotal.text.toDouble()/100.0).toLong()
+                        val success =  CustomerDao.updatePoint(it.id, point)
+                        println("update point: ${point} "+success)
+                    }
+
+                    ViewUtil.createAlert(Alert.AlertType.CONFIRMATION,"Payment","Pay with success").showAndWait()
+                    clearAll()
+                    customerCode.requestFocus()
 
 
-               }
 
-           }else{
-               ViewUtil.createAlert(Alert.AlertType.WARNING,"Invalid Data","Cash must be greater than grand total").showAndWait()
 
-           }
-       }else{
-           ViewUtil.createAlert(Alert.AlertType.WARNING,"Invalid Data","There is no product to pay").showAndWait()
-       }
+                }
 
+            }else{
+                ViewUtil.createAlert(Alert.AlertType.WARNING,"Invalid Data","Cash must be greater than grand total").showAndWait()
+
+            }
+        }else{
+            ViewUtil.createAlert(Alert.AlertType.WARNING,"Invalid Data","There is no product to pay").showAndWait()
+        }
     }
 
     private fun clearAll(){
