@@ -33,6 +33,8 @@ class ProductController :Initializable,MessageListener,BaseController() {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         println("init productController")
 
+        editMenuItem()
+
        // socketMesageEvent.startingListening()
 
         employeeTf.text = Context.currentEmployee.value.userName
@@ -235,5 +237,32 @@ class ProductController :Initializable,MessageListener,BaseController() {
     override fun onDestroy() {
        // socketMesageEvent.removeListener()
         println("clear productController")
+    }
+
+    private fun editMenuItem() {
+        MainController.editMenu.items.clear()
+
+
+        val saveMenuItem =  MenuItem("Save")
+        saveMenuItem.setOnAction {
+
+        }
+        val updateMenuItems =  MenuItem("Update")
+        updateMenuItems.setOnAction {
+
+        }
+
+        val deleteMenuItems =  MenuItem("Delete")
+        deleteMenuItems.setOnAction {
+
+        }
+        val clearMenuItems =  MenuItem("Clear")
+        clearMenuItems.setOnAction {
+
+        }
+
+
+        MainController.editMenu.items.addAll(  saveMenuItem,updateMenuItems,deleteMenuItems  )
+
     }
 }

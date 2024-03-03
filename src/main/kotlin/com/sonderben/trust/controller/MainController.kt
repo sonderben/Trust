@@ -3,6 +3,7 @@ package com.sonderben.trust.controller
 import SingletonView
 import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
+import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
@@ -235,6 +236,17 @@ class MainController : Initializable {
             borderpane.left.managedProperty().set(true)
         }
 
+    }
+
+    @FXML
+    fun lateralBarOnAction(event: ActionEvent) {
+        if (borderpane.left.isVisible){
+            borderpane.left.isVisible = false
+            borderpane.left.managedProperty().set(false)
+        }else{
+            borderpane.left.isVisible = true
+            borderpane.left.managedProperty().set(true)
+        }
     }
 
     fun disconnectOnMouseClicked(mouseEvent: MouseEvent) {

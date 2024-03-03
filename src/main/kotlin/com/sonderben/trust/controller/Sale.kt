@@ -56,26 +56,7 @@ class Sale :Initializable,MessageListener,BaseController(){
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         //socketMesageEvent.startingListening()
 
-        MainController.editMenu.items.clear()
-
-
-        val saveMenuItem =  MenuItem("Pay")
-        saveMenuItem.setOnAction {
-            pay()
-        }
-        val clearMenuItems =  MenuItem("Clear")
-        clearMenuItems.setOnAction {
-            clearTextS()
-        }
-
-        val cancelMenuItems =  MenuItem("Cancel")
-        clearMenuItems.setOnAction {
-            clearAll()
-        }
-
-
-        MainController.editMenu.items.addAll(  saveMenuItem,/*updateMenuItem,deleteMenuItem,*/clearMenuItems,cancelMenuItems  )
-
+        editMenuItem()
 
         //customerCode.onlyInt()
         codeProductTextField.onlyInt()
@@ -155,6 +136,29 @@ class Sale :Initializable,MessageListener,BaseController(){
 
 
 
+
+    }
+
+    private fun editMenuItem() {
+        MainController.editMenu.items.clear()
+
+
+        val saveMenuItem =  MenuItem("Pay")
+        saveMenuItem.setOnAction {
+            pay()
+        }
+        val clearMenuItems =  MenuItem("Clear")
+        clearMenuItems.setOnAction {
+            clearTextS()
+        }
+
+        val cancelMenuItems =  MenuItem("Cancel")
+        clearMenuItems.setOnAction {
+            clearAll()
+        }
+
+
+        MainController.editMenu.items.addAll(  saveMenuItem,/*updateMenuItem,deleteMenuItem,*/clearMenuItems,cancelMenuItems  )
 
     }
 

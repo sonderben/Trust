@@ -28,6 +28,8 @@ class RoleController :Initializable, BaseController(),EventHandler<MouseEvent>{
     private var roleSelectedOrToSave:Role? = null
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
+        editMenuItem()
+
         val listScreen = ScreenEnum.values().toList()
         gridPaneScreen.children.clear()
         /*for (screen in listScreen){
@@ -187,6 +189,33 @@ class RoleController :Initializable, BaseController(),EventHandler<MouseEvent>{
     }
 
     override fun onDestroy() {
+
+    }
+
+    private fun editMenuItem() {
+        MainController.editMenu.items.clear()
+
+
+        val saveMenuItem =  MenuItem("Save")
+        saveMenuItem.setOnAction {
+
+        }
+        val updateMenuItems =  MenuItem("Update")
+        updateMenuItems.setOnAction {
+
+        }
+
+        val deleteMenuItems =  MenuItem("Delete")
+        deleteMenuItems.setOnAction {
+
+        }
+        val clearMenuItems =  MenuItem("Clear")
+        clearMenuItems.setOnAction {
+
+        }
+
+
+        MainController.editMenu.items.addAll(  saveMenuItem,updateMenuItems,deleteMenuItems  )
 
     }
 }

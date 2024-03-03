@@ -27,6 +27,7 @@ class EmployeeController:Initializable, BaseController() {
     var days = arrayListOf<String>("Lunes","Martes","Miercroles","Jueves","Viernes","Sabado","Domingo")
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        editMenuItem()
         GenreCol.setCellValueFactory { employee -> SimpleStringProperty(employee.value.genre) }
         birthdayCol.setCellValueFactory { employee -> SimpleStringProperty( employee.value.birthDay.format() ) }
         firstNameCol.setCellValueFactory { employee -> SimpleStringProperty("${employee.value.fullName}") }
@@ -315,6 +316,33 @@ class EmployeeController:Initializable, BaseController() {
     }
 
     override fun onDestroy() {
+
+    }
+
+    private fun editMenuItem() {
+        MainController.editMenu.items.clear()
+
+
+        val saveMenuItem =  MenuItem("Save")
+        saveMenuItem.setOnAction {
+
+        }
+        val updateMenuItems =  MenuItem("Update")
+        updateMenuItems.setOnAction {
+
+        }
+
+        val deleteMenuItems =  MenuItem("Delete")
+        deleteMenuItems.setOnAction {
+
+        }
+        val clearMenuItems =  MenuItem("Clear")
+        clearMenuItems.setOnAction {
+
+        }
+
+
+        MainController.editMenu.items.addAll(  saveMenuItem,updateMenuItems,deleteMenuItems  )
 
     }
 }
