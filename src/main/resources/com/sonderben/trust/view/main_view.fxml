@@ -39,7 +39,7 @@
                                     <Insets left="5.0" />
                                  </HBox.margin>
                               </ImageView>
-                              <Label text="Sale">
+                              <Label text="%sale">
                                  <font>
                                     <Font name="Didot" size="13.0" />
                                  </font>
@@ -59,7 +59,7 @@
                                     <Insets left="5.0" />
                                  </HBox.margin>
                               </ImageView>
-                              <Label text="Products">
+                              <Label text="%product">
                                  <font>
                                     <Font name="Didot" size="13.0" />
                                  </font>
@@ -79,7 +79,7 @@
                                     <Insets left="5.0" />
                                  </HBox.margin>
                               </ImageView>
-                              <Label text="Employee" />
+                              <Label text="%employee" />
                            </children>
                            <VBox.margin>
                               <Insets bottom="5.0" />
@@ -95,7 +95,7 @@
                                     <Insets left="5.0" />
                                  </HBox.margin>
                               </ImageView>
-                              <Label text="Roles" />
+                              <Label text="%role" />
                            </children>
                            <VBox.margin>
                               <Insets bottom="5.0" />
@@ -111,7 +111,7 @@
                                     <Insets left="5.0" />
                                  </HBox.margin>
                               </ImageView>
-                              <Label text="Configuration" />
+                              <Label text="%configuration" />
                            </children>
                            <VBox.margin>
                               <Insets bottom="5.0" />
@@ -127,7 +127,7 @@
                                     <Insets left="5.0" />
                                  </HBox.margin>
                               </ImageView>
-                              <Label text="Queries" />
+                              <Label text="%query" />
                            </children>
                         </HBox>
                         <HBox fx:id="customer_service" layoutX="10.0" layoutY="400.0" spacing="5.0" styleClass="lateral-button">
@@ -140,7 +140,7 @@
                                     <Insets left="5.0" />
                                  </HBox.margin>
                               </ImageView>
-                              <Label text="Customer Service" />
+                              <Label text="%customer_services" />
                            </children>
                         </HBox>
                      </children>
@@ -155,25 +155,25 @@
          <children>
             <MenuBar fx:id="menuBar" styleClass="bg-menubar" useSystemMenuBar="true">
               <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu mnemonicParsing="false" text="%file">
                   <items>
                     <MenuItem mnemonicParsing="false" text="Sign out" />
                         <MenuItem mnemonicParsing="false" text="Configuration" />
                   </items>
                 </Menu>
-                <Menu fx:id="menuEdit" mnemonicParsing="false" text="Edit">
+                <Menu fx:id="menuEdit" mnemonicParsing="false" text="%edit">
                   <items>
                     <MenuItem mnemonicParsing="false" text="Delete" />
                   </items>
                 </Menu>
-                  <Menu fx:id="menuView" mnemonicParsing="false" text="View" />
-                  <Menu fx:id="menuView1" mnemonicParsing="false" text="Window">
+                  <Menu fx:id="menuView" mnemonicParsing="false" text="%view" />
+                  <Menu fx:id="menuView1" mnemonicParsing="false" text="%window">
                      <items>
                         <MenuItem mnemonicParsing="false" onAction="#lateralBarOnAction" text="Lateral bar" />
                         <MenuItem mnemonicParsing="false" text="Bottom bar" />
                      </items>
                   </Menu>
-                <Menu mnemonicParsing="false" text="Help">
+                <Menu mnemonicParsing="false" text="%help">
                   <items>
                     <MenuItem mnemonicParsing="false" text="About" />
                   </items>

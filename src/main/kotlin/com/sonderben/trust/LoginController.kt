@@ -1,15 +1,10 @@
 package com.sonderben.trust
 
-import com.itextpdf.text.List
 import com.sonderben.trust.controller.ConfigurationController
 import com.sonderben.trust.db.dao.EmployeeDao
-import com.sonderben.trust.db.dao.enterprise.EnterpriseInfoDao
 import entity.EmployeeEntity
 import entity.enterprise.EnterpriseInfo
-import io.reactivex.rxjavafx.sources.ListChange
 import javafx.beans.property.SimpleObjectProperty
-import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
 import javafx.collections.ListChangeListener
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
@@ -46,7 +41,13 @@ class LoginController : Initializable{
         val employeeEntity = EmployeeDao.login(userNameTextField.text.trim(),password.text.trim())
         if ( employeeEntity != null ){
             Context.currentEmployee = SimpleObjectProperty(employeeEntity)
-            val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/main_view.fxml"))
+
+            Locale.setDefault(Locale.FRENCH)
+            val resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string", Locale.FRENCH)
+
+
+
+            val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/main_view.fxml"),resourceBundle)
             val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
             HelloApplication.primary.scene = scene
         }else{

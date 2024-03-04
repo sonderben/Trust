@@ -5,6 +5,8 @@ import javafx.scene.Node;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class SingletonView {
 
@@ -160,7 +162,10 @@ public class SingletonView {
                 controller = null;
             }
 
-            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path));
+
+            Locale.setDefault( Locale.FRENCH );
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string",Locale.FRENCH);FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path),resourceBundle);
+
             Node node= fxmlLoader.load();
             if (fxmlLoader.getController() instanceof BaseController){
                 controller = fxmlLoader.getController();
