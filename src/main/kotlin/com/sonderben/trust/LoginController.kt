@@ -42,8 +42,8 @@ class LoginController : Initializable{
         if ( employeeEntity != null ){
             Context.currentEmployee = SimpleObjectProperty(employeeEntity)
 
-            Locale.setDefault(Locale.FRENCH)
-            val resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string", Locale.FRENCH)
+
+            val resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
 
 
 

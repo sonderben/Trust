@@ -26,7 +26,7 @@
    <children>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
-          <Tab text="Customer">
+          <Tab text="%customer">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -34,15 +34,15 @@
                            <children>
                               <TableView fx:id="cTableview" prefHeight="200.0" prefWidth="200.0">
                                 <columns>
-                                  <TableColumn fx:id="cCodeCol" prefWidth="75.0" text="code" />
-                                  <TableColumn fx:id="cFullNameCol" prefWidth="75.0" text="Fullname" />
-                                    <TableColumn fx:id="cPassportCol" prefWidth="75.0" text="Passport" />
-                                    <TableColumn fx:id="cGenreCol" prefWidth="75.0" text="Genre" />
-                                    <TableColumn fx:id="cDirCol" prefWidth="75.0" text="direction" />
-                                    <TableColumn fx:id="cEmailCol" prefWidth="75.0" text="email" />
-                                    <TableColumn fx:id="cTelCol" prefWidth="75.0" text="Tel" />
-                                    <TableColumn fx:id="cBirthdayCol" prefWidth="75.0" text="Birthday" />
-                                    <TableColumn fx:id="cPointCol" prefWidth="75.0" text="Point" />
+                                  <TableColumn fx:id="cCodeCol" prefWidth="75.0" text="%code" />
+                                  <TableColumn fx:id="cFullNameCol" prefWidth="75.0" text="%full_name" />
+                                    <TableColumn fx:id="cPassportCol" prefWidth="75.0" text="%passport" />
+                                    <TableColumn fx:id="cGenreCol" prefWidth="75.0" text="%gender" />
+                                    <TableColumn fx:id="cDirCol" prefWidth="75.0" text="%direction" />
+                                    <TableColumn fx:id="cEmailCol" prefWidth="75.0" text="%email" />
+                                    <TableColumn fx:id="cTelCol" prefWidth="75.0" text="%phone" />
+                                    <TableColumn fx:id="cBirthdayCol" prefWidth="75.0" text="%birthday" />
+                                    <TableColumn fx:id="cPointCol" prefWidth="75.0" text="%points" />
                                 </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -69,21 +69,21 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <Label text="First name" textFill="WHITE" />
-                                    <Label text="Last name" textFill="WHITE" GridPane.columnIndex="1" />
-                                    <Label text="Passport" textFill="WHITE" GridPane.columnIndex="2" />
-                                    <Label text="Gender" textFill="WHITE" GridPane.columnIndex="3" />
-                                    <Label text="Direction" textFill="WHITE" GridPane.rowIndex="2" />
-                                    <Label text="Email" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <Label text="Telephone" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                                    <Label text="Birthday" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                    <Label text="%first_name" textFill="WHITE" />
+                                    <Label text="%last_name" textFill="WHITE" GridPane.columnIndex="1" />
+                                    <Label text="%passport" textFill="WHITE" GridPane.columnIndex="2" />
+                                    <Label text="%gender" textFill="WHITE" GridPane.columnIndex="3" />
+                                    <Label text="%direction" textFill="WHITE" GridPane.rowIndex="2" />
+                                    <Label text="%email" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label text="%phone" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                    <Label text="%birthday" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                                     <TextField fx:id="cFirstnameTf" GridPane.rowIndex="1" />
                                     <TextField fx:id="cLastNameTf" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                     <TextField fx:id="cPassportTf" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                     <TextField fx:id="cDirectionTtf" GridPane.rowIndex="3" />
                                     <TextField fx:id="cEmailTf" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                     <TextField fx:id="cTelTf" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                                    <ChoiceBox fx:id="cGenderCb" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                    <ChoiceBox fx:id="cGenderCb" value="%select_gender" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                                         <items>
                                             <FXCollections fx:factory="observableArrayList">
                                                 <String fx:value="Male" />
@@ -97,10 +97,10 @@
                               </GridPane>
                               <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                                  <children>
-                                    <Button layoutX="382.0" layoutY="44.0" mnemonicParsing="false" onAction="#onSaveCustomer" text="Save" />
-                                    <Button mnemonicParsing="false" onAction="#onUpdateCustomer" text="Update" />
-                                    <Button mnemonicParsing="false" onAction="#onDeleteCustomer" text="Delete" />
-                                    <Button layoutX="387.0" layoutY="44.0" mnemonicParsing="false" onAction="#onClearCustomer" text="Clear" />
+                                    <Button layoutX="382.0" layoutY="44.0" mnemonicParsing="false" onAction="#onSaveCustomer" text="%save" />
+                                    <Button mnemonicParsing="false" onAction="#onUpdateCustomer" text="%update" />
+                                    <Button mnemonicParsing="false" onAction="#onDeleteCustomer" text="%delete" />
+                                    <Button layoutX="387.0" layoutY="44.0" mnemonicParsing="false" onAction="#onClearCustomer" text="%clear" />
                                  </children>
                               </HBox>
                            </children>
@@ -108,7 +108,7 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-          <Tab text="Return Product">
+          <Tab text="%return_product">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -126,19 +126,19 @@
                                  </rowConstraints>
                                  <children>
                                     <TextField fx:id="rInvoiceTf" GridPane.rowIndex="1" />
-                                    <Label text="Invoice code" textFill="WHITE" />
-                                    <Button mnemonicParsing="false" onAction="#rOnSearch" text="Search" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                    <Label text="%invoice_code" textFill="WHITE" />
+                                    <Button mnemonicParsing="false" onAction="#rOnSearch" text="%search" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                               <Pane opacity="0.32" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #aaa;" />
                               <TableView fx:id="rTableview" maxHeight="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                 <columns>
-                                  <TableColumn fx:id="rCodeCol" prefWidth="75.0" text="Code" />
-                                  <TableColumn fx:id="rDescriptionCol" prefWidth="75.0" text="Description" />
-                                    <TableColumn fx:id="rCategoryCol" prefWidth="75.0" text="Category" />
-                                    <TableColumn fx:id="rDateExpiredCol" prefWidth="75.0" text="Date Expired" />
-                                    <TableColumn fx:id="rQuantityCol" prefWidth="75.0" text="Qty" />
-                                    <TableColumn fx:id="rTotal" prefWidth="75.0" text="Total" />
+                                  <TableColumn fx:id="rCodeCol" prefWidth="75.0" text="%code" />
+                                  <TableColumn fx:id="rDescriptionCol" prefWidth="75.0" text="%description" />
+                                    <TableColumn fx:id="rCategoryCol" prefWidth="75.0" text="%category" />
+                                    <TableColumn fx:id="rDateExpiredCol" prefWidth="75.0" text="%exp_date" />
+                                    <TableColumn fx:id="rQuantityCol" prefWidth="75.0" text="%qty" />
+                                    <TableColumn fx:id="rTotal" prefWidth="75.0" text="%total" />
                                 </columns>
                                  <columnResizePolicy>
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -158,16 +158,16 @@
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Label text="Reason" textFill="WHITE" />
+                                          <Label text="%reason" textFill="WHITE" />
                                           <TextField fx:id="rReasonTf" GridPane.rowIndex="1" />
-                                          <Label text="Action" textFill="WHITE" GridPane.rowIndex="2" />
+                                          <Label text="%action" textFill="WHITE" GridPane.rowIndex="2" />
                                           <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.rowIndex="3">
                                              <children>
-                                                <RadioButton fx:id="changeRbtn" mnemonicParsing="false" selected="true" text="Change">
+                                                <RadioButton fx:id="changeRbtn" mnemonicParsing="false" selected="true" text="%change_product">
                                                    <toggleGroup>
                                                       <ToggleGroup fx:id="toggleGroup" />
                                                    </toggleGroup></RadioButton>
-                                                <RadioButton fx:id="moneyRbtn" mnemonicParsing="false" text="Return money" toggleGroup="$toggleGroup" />
+                                                <RadioButton fx:id="moneyRbtn" mnemonicParsing="false" text="%return_money" toggleGroup="$toggleGroup" />
                                              </children>
                                           </HBox>
                                        </children>
@@ -188,7 +188,7 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-            <Tab text="Change points">
+            <Tab text="%change_points">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -206,8 +206,8 @@
                                  </rowConstraints>
                                  <children>
                                     <TextField fx:id="cpCodeTf" GridPane.rowIndex="1" />
-                                    <Label text="Code" textFill="WHITE" />
-                                    <Button mnemonicParsing="false" onAction="#cpOnsearch" text="Search" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                    <Label text="%customer_code" textFill="WHITE" />
+                                    <Button mnemonicParsing="false" onAction="#cpOnsearch" text="%search" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                               <Pane opacity="0.32" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #aaa;">
@@ -227,10 +227,10 @@
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
                                  <children>
-                                    <Label text="First name" textFill="WHITE" />
-                                    <Label text="Last name" textFill="WHITE" GridPane.columnIndex="1" />
-                                    <Label text="Passport" textFill="WHITE" GridPane.columnIndex="2" />
-                                    <Label text="Point" textFill="WHITE" GridPane.columnIndex="3" />
+                                    <Label text="%first_name" textFill="WHITE" />
+                                    <Label text="%last_name" textFill="WHITE" GridPane.columnIndex="1" />
+                                    <Label text="%passport" textFill="WHITE" GridPane.columnIndex="2" />
+                                    <Label text="%points" textFill="WHITE" GridPane.columnIndex="3" />
                                     <TextField fx:id="cpFirstnameTf" editable="false" GridPane.rowIndex="1" />
                                     <TextField fx:id="cpLastnameTf" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                     <TextField fx:id="cpPassportTf" editable="false" GridPane.columnIndex="2" GridPane.rowIndex="1" />
@@ -251,8 +251,8 @@
                               </HBox>
                               <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                                  <children>
-                                    <Button fx:id="cpOnSave" layoutX="387.0" layoutY="44.0" mnemonicParsing="false" text="Clear" />
-                                    <Button fx:id="changePointOnSave" disable="true" layoutX="544.0" layoutY="44.0" mnemonicParsing="false" text="Change Point" />
+                                    <Button fx:id="cpOnSave" layoutX="387.0" layoutY="44.0" mnemonicParsing="false" text="%clear" />
+                                    <Button fx:id="changePointOnSave" disable="true" layoutX="544.0" layoutY="44.0" mnemonicParsing="false" text="%change_points" />
                                  </children>
                               </HBox>
                            </children>

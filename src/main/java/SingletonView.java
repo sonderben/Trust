@@ -155,7 +155,7 @@ public class SingletonView {
         }
     }*/
     public static Node get(String path) throws IOException {
-        System.out.println(path);
+
         if (pathList.contains(path)){
             if (controller!=null){
                 controller.onDestroy();
@@ -163,8 +163,8 @@ public class SingletonView {
             }
 
 
-            Locale.setDefault( Locale.FRENCH );
-            ResourceBundle resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string",Locale.FRENCH);FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path),resourceBundle);
+
+            ResourceBundle resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string");FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path),resourceBundle);
 
             Node node= fxmlLoader.load();
             if (fxmlLoader.getController() instanceof BaseController){

@@ -30,17 +30,17 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="Name" textFill="WHITE" />
-                  <Label text="Direction" textFill="WHITE" GridPane.columnIndex="1" />
-                  <Label text="Telephones" textFill="WHITE" GridPane.columnIndex="2" />
-                  <Label text="Foundation date" textFill="WHITE" GridPane.rowIndex="2" />
-                  <Label text="Website" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Label text="Category" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <Label text="%name" textFill="WHITE" />
+                  <Label text="%direction" textFill="WHITE" GridPane.columnIndex="1" />
+                  <Label text="%phone" textFill="WHITE" GridPane.columnIndex="2" />
+                  <Label text="%foundation_date" textFill="WHITE" GridPane.rowIndex="2" />
+                  <Label text="%website" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label text="%category" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                   <TextField fx:id="nameTextField" text="Acra" GridPane.rowIndex="1" />
                   <TextField fx:id="directionTextField" text="haiti" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <TextField fx:id="telephoneTextField" text="509" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   <TextField fx:id="websiteTextField" text="www.acra.com" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <ChoiceBox fx:id="categoryChoiceBox" maxWidth="1.7976931348623157E308" prefWidth="150.0" value="Select what looks most like your company" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                  <ChoiceBox fx:id="categoryChoiceBox" maxWidth="1.7976931348623157E308" prefWidth="150.0" value="%select_type_company" GridPane.columnIndex="2" GridPane.rowIndex="3">
                       <items>
                           <FXCollections fx:factory="observableArrayList">
                               <String fx:value="Supermarket" />

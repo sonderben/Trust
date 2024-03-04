@@ -5,17 +5,16 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../../css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.queries.FrequentCustomers">
    <children>
       <VBox layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0">
                <columns>
-                  <TableColumn fx:id="customerCol" prefWidth="75.0" text="Customer" />
-                  <TableColumn fx:id="pointCol" prefWidth="75.0" text="Point" />
-                  <TableColumn fx:id="totalProductCol" prefWidth="75.0" text="Total product" />
-                  <TableColumn fx:id="frequencyCol" prefWidth="75.0" text="Frequency" />
+                  <TableColumn fx:id="customerCol" prefWidth="75.0" text="%customer" />
+                  <TableColumn fx:id="pointCol" prefWidth="75.0" text="%points" />
+                  <TableColumn fx:id="totalProductCol" prefWidth="75.0" text="%total" />
+                  <TableColumn fx:id="frequencyCol" prefWidth="75.0" text="%frequency" />
                </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

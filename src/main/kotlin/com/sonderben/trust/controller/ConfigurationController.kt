@@ -58,10 +58,12 @@ class ConfigurationController:Initializable, BaseController() {
     private var enterpriseInfo:Node?=null
     private var invoice:Node?=null
     private fun createPage(index :Int):Node{
+        val resourcesBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
+        val fxmlLoader: FXMLLoader
         when(index){
             0 -> {
                if(enterpriseInfo==null){
-                   val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/config/businessInfo.fxml"))
+                    fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/config/businessInfo.fxml"),resourcesBundle)
                    enterpriseInfo = fxmlLoader.load<Node>()
                    businessInfoController=fxmlLoader.getController()
                    businessInfoController?.enterprise = enterprise
@@ -72,7 +74,7 @@ class ConfigurationController:Initializable, BaseController() {
             }
             1 -> {
                if(nodeAdmin==null){
-                   val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/config/admin.fxml"))
+                    fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/config/admin.fxml"),resourcesBundle)
                    nodeAdmin = fxmlLoader.load<Node>()
                    admin = fxmlLoader.getController()
 
@@ -82,9 +84,9 @@ class ConfigurationController:Initializable, BaseController() {
                }
                 return nodeAdmin!!
             }
-            2 -> {
+            else -> {
                 if (invoice==null){
-                    val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/config/invoice.fxml"))
+                     fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/config/invoice.fxml"),resourcesBundle)
                     invoice = fxmlLoader.load<Node>()
                     invoiceController?.enterprise = enterprise
 
@@ -92,10 +94,9 @@ class ConfigurationController:Initializable, BaseController() {
                 }
                 return invoice!!
             }
+
         }
-        val vbox = VBox()
-        vbox.children.add( Label("Chen") )
-        return vbox
+
 
     }
 

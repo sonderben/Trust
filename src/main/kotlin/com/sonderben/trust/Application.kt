@@ -7,7 +7,6 @@ import javafx.fxml.FXMLLoader
 import javafx.print.Printer
 import javafx.scene.Scene
 import javafx.stage.Stage
-import org.scenicview.ScenicView
 
 class HelloApplication : Application() {
 
