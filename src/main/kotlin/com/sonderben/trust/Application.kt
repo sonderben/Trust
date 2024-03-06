@@ -12,14 +12,17 @@ class HelloApplication : Application() {
 
     override fun start(stage: Stage) {
        // Database.createTrustTables()
+        Context.start()
         Database.createTable()
+
+        Context.readJson()
 
 
         primary = stage
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
         val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
 
-        println("printer: ${Printer.getDefaultPrinter()}" )
+        //println("printer: ${Printer.getDefaultPrinter()}" )
 
         primary.centerOnScreen()
 

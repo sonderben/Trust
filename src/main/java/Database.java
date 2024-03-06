@@ -5,6 +5,8 @@ import com.sonderben.trust.db.dao.*;
 import com.sonderben.trust.model.Role;
 import com.sonderben.trust.model.Screen;
 import entity.*;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ public class Database {
 
 
     public static void createTable() throws SQLException {
+
         DATABASE_NAME = "midb.db";
         Statement statement;
         String tableError = "";
@@ -119,12 +122,7 @@ public class Database {
         Role role = new Role();
         role.setId(1L);
 
-       /* EmployeeEntity emp =        new EmployeeEntity("Admin","12345","Admin","Male","Admin","admin@gmail.com","11111", Calendar.getInstance(),"1","root","1234",
-                        role,List.of( new ScheduleEntity(null,1,11.30f,1f) ));
 
-
-        EnterpriseDao.INSTANCE.save(new EnterpriseEntity("Acra motors","lascirie #1","509 340 5643",Calendar.getInstance(),"www.baw.com","PHARMACY",emp,"1","1" ));
-*/
         RoleDao.INSTANCE.save(
                 new Role("Saler",List.of(
                         new Screen(ScreenEnum.SALE,List.of(
@@ -251,4 +249,6 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
+
+
 }

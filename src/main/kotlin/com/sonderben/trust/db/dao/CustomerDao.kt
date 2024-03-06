@@ -4,6 +4,10 @@ import Database.DATABASE_NAME
 import com.sonderben.trust.Util
 import com.sonderben.trust.db.SqlCreateTables
 import entity.CustomerEntity
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import java.sql.SQLException
@@ -17,98 +21,100 @@ object CustomerDao : CrudDao<CustomerEntity> {
     init {
         findAll()
     }
-    override fun save(entity: CustomerEntity): Boolean {
-        val insertEmployee = buildString {
-            append("Insert into ${SqlCreateTables.customers} ")
-            append("( birthDay,code,direction,point,email,firstName,genre,lastName,passport,telephone ) ")
-            append("values (?,?,?,?,?,?,?,?,?,?) ")
-        }
-
-        Database.connect(DATABASE_NAME).use { connection ->
-
-            connection.prepareStatement(insertEmployee).use {preparedStatement ->
-                preparedStatement.setTimestamp(1,Timestamp(entity.birthDay.time.time))
-                val tempCode = entity.code.padStart(12,'0')
-                preparedStatement.setString(2,tempCode)
-                preparedStatement.setString(3,entity.direction)
-                preparedStatement.setLong(4,entity.point)
-                preparedStatement.setString(5,entity.email)
-                preparedStatement.setString(6,entity.firstName)
-                preparedStatement.setString(7,entity.genre)
-                preparedStatement.setString(8,entity.lastName)
-                preparedStatement.setString(9,entity.passport)
-                preparedStatement.setString(10,entity.telephone)
-
-
-                val rowCount = preparedStatement.executeUpdate()
-                entity.id = Database.getLastId()
-
-                if (rowCount<=0){
-                    connection.rollback()
-
-                }
-
-
-                customers.add( entity )
-
-
-                return rowCount>0
-
-
+    override fun save(entity: CustomerEntity): Completable {
+        return Completable.create {emetter->
+            val insertEmployee = buildString {
+                append("Insert into ${SqlCreateTables.customers} ")
+                append("( birthDay,code,direction,point,email,firstName,genre,lastName,passport,telephone ) ")
+                append("values (?,?,?,?,?,?,?,?,?,?) ")
             }
-        }
+            Database.connect(DATABASE_NAME).use { connection ->
 
-    }
+                connection.prepareStatement(insertEmployee).use {preparedStatement ->
+                    preparedStatement.setTimestamp(1,Timestamp(entity.birthDay.time.time))
+                    val tempCode = entity.code.padStart(12,'0')
+                    preparedStatement.setString(2,tempCode)
+                    preparedStatement.setString(3,entity.direction)
+                    preparedStatement.setLong(4,entity.point)
+                    preparedStatement.setString(5,entity.email)
+                    preparedStatement.setString(6,entity.firstName)
+                    preparedStatement.setString(7,entity.genre)
+                    preparedStatement.setString(8,entity.lastName)
+                    preparedStatement.setString(9,entity.passport)
+                    preparedStatement.setString(10,entity.telephone)
 
-    override fun delete(idEntity: Long): Boolean {
-        Database.connect("").use { connection ->
-            connection.prepareStatement("DELETE FROM ${SqlCreateTables.customers} WHERE id = ?").use { preparedStatement ->
-                preparedStatement.setLong(1,idEntity)
-                customers.removeIf { it.id==idEntity }
-                return preparedStatement.execute()
-            }
 
-        }
-    }
+                    val rowCount = preparedStatement.executeUpdate()
+                    entity.id = Database.getLastId()
 
+                    if (rowCount<=0){
+                        connection.rollback()
+                        emetter.onError(Throwable("can not save customer: $entity"))
 
-
-    override fun findById(iEntity: Long): CustomerEntity? {
-        val selectAll = "SELECT * FROM ${SqlCreateTables.customers} WHERE id = ?"
-        Database.connect(DATABASE_NAME).use {connection ->
-            connection.prepareStatement(selectAll).use {statement ->
-                statement.setLong(1,iEntity)
-                statement.executeQuery().use {resultSet ->
-                    if (resultSet.next()){
-
-                        val customer = CustomerEntity()
-                        customer.apply {
-                            this.id = iEntity
-                            firstName = resultSet.getString("firstName")
-                            passport = resultSet.getString("passport")
-                            lastName = resultSet.getString("lastName")
-                            genre = resultSet.getString("genre")
-                            direction = resultSet.getString("direction")
-                            email = resultSet.getString("email")
-                            telephone = resultSet.getString("telephone")
-                            birthDay = Util.timeStampToCalendar( resultSet.getTimestamp("birthDay") )
-                            code = resultSet.getString("code")
-                            point = resultSet.getLong("point")
-
-                        }
-
-                        return customer
                     }
-                    //return null
+
+
+                    customers.add( entity )
+
+
+                    emetter.onComplete()
+
 
                 }
-                println("findAll: "+customers)
+            }
+        }
+            .subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
 
+    }
+
+    override fun delete(idEntity: Long): Completable {
+        return  Completable.create {emitter ->
+            Database.connect("").use { connection ->
+                connection.prepareStatement("DELETE FROM ${SqlCreateTables.customers} WHERE id = ?").use { preparedStatement ->
+                    preparedStatement.setLong(1,idEntity)
+                    customers.removeIf { it.id==idEntity }
+                    if (preparedStatement.executeUpdate()>0){
+                        emitter.onComplete()
+                    }
+                }
 
             }
+        }.subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
+    }
 
+
+
+    override fun findById(iEntity: Long): Maybe<CustomerEntity> {
+        return Maybe.create { emitter->
+            val selectAll = "SELECT * FROM ${SqlCreateTables.customers} WHERE id = ?"
+            Database.connect(DATABASE_NAME).use {connection ->
+                connection.prepareStatement(selectAll).use {statement ->
+                    statement.setLong(1,iEntity)
+                    statement.executeQuery().use {resultSet ->
+                            val customer = CustomerEntity()
+                            customer.apply {
+                                this.id = iEntity
+                                firstName = resultSet.getString("firstName")
+                                passport = resultSet.getString("passport")
+                                lastName = resultSet.getString("lastName")
+                                genre = resultSet.getString("genre")
+                                direction = resultSet.getString("direction")
+                                email = resultSet.getString("email")
+                                telephone = resultSet.getString("telephone")
+                                birthDay = Util.timeStampToCalendar( resultSet.getTimestamp("birthDay") )
+                                code = resultSet.getString("code")
+                                point = resultSet.getLong("point")
+
+                            }
+
+                            if( customer.id == null) emitter.onComplete()else emitter.onSuccess(customer)
+                    }
+                }
+            }
         }
-        return null
+
     }
 
     override fun findAll(): Boolean {
@@ -150,13 +156,14 @@ object CustomerDao : CrudDao<CustomerEntity> {
 
 
 
-    override fun update(entity: CustomerEntity): Boolean {
-        if (entity.id==null)
-            throw SQLException("id entity can not be null")
+    override fun update(entity: CustomerEntity): Completable {
+        return Completable.create {emitter->
+            if (entity.id==null)
+                throw SQLException("id entity can not be null")
 
-        if (findById(entity.id)==null)
-            throw SQLException("id entity don't exist")
-        val updateCustomer = """
+            if (findById(entity.id)==null)
+                throw SQLException("id entity don't exist")
+            val updateCustomer = """
             update  ${SqlCreateTables.customers}
              set birthDay =   ?,
              direction = ? ,
@@ -170,41 +177,47 @@ object CustomerDao : CrudDao<CustomerEntity> {
         """.trimIndent()
 
 
-        Database.connect(DATABASE_NAME).use { connection ->
+            Database.connect(DATABASE_NAME).use { connection ->
 
 
-            connection.prepareStatement(updateCustomer).use { preparedStatement ->
-                preparedStatement.setTimestamp(1, Timestamp(entity.birthDay.time.time))
+                connection.prepareStatement(updateCustomer).use { preparedStatement ->
+                    preparedStatement.setTimestamp(1, Timestamp(entity.birthDay.time.time))
 
 
-                preparedStatement.setString(2, entity.direction)
+                    preparedStatement.setString(2, entity.direction)
 
-                preparedStatement.setString(3, entity.email)
-                preparedStatement.setString(4, entity.firstName)
-                preparedStatement.setString(5, entity.genre)
-                preparedStatement.setString(6, entity.lastName)
-                preparedStatement.setString(7, entity.passport)
-                preparedStatement.setString(8, entity.telephone)
-                preparedStatement.setLong(9, entity.id)
-
-
-                val rowCount = preparedStatement.executeUpdate()
+                    preparedStatement.setString(3, entity.email)
+                    preparedStatement.setString(4, entity.firstName)
+                    preparedStatement.setString(5, entity.genre)
+                    preparedStatement.setString(6, entity.lastName)
+                    preparedStatement.setString(7, entity.passport)
+                    preparedStatement.setString(8, entity.telephone)
+                    preparedStatement.setLong(9, entity.id)
 
 
+                    val rowCount = preparedStatement.executeUpdate()
+
+
+                    if (rowCount>0){
+                        customers[ customers.indexOf( entity ) ] = entity
+                        emitter.onComplete()
+                    }else{
+                        emitter.onError(Throwable("can not update the customer, id: $entity "))
+                    }
 
 
 
-                if (rowCount>0)
-                customers[ customers.indexOf( entity ) ] = entity
 
 
-                return rowCount>0
+
+                }
 
 
             }
-
-
         }
+            .subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
+
     }
 
     fun findByCode(code: String):CustomerEntity?{

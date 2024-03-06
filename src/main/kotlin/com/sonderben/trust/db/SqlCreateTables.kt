@@ -157,8 +157,9 @@ object SqlCreateTables {
         start_hour float(4),
         end_hour float(4),
         id_employee integer,
+        
         FOREIGN key (id_employee)
-            REFERENCES $employees (id)
+            REFERENCES $employees (id) ON DELETE CASCADE
         );
     """.trimIndent()
 

@@ -167,10 +167,11 @@ class ProductController :Initializable,MessageListener,BaseController() {
     @FXML
     fun onDeleteBtn(event: ActionEvent) {
         println("onDeleteBtn")
+
     }
 
     @FXML
-    fun onSaveBtn(event: ActionEvent) {
+    fun onSaveBtn() {
 
         val cc = categoryCb.selectionModel.selectedItem
         tempEmployee = Context.currentEmployee.value
@@ -192,9 +193,20 @@ class ProductController :Initializable,MessageListener,BaseController() {
                tempEmployee
            )
 
-           ProductDao.save(pro)
+           ProductDao.save( pro ).subscribe({ clearAll() },{ th-> println(th.message) } )
 
        }
+    }
+
+    private fun clearAll() {
+        codeTf.text = ""
+        descriptionTf.text = ""
+        sellingTf.text = ""
+        purchaseTf.text = ""
+        discountTf.text = ""
+        itbisTf.text = ""
+        qtyTf.text = ""
+        qtyTf.text = ""
     }
 
     @FXML

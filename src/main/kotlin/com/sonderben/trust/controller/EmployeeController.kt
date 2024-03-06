@@ -18,8 +18,6 @@ import javafx.scene.layout.VBox
 import javafx.util.Callback
 import javafx.util.StringConverter
 import java.net.URL
-import java.time.LocalDate
-import java.time.ZoneId
 import java.util.*
 
 
@@ -176,15 +174,18 @@ class EmployeeController:Initializable, BaseController() {
     @FXML
     fun onDeleteButton(event: ActionEvent) {
         if (employeeToSave.id != null){
-            EmployeeDao.delete( employeeToSave.id )
-            clear()
-            userTableView.selectionModel.select(null)
+            EmployeeDao.delete( employeeToSave.id ).subscribe(
+                {
+                clear()
+                userTableView.selectionModel.select(null)
+            },{th-> println(th.message) })
+
         }
 
     }
 
     @FXML
-    fun onSaveButton(event: ActionEvent) {
+    fun onSaveButton() {
 
          employeeToSave.apply {
              firstName = firstNameTextField.text
@@ -201,10 +202,12 @@ class EmployeeController:Initializable, BaseController() {
              role = choiceBoxRole.value
              /*mutableListOf()*/
          }
-        EmployeeDao.save(employeeToSave)
+        EmployeeDao.save(employeeToSave).subscribe({
+            clear()
+            userTableView.selectionModel.select(null)
+        },{th-> println(th.message) })
 
-        clear()
-        userTableView.selectionModel.select(null)
+
     }
 
     @FXML
@@ -294,11 +297,11 @@ class EmployeeController:Initializable, BaseController() {
 
 
         @FXML
-        fun onDelete(event: ActionEvent?) {
+        fun onDelete(event: ActionEvent) {
         }
 
         @FXML
-        fun onSave(event: ActionEvent?) {
+        fun onSave(event: ActionEvent) {
             val schedule = ScheduleEntity(
                 null,
                 dayChoicebox.items.indexOf(dayChoicebox.value),
@@ -310,7 +313,7 @@ class EmployeeController:Initializable, BaseController() {
         }
 
         @FXML
-        fun onUpdate(event: ActionEvent?) {
+        fun onUpdate(event: ActionEvent) {
         }
 
     }

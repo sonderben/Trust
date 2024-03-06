@@ -8,6 +8,10 @@ import com.sonderben.trust.db.SqlCreateTables
 import com.sonderben.trust.model.Role
 import entity.EmployeeEntity
 import entity.EnterpriseEntity
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.collections.FXCollections
 import java.sql.Timestamp
 
@@ -21,123 +25,121 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
            findAll()
        }catch (e:Exception){}
     }
-    override fun save(entity: EnterpriseEntity): Boolean {
+    override fun save(entity: EnterpriseEntity): Completable {
         Database.connect(DATABASE_NAME).autoCommit = false
 
-        val employee = entity.employee
-        if (employee.role == null ){
-            throw Exception("Role can not be null")
-        }
-        val insertEmployee = buildString {
-            append("Insert into ${SqlCreateTables.employees} ")//passport
-            append("(bankAccount,direction,email,firstName,genre,lastName,passport,password,telephone,userName,birthDay,id_role) ")
-            append("values (?,?,?,?,?,?,?,?,?,?,?,?) ")
-        }
-        val insertIntoSchedule = buildString {
-            append("INSERT INTO ${SqlCreateTables.schedules }")
-            append(" (workDay,start_hour,end_hour,id_employee) ")
-            append(" values( ?,?,?,?);")
-        }
-        val insertEnterprise = buildString {
-            append("Insert into ${SqlCreateTables.enterprise} ")
-            append("(name,direction,telephone,foundation,website,category,invoiceTemplate,invoiceTemplateHtml,id_employee) ")
-            append("values (?,?,?,?,?,?,?,?,?) ")
-        }
-        var lastIdEmployeeAdded = 0L
-        Database.connect(DATABASE_NAME).use { connection ->
-            connection.autoCommit = false
-            connection.prepareStatement(insertEmployee).use {preparedStatement ->
-                preparedStatement.setString(1,employee.bankAccount)
-                preparedStatement.setString(2,employee.direction)
-                preparedStatement.setString(3,employee.email)
-                preparedStatement.setString(4,employee.firstName)
-                preparedStatement.setString(5,employee.genre)
-                preparedStatement.setString(6,employee.lastName)
-                preparedStatement.setString(7,employee.passport)
-                preparedStatement.setString(8,employee.password)
-                preparedStatement.setString(9,employee.telephone)
-                preparedStatement.setString(10,employee.userName)
-                preparedStatement.setTimestamp(11, Timestamp(employee.birthDay.time.time))
-                preparedStatement.setLong(12,saveRole(employee.role) )
+        return Completable.create { emitter->
+            val employee = entity.employee
+            if (employee.role == null ){
+                throw Exception("Role can not be null")
+            }
+            val insertEmployee = buildString {
+                append("Insert into ${SqlCreateTables.employees} ")//passport
+                append("(bankAccount,direction,email,firstName,genre,lastName,passport,password,telephone,userName,birthDay,id_role) ")
+                append("values (?,?,?,?,?,?,?,?,?,?,?,?) ")
+            }
+            val insertIntoSchedule = buildString {
+                append("INSERT INTO ${SqlCreateTables.schedules }")
+                append(" (workDay,start_hour,end_hour,id_employee) ")
+                append(" values( ?,?,?,?);")
+            }
+            val insertEnterprise = buildString {
+                append("Insert into ${SqlCreateTables.enterprise} ")
+                append("(name,direction,telephone,foundation,website,category,invoiceTemplate,invoiceTemplateHtml,id_employee) ")
+                append("values (?,?,?,?,?,?,?,?,?) ")
+            }
+            var lastIdEmployeeAdded = 0L
+            Database.connect(DATABASE_NAME).use { connection ->
+                connection.autoCommit = false
+                connection.prepareStatement(insertEmployee).use {preparedStatement ->
+                    preparedStatement.setString(1,employee.bankAccount)
+                    preparedStatement.setString(2,employee.direction)
+                    preparedStatement.setString(3,employee.email)
+                    preparedStatement.setString(4,employee.firstName)
+                    preparedStatement.setString(5,employee.genre)
+                    preparedStatement.setString(6,employee.lastName)
+                    preparedStatement.setString(7,employee.passport)
+                    preparedStatement.setString(8,employee.password)
+                    preparedStatement.setString(9,employee.telephone)
+                    preparedStatement.setString(10,employee.userName)
+                    preparedStatement.setTimestamp(11, Timestamp(employee.birthDay.time.time))
+                    preparedStatement.setLong(12,saveRole(employee.role) )
 
-                val rowCount = preparedStatement.executeUpdate()
+                    val rowCount = preparedStatement.executeUpdate()
 
 
-                if (rowCount>0){
-                    lastIdEmployeeAdded = Database.getLastId()
-                    entity.id = lastIdEmployeeAdded
+                    if (rowCount>0){
+                        lastIdEmployeeAdded = Database.getLastId()
+                        entity.id = lastIdEmployeeAdded
 
-                    for (schedule in employee.schedules){
-                        connection.prepareStatement(insertIntoSchedule).use {ps ->
-                            ps.setInt(1,schedule.workDay)
-                            ps.setFloat(2,schedule.startHour)
-                            ps.setFloat(3,schedule.endHour)
-                            ps.setLong(4,lastIdEmployeeAdded)
-                            val rowCount2 = ps.executeUpdate()
-                            if (rowCount2<0){
-                                connection.rollback()
-                                connection.autoCommit = true
-                                throw Exception(" unable to add  table: (${SqlCreateTables.schedules})")
-                            }else{
-                                schedule.id = Database.getLastId()
+                        for (schedule in employee.schedules){
+                            connection.prepareStatement(insertIntoSchedule).use {ps ->
+                                ps.setInt(1,schedule.workDay)
+                                ps.setFloat(2,schedule.startHour)
+                                ps.setFloat(3,schedule.endHour)
+                                ps.setLong(4,lastIdEmployeeAdded)
+                                val rowCount2 = ps.executeUpdate()
+                                if (rowCount2<0){
+                                    connection.rollback()
+                                    connection.autoCommit = true
+                                    emitter.onError( Throwable("unable to add  table: (${SqlCreateTables.schedules})") )
+
+                                }else{
+                                    schedule.id = Database.getLastId()
+                                }
                             }
                         }
-                    }
-                }else{
-                    connection.rollback()
-                    connection.autoCommit = true
-                    throw Exception("cannot add employee")
-                }
-
-
-
-
-                connection.prepareStatement(insertEnterprise).use { ps2->
-                    ps2.setString(1,entity.name)
-                    ps2.setString(2,entity.direction)
-                    ps2.setString(3,entity.telephone)
-                    ps2.setTimestamp(4,Timestamp(entity.foundation.time.time))
-                    ps2.setString(5,entity.website)
-                    ps2.setString(6,"PHARMACY")
-                    ps2.setString(7,entity.invoiceTemplate)
-                    ps2.setString(8,entity.invoiceTemplateHtml)
-                    ps2.setLong(9,lastIdEmployeeAdded)
-                    if (ps2.executeUpdate()>0){
-                        connection.commit()
-                        connection.autoCommit = true
-                        return true
                     }else{
                         connection.rollback()
-                        connection.autoCommit = false
-                        throw Exception("cannot add enterprise")
+                        connection.autoCommit = true
+                        emitter.onError( Throwable("cannot add employee") )
+
                     }
+
+
+
+
+                    connection.prepareStatement(insertEnterprise).use { ps2->
+                        ps2.setString(1,entity.name)
+                        ps2.setString(2,entity.direction)
+                        ps2.setString(3,entity.telephone)
+                        ps2.setTimestamp(4,Timestamp(entity.foundation.time.time))
+                        ps2.setString(5,entity.website)
+                        ps2.setString(6,"PHARMACY")
+                        ps2.setString(7,entity.invoiceTemplate)
+                        ps2.setString(8,entity.invoiceTemplateHtml)
+                        ps2.setLong(9,lastIdEmployeeAdded)
+                        if (ps2.executeUpdate()>0){
+                            connection.commit()
+                            connection.autoCommit = true
+                            emitter.onComplete()
+                        }else{
+                            connection.rollback()
+                            connection.autoCommit = false
+                            emitter.onError( Throwable( "unable to add  table: (${SqlCreateTables.schedules})" ) )
+                        }
+                    }
+
+
                 }
-
-
             }
         }
 
-        /*val insertTrustEnterpriseInfo = "insert into ${SqlCreateTables.trustEnterpriseInfo} (name, path) values (?,?)"
 
-        Database.connect( Database.TRUST_DB ).use { connection ->
-            connection.prepareStatement( insertTrustEnterpriseInfo ).use { preparedStatement ->
-                preparedStatement.setString(1, entity.name)
-                preparedStatement.setString(2,entity.name)
-                val rowCount = preparedStatement.executeUpdate()
-                if (rowCount<=0) throw Exception("can not add enterpriseEnfo")
-            }
 
-        }*/
 
 
     }
 
-    override fun delete(idEntity: Long): Boolean {
-       return true
+    override fun delete(idEntity: Long): Completable {
+       return Completable.create {
+
+       }.subscribeOn(Schedulers.io())
+           .observeOn(JavaFxScheduler.platform())
     }
 
-    override fun findById(iEntity: Long): EnterpriseEntity? {
-        return null
+    override fun findById(iEntity: Long): Maybe<EnterpriseEntity> {
+        return Maybe.create {  }
     }
 
     private fun saveRole(role:Role):Long{
@@ -246,7 +248,9 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
         return true
     }
 
-    override fun update(entity: EnterpriseEntity): Boolean {
-        return true
+    override fun update(entity: EnterpriseEntity): Completable {
+        return Completable.create {  }
+            .subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
     }
 }

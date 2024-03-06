@@ -7,6 +7,10 @@ import com.sonderben.trust.toCalendar
 import com.sonderben.trust.toTimestamp
 import entity.InvoiceEntity
 import entity.ProductSaled
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.collections.FXCollections
 import java.sql.SQLException
 import java.sql.Timestamp
@@ -14,119 +18,127 @@ import java.util.Calendar
 import kotlin.collections.List
 
 object InvoiceDao:CrudDao<InvoiceEntity> {
-    var invoices = FXCollections.observableArrayList<InvoiceEntity>()
+    //var invoices = FXCollections.observableArrayList<InvoiceEntity>()
 
 
 
-    override fun save(entity: InvoiceEntity): Boolean {
+    override fun save(entity: InvoiceEntity): Completable {
+        return Completable.create { emitter->
+            val insertInvoice = "insert into ${SqlCreateTables.invoices} (dateCreated, codeBar, id_employee, id_customer) values (?,?,?,?)"
 
-        val insertInvoice = "insert into ${SqlCreateTables.invoices} (dateCreated, codeBar, id_employee, id_customer) values (?,?,?,?)"
+            val insertProductSealed = "Insert into ${SqlCreateTables.productSealed}" +
+                    " (code,description,price,quantity,discount,itbis,total,wasDiscountCategory,category,expirationDate)  values(?,?,?,?,?,?,?,?,?,?);"
 
-        val insertProductSealed = "Insert into ${SqlCreateTables.productSealed}" +
-                " (code,description,price,quantity,discount,itbis,total,wasDiscountCategory,category,expirationDate)  values(?,?,?,?,?,?,?,?,?,?);"
-
-        val insertInvoiceProductSealed = "Insert into  ${SqlCreateTables.invoiceProductSealed} (id_invoice,id_product_sealed) values(?,?);"
-
-
-        Database.connect(DATABASE_NAME).use { connection ->
-            connection.autoCommit = false
-            var idInvoice = 0L
-            connection.prepareStatement(insertInvoice).use { statement ->
-                statement.setTimestamp(1,Timestamp(entity.date.timeInMillis))
-                statement.setString(2,entity.codeBar)
-                statement.setLong(3,entity.employee.id)
-                entity.customer?.id?.let {
-                    statement.setLong(4,it)
-                }
-                val rowCount = statement.executeUpdate()
-
-                if (rowCount<=0){
-                    println("error al insert Invoice")
-                    connection.rollback()
-                    connection.autoCommit = false
-                    return false
-                }
+            val insertInvoiceProductSealed = "Insert into  ${SqlCreateTables.invoiceProductSealed} (id_invoice,id_product_sealed) values(?,?);"
 
 
-                idInvoice = Database.getLastId()
-                connection.prepareStatement(insertProductSealed).use { preparedStatement ->
+            Database.connect(DATABASE_NAME).use { connection ->
+                connection.autoCommit = false
+                var idInvoice = 0L
+                connection.prepareStatement(insertInvoice).use { statement ->
+                    statement.setTimestamp(1,Timestamp(entity.date.timeInMillis))
+                    statement.setString(2,entity.codeBar)
+                    statement.setLong(3,entity.employee.id)
+                    entity.customer?.id?.let {
+                        statement.setLong(4,it)
+                    }
+                    val rowCount = statement.executeUpdate()
 
-                    val productSales:List<ProductSaled> = entity.products
-                    for (productSale in productSales){
-                        preparedStatement.setString(1,productSale.code)
-                        preparedStatement.setString(2,productSale.description)
-                        preparedStatement.setFloat(3,productSale.price)
-                        preparedStatement.setFloat(4,productSale.qty)
-                        preparedStatement.setFloat(5,productSale.discount)
-                        preparedStatement.setFloat(6,productSale.itbis)
-                        preparedStatement.setDouble(7,productSale.total)
-                        preparedStatement.setBoolean(8,productSale.isWasDiscountCategory)
-                        preparedStatement.setString(9,productSale.category)
-                        preparedStatement.setTimestamp(10,productSale.expirationDate.toTimestamp())
-                        val rc = preparedStatement.executeUpdate()
-                        if (rc>0){
-                            val r = ProductDao.updateQuantityRemaining(productSale.code,productSale.qty)
-
-                            if (r<=0){
-                                connection.rollback()
-                                connection.autoCommit = true
-                                throw SQLException("can not update qty remaining product")
-                            }
-                        }
-
-                        if (rc<=0){
-                            println("error al insert ProductSealed")
-                            connection.rollback()
-                            connection.autoCommit = true
-                            return false
-                        }
-
-                        val idProduct = Database.getLastId()
-
-                        connection.prepareStatement(insertInvoiceProductSealed).use { ps ->
-                            ps.setLong(1,idInvoice)
-                            ps.setLong(2,idProduct)
-                            val rowCount2 = ps.executeUpdate()
-
-                            if (rowCount2<=0){
-                                connection.rollback()
-                                println("error al insert InvoiceProductSealed")
-                                connection.autoCommit = true
-                                return false
-                            }
-                        }
+                    if (rowCount<=0){
+                        println("error al insert Invoice")
+                        connection.rollback()
+                        connection.autoCommit = false
+                        emitter.onError( Throwable("can not save invoice: $entity") )
                     }
 
 
+                    idInvoice = Database.getLastId()
+                    connection.prepareStatement(insertProductSealed).use { preparedStatement ->
 
-                    connection.commit()
+                        val productSales:List<ProductSaled> = entity.products
+                        for (productSale in productSales){
+                            preparedStatement.setString(1,productSale.code)
+                            preparedStatement.setString(2,productSale.description)
+                            preparedStatement.setFloat(3,productSale.price)
+                            preparedStatement.setFloat(4,productSale.qty)
+                            preparedStatement.setFloat(5,productSale.discount)
+                            preparedStatement.setFloat(6,productSale.itbis)
+                            preparedStatement.setDouble(7,productSale.total)
+                            preparedStatement.setBoolean(8,productSale.isWasDiscountCategory)
+                            preparedStatement.setString(9,productSale.category)
+                            preparedStatement.setTimestamp(10,productSale.expirationDate.toTimestamp())
+                            val rc = preparedStatement.executeUpdate()
+                            if (rc>0){
+                                val r = ProductDao.updateQuantityRemaining(productSale.code,productSale.qty)
+
+                                if (r<=0){
+                                    connection.rollback()
+                                    connection.autoCommit = true
+                                    throw SQLException("can not update qty remaining product")
+                                }
+                            }
+
+                            if (rc<=0){
+                                println("error al insert ProductSealed")
+                                connection.rollback()
+                                connection.autoCommit = true
+                                emitter.onError( Throwable("error al insert ProductSealed") )
+                            }
+
+                            val idProduct = Database.getLastId()
+
+                            connection.prepareStatement(insertInvoiceProductSealed).use { ps ->
+                                ps.setLong(1,idInvoice)
+                                ps.setLong(2,idProduct)
+                                val rowCount2 = ps.executeUpdate()
+
+                                if (rowCount2<=0){
+                                    connection.rollback()
+                                    println("error al insert InvoiceProductSealed")
+                                    connection.autoCommit = true
+                                    emitter.onError( Throwable("error al insert InvoiceProductSealed") )
+                                }
+                            }
+                        }
+
+
+
+                        connection.commit()
+                        emitter.onComplete()
+
+                    }
+
 
                 }
-
-
             }
-
-
-
-
         }
-        return true
+            .subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
+
+
+
     }
 
-    override fun delete(idEntity: Long): Boolean {
-        return true
+    override fun delete(idEntity: Long): Completable {
+        return Completable.create {
+
+        }.subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
+            .observeOn(JavaFxScheduler.platform())
     }
 
-    override fun findById(iEntity: Long): InvoiceEntity? {
-        return null
+    override fun findById(iEntity: Long): Maybe<InvoiceEntity> {
+        return Maybe.create {  }
     }
 
     override fun findAll(): Boolean {
-        return true
+        return false
     }
 
-    override fun update(entity: InvoiceEntity): Boolean {
-        return true
+    override fun update(entity: InvoiceEntity): Completable {
+        return Completable.create {  }
+            .subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
     }
 
     fun productSealed():List<ProductSealed>{

@@ -28,8 +28,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.media.Media
 import javafx.scene.media.MediaPlayer
 import javafx.scene.text.Text
-import javafx.scene.web.HTMLEditor
-import org.jsoup.Jsoup
+
 import java.net.URL
 import java.text.NumberFormat
 import java.time.LocalDateTime
@@ -268,24 +267,22 @@ class Sale :Initializable,MessageListener,BaseController(){
             }
             if (cashTextField.text.toDouble()>=grandTotal.text.toDouble()){
                 val codeBar = Random.nextLong(LongRange(10_000_000,99_999_999))
-                val isPayed = InvoiceDao.save(
+                InvoiceDao.save(
                     InvoiceEntity(mProducts, Context.currentEmployee.value, mCurrentCustomer, codeBar.toString(), Calendar.getInstance())
-                )
-                if (isPayed){
-                    mCurrentCustomer?.let {
-                        val point = (grandTotal.text.toDouble()/100.0).toLong()
-                        val success =  CustomerDao.updatePoint(it.id, point)
-                        println("update point: ${point} "+success)
-                    }
+                ).subscribe({
 
-                    ViewUtil.createAlert(Alert.AlertType.CONFIRMATION,"Payment","Pay with success").showAndWait()
-                    clearAll()
-                    customerCode.requestFocus()
+                        mCurrentCustomer?.let {
+                            val point = (grandTotal.text.toDouble()/100.0).toLong()
+                            val success =  CustomerDao.updatePoint(it.id, point)
+                            println("update point: ${point} "+success)
+                        }
 
+                        ViewUtil.createAlert(Alert.AlertType.CONFIRMATION,"Payment","Pay with success").showAndWait()
+                        clearAll()
+                        customerCode.requestFocus()
 
+                },{})
 
-
-                }
 
             }else{
                 ViewUtil.createAlert(Alert.AlertType.WARNING,"Invalid Data","Cash must be greater than grand total").showAndWait()

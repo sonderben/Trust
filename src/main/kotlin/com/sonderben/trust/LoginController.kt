@@ -38,22 +38,17 @@ class LoginController : Initializable{
     @FXML
     fun onLoginButtonClick(event: ActionEvent?) {
 
-        val employeeEntity = EmployeeDao.login(userNameTextField.text.trim(),password.text.trim())
-        if ( employeeEntity != null ){
-            Context.currentEmployee = SimpleObjectProperty(employeeEntity)
-
-
-            val resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
-
-
-
-            val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/main_view.fxml"),resourceBundle)
-            val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
-            HelloApplication.primary.scene = scene
-        }else{
-            infoLabel.isVisible = true
-            infoLabel.text = "username or password is wrong"
-        }
+        EmployeeDao.login(userNameTextField.text.trim(),password.text.trim())
+            .subscribe({employeeEntity ->
+                Context.currentEmployee = SimpleObjectProperty(employeeEntity)
+                val resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
+                val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/main_view.fxml"),resourceBundle)
+                val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
+                HelloApplication.primary.scene = scene
+            },{},{
+                infoLabel.isVisible = true
+                infoLabel.text = "username or password is wrong"
+            })
 
 
     }

@@ -153,13 +153,11 @@ class RoleController :Initializable, BaseController(),EventHandler<MouseEvent>{
                 )
             }
 
-            val suc = RoleDao.save(
-                Role(nameTf.text,screens)
-            )
-            if (suc){
+            RoleDao.save(Role(nameTf.text,screens)).subscribe({
                 clearRDButtons()
                 nameTf.text = ""
-            }
+            },{})
+
 
     }
 
@@ -171,12 +169,9 @@ class RoleController :Initializable, BaseController(),EventHandler<MouseEvent>{
     fun onDeleteRole(event: ActionEvent) {
         roleSelectedOrToSave?.let {
             if (!it.name.equals("Admin")){
-                val isDelete = RoleDao.delete( it.id )
-                if (isDelete){
-                    clearAll()
-                } else {
+                RoleDao.delete( it.id )
+                    .subscribe({clearAll()},{})
 
-                }
             }
             else
                 ViewUtil.createAlert(Alert.AlertType.WARNING,"Delete role","Can not delete main role.").showAndWait()

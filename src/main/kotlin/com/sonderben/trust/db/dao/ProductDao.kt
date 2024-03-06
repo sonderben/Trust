@@ -6,6 +6,10 @@ import com.sonderben.trust.db.SqlCreateTables
 import entity.CategoryEntity
 import entity.EmployeeEntity
 import entity.ProductEntity
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.collections.FXCollections
 import java.sql.Timestamp
 import java.util.Calendar
@@ -17,54 +21,60 @@ object ProductDao : CrudDao<ProductEntity> {
         findAll()
     }
 
-    override fun save(entity: ProductEntity): Boolean {
+    override fun save(entity: ProductEntity): Completable {
 
-        var insertProduct = """
+        return  Completable.create { emitter->
+            var insertProduct = """
             INSERT INTO ${SqlCreateTables.products} 
             (discount, itbis, purchasePrice, quantity, sellingPrice,id_category, dateAdded, id_employee, expirationDate, code, description,quantityRemaining ) 
             values(?,?,?,?,?,?,?,?,?,?,?,?)
         """.trimIndent()
-        Database.connect(DATABASE_NAME).use { connection ->
-            connection.prepareStatement(insertProduct).use { preparedStatement ->
-                preparedStatement.setDouble(1, entity.discount)
-                preparedStatement.setDouble(2, entity.itbis)
-                preparedStatement.setDouble(3, entity.purchasePrice)
-                preparedStatement.setInt(4, entity.quantity)
-                preparedStatement.setDouble(5, entity.sellingPrice)
-                preparedStatement.setLong(6, entity.category.id)
-                preparedStatement.setTimestamp(7, Timestamp(Calendar.getInstance().timeInMillis))
-                preparedStatement.setLong(8, entity.employee.id)
-                preparedStatement.setTimestamp(9, Timestamp(entity.expirationDate.timeInMillis))
-                val tempCode = entity.code.padStart(12, '0')
-                preparedStatement.setString(10, tempCode)
-                preparedStatement.setString(11, entity.description)
-                preparedStatement.setInt(12, entity.quantity)
-                val rowCount = preparedStatement.executeUpdate()
-                val lastId = Database.getLastId()
-                entity.id = lastId
+            Database.connect(DATABASE_NAME).use { connection ->
+                connection.prepareStatement(insertProduct).use { preparedStatement ->
+                    preparedStatement.setDouble(1, entity.discount)
+                    preparedStatement.setDouble(2, entity.itbis)
+                    preparedStatement.setDouble(3, entity.purchasePrice)
+                    preparedStatement.setInt(4, entity.quantity)
+                    preparedStatement.setDouble(5, entity.sellingPrice)
+                    preparedStatement.setLong(6, entity.category.id)
+                    preparedStatement.setTimestamp(7, Timestamp(Calendar.getInstance().timeInMillis))
+                    preparedStatement.setLong(8, entity.employee.id)
+                    preparedStatement.setTimestamp(9, Timestamp(entity.expirationDate.timeInMillis))
+                    val tempCode = entity.code.padStart(12, '0')
+                    preparedStatement.setString(10, tempCode)
+                    preparedStatement.setString(11, entity.description)
+                    preparedStatement.setInt(12, entity.quantity)
+                    val rowCount = preparedStatement.executeUpdate()
+                    val lastId = Database.getLastId()
+                    entity.id = lastId
 
 
 
-                if (rowCount > 0 && lastId != null) {
-                    products.add(entity)
-                    return true
-                } else {
-                    println("rowCount: $rowCount , last id: $lastId")
+                    if (rowCount > 0 && lastId != null) {
+                        products.add(entity)
+                        emitter.onComplete()
+                    } else {
+                        println("rowCount: $rowCount , last id: $lastId")
+                        emitter.onError( Throwable("Can not save product: $entity") )
+                    }
+
+
+
                 }
-                return false
-
-
             }
-        }
+        }.subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
 
     }
 
-    override fun delete(idEntity: Long): Boolean {
-        return false
+    override fun delete(idEntity: Long): Completable {
+        return Completable.create {  }
+            .subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
     }
 
-    override fun findById(iEntity: Long): ProductEntity? {
-        return null
+    override fun findById(iEntity: Long): Maybe<ProductEntity> {
+        return Maybe.create{}
     }
 
     override fun findAll(): Boolean {
@@ -120,8 +130,10 @@ object ProductDao : CrudDao<ProductEntity> {
         return false
     }
 
-    override fun update(entity: ProductEntity): Boolean {
-        return false
+    override fun update(entity: ProductEntity): Completable {
+        return Completable.create {  }
+            .subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
     }
 
     fun findProductByCode(code: String): ProductEntity? {

@@ -145,16 +145,11 @@ class ConfigurationController:Initializable, BaseController() {
 
         }
 
-
-
-
-        val isSave = EnterpriseDao.save( enterprise!! )
-        if (isSave){
-
-            val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
-            val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
-            HelloApplication.primary.scene = scene
-        }
-
+        EnterpriseDao.save( enterprise!! )
+            .subscribe({
+                val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
+                val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
+                HelloApplication.primary.scene = scene
+            },{})
     }
 }

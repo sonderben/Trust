@@ -4,6 +4,10 @@ import Database
 import Database.DATABASE_NAME
 import com.sonderben.trust.db.SqlCreateTables
 import com.sonderben.trust.model.Role
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.collections.FXCollections
 
 object RoleDao:CrudDao<Role> {
@@ -26,73 +30,83 @@ object RoleDao:CrudDao<Role> {
     private const val selectAllRoles = "SELECT * FROM ${SqlCreateTables.roles}"
 
 
-    override fun save(entity:Role):Boolean{
-        var tempRole = entity
-        Database.connect(DATABASE_NAME).use { connection ->
-            var roleId:Long
+    override fun save(entity:Role):Completable{
+        return Completable.create { emitter->
+            var tempRole = entity
+            Database.connect(DATABASE_NAME).use { connection ->
+                var roleId:Long
 
-            connection.autoCommit = false
+                connection.autoCommit = false
 
-            connection.prepareStatement( insertRole ).use { preparedStatement ->
-                preparedStatement.setString(1,entity.name)
-                val intRow = preparedStatement.executeUpdate()
-                if ( intRow>0 ){
-                    roleId = Database.getLastId()
-                    tempRole.id = roleId
+                connection.prepareStatement( insertRole ).use { preparedStatement ->
+                    preparedStatement.setString(1,entity.name)
+                    val intRow = preparedStatement.executeUpdate()
+                    if ( intRow>0 ){
+                        roleId = Database.getLastId()
+                        tempRole.id = roleId
 
-                    for (screen in entity.screens){
-                        connection.prepareStatement( insertScreen ).use { ps ->
-                            ps.setString(1,screen.screen.name)
-                            ps.setString(2,screen.actions.map { it.name }.joinToString ("," ) )
-                            ps.setLong(3,roleId)
+                        for (screen in entity.screens){
+                            connection.prepareStatement( insertScreen ).use { ps ->
+                                ps.setString(1,screen.screen.name)
+                                ps.setString(2,screen.actions.map { it.name }.joinToString ("," ) )
+                                ps.setLong(3,roleId)
 
-                            val rowCount = ps.executeUpdate()
-                            if (rowCount<=0) {
-                                connection.rollback()
-                                connection.autoCommit = true
-                                throw Exception("can't save screen: $screen")
+                                val rowCount = ps.executeUpdate()
+                                if (rowCount<=0) {
+                                    connection.rollback()
+                                    connection.autoCommit = true
+                                    throw Exception("can't save screen: $screen")
+                                }
+
                             }
-
                         }
+
+                        connection.commit()
+                        connection.autoCommit = true
+                        roles.add( tempRole )
+                        emitter.onComplete()
+
+                    }else{
+                        connection.rollback()
+                        connection.autoCommit = true
+                        emitter.onError( Throwable("Can not be saved role: $entity") )
                     }
-
-                    connection.commit()
-                    roles.add( tempRole )
-                    return true
-
-                }else{
-                    connection.rollback()
-                    connection.autoCommit = true
-                    throw Exception("Role can not be saved")
                 }
+
+
             }
-
-
-        }
+        }.subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
 
 
 
 
     }
 
-    override fun delete(idEntity: Long): Boolean {
+    override fun delete(idEntity: Long): Completable {
 
-        Database.connect(DATABASE_NAME).use { connection ->
-            connection.prepareStatement("delete from ${SqlCreateTables.roles} where id = ?").use { preparedStatement ->
-                preparedStatement.setLong(1,idEntity)
-                val rowCount = preparedStatement.executeUpdate()
-                if (rowCount>0){
-                    roles.removeIf { it.id.equals(idEntity) }
-                    return true
+        return Completable.create {emitter->
+            Database.connect(DATABASE_NAME).use { connection ->
+                connection.prepareStatement("delete from ${SqlCreateTables.roles} where id = ?").use { preparedStatement ->
+                    preparedStatement.setLong(1,idEntity)
+                    val rowCount = preparedStatement.executeUpdate()
+                    if (rowCount>0){
+                        roles.removeIf { it.id.equals(idEntity) }
+                        emitter.onComplete()
+                    }
+                    emitter.onError(Throwable("cant delete role, id: $idEntity"))
                 }
-                return false
-            }
 
+            }
         }
+            .subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
+
+
     }
 
-    override fun findById(iEntity: Long): Role? {
-        return null
+    override fun findById(iEntity: Long): Maybe<Role> {
+        return Maybe.create {}
     }
 
     override fun findAll():Boolean {
@@ -125,8 +139,10 @@ object RoleDao:CrudDao<Role> {
         return true
     }
 
-    override fun update(entity: Role): Boolean {
-        return true
+    override fun update(entity: Role): Completable {
+        return Completable.create {  }
+            .subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
     }
 
     private fun deleteById(){}

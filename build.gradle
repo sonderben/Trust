@@ -45,56 +45,25 @@ javafx {
 }
 
 dependencies {
-    implementation('org.controlsfx:controlsfx:11.1.2')
-    implementation('com.dlsc.formsfx:formsfx-core:11.6.0') {
-        exclude(group: 'org.openjfx')
-    }
-    implementation('net.synedra:validatorfx:0.4.0') {
-        exclude(group: 'org.openjfx')
-    }
-    implementation('org.kordamp.ikonli:ikonli-javafx:12.3.1')
-    implementation('org.kordamp.bootstrapfx:bootstrapfx-core:0.4.0')
-    /*implementation('eu.hansolo:tilesfx:17.1.17') {
-        exclude(group: 'org.openjfx')
-    }*/
+
     implementation ('org.xerial:sqlite-jdbc:3.44.1.0')
-    //implementation('com.h2database:h2:2.2.220')
-    //implementation('com.gluonhq:rich-text-area:1.1.1')
-    //implementation("com.gluonhq:rich-text-area:1.1.1")
+
 
     implementation files('libs/scenicview.jar')
 
-
-
-
-    implementation('com.github.almasb:fxgl:17.2') {
-        exclude(group: 'org.openjfx')
-        exclude(group: 'org.jetbrains.kotlin')
-    }
 
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 
     implementation 'org.xerial:sqlite-jdbc:3.44.1.0'
 
-    implementation 'org.jsoup:jsoup:1.17.2'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 
-    // data
-
-    //implementation("org.hibernate.orm:hibernate-core:6.4.1.Final")
-    //implementation('io.reactivex.rxjava3:rxjava:3.1.5')
     implementation 'com.github.reactivex:rxjavafx:2.11.0-RC36'
 
-    //implementation 'org.hibernate.orm:hibernate-community-dialects:6.4.2.Final'
-
-
-
-
-
-    // itextpdf
     implementation("com.itextpdf:itextpdf:5.5.13.3")
 
-
+    // https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjavafx
+    //implementation 'io.reactivex.rxjava2:rxjavafx:2.11.0-RC16'
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
@@ -103,7 +72,7 @@ dependencies {
 test {
     useJUnitPlatform()
 }
-
+/*
 jlink {
     imageZip = project.file("${buildDir}/distributions/app-${javafx.platform.classifier}.zip")
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
@@ -114,4 +83,4 @@ jlink {
 
 jlinkZip {
     group = 'distribution'
-}
+}*/
