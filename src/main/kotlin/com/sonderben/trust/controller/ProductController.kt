@@ -30,6 +30,7 @@ import java.util.*
 class ProductController :Initializable,MessageListener,BaseController() {
 
     //private var socketMesageEvent = SocketMessageEvent(this)
+    private var currentProductSelected:ProductEntity?=null
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         println("init productController")
 
@@ -64,6 +65,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
         tableView.selectionModel.selectionMode = SelectionMode.SINGLE
         tableView.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
             if (newValue != null) {
+                currentProductSelected = newValue
                 var year = newValue.dateAdded.get(Calendar.YEAR)
                 var month = newValue.dateAdded.get(Calendar.MONTH) + 1
                 var day = newValue.dateAdded.get(Calendar.DAY_OF_MONTH)
@@ -81,7 +83,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
 
                 qtyTf.text = newValue.quantity.toString()
                 discountTf.text = newValue.discount.toString()
-                itbisTf.text = newValue.quantity.toString()
+                itbisTf.text = newValue.itbis.toString()
                 employeeTf.text = newValue.employee.userName
 
                 categoryCb.selectionModel.select(categoryCb.items.indexOf(categoryCb.items.find { it.id == newValue.category.id }))
@@ -165,8 +167,14 @@ class ProductController :Initializable,MessageListener,BaseController() {
     private lateinit var tableView: TableView<ProductEntity>
 
     @FXML
-    fun onDeleteBtn(event: ActionEvent) {
-        println("onDeleteBtn")
+    fun onDeleteBtn() {
+
+        currentProductSelected?.let {
+            ProductDao.delete(it.id).subscribe({
+                clearAll()
+            },{th-> println( th.message ) })
+        }
+
 
     }
 
@@ -207,6 +215,8 @@ class ProductController :Initializable,MessageListener,BaseController() {
         itbisTf.text = ""
         qtyTf.text = ""
         qtyTf.text = ""
+        currentProductSelected = null
+        tableView.selectionModel.clearSelection()
     }
 
     @FXML
@@ -219,8 +229,30 @@ class ProductController :Initializable,MessageListener,BaseController() {
     }
 
     @FXML
-    fun onUpdateBtn(event: ActionEvent) {
-        println("onUpdateBtn")
+    fun onUpdateBtn() {
+        currentProductSelected?.let {
+
+
+            ///////
+
+            it.apply {
+                code = codeTf.text
+                description = descriptionTf.text
+                sellingPrice = sellingTf.text.toDouble()
+                purchasePrice = purchaseTf.text.toDouble()
+                discount = discountTf.text.toDouble()
+                itbis = itbisTf.text.toDouble()
+                quantity = qtyTf.text.toInt()
+                qtyTf.text.toInt()
+
+            }
+
+
+
+            ProductDao.update(it) .subscribe({
+                                             clearAll()
+            },{th-> println(th.message) })
+        }
     }
 
     fun hideBottomPanelOnMouseClicked(){

@@ -8,12 +8,17 @@ import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.scene.shape.Circle
 import javafx.scene.shape.StrokeType
+import java.util.*
 
 class RDButton( var name:ScreenEnum,var isChecked:Boolean = false):Pane(),EventHandler<MouseEvent> {
     private var radius = 8.0
     private var outerCircle: Circle = Circle(radius)
     private var innerCircle: Circle
-    private val label = Label(name.name.toLowerCase().replace("_"," ").replaceFirstChar { it.uppercase() })
+    private val resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
+
+    //private val label = Label(name.name.toLowerCase().replace("_"," ").replaceFirstChar { it.uppercase() })
+    private val label = Label( resourceBundle.getString( name.name.toLowerCase() ) )
+
     init {
         label.style = "-fx-text-fill: white;"
 

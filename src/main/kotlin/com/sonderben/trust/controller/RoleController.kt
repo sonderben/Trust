@@ -32,12 +32,7 @@ class RoleController :Initializable, BaseController(),EventHandler<MouseEvent>{
 
         val listScreen = ScreenEnum.values().toList()
         gridPaneScreen.children.clear()
-        /*for (screen in listScreen){
-            val radioButton = RDButton( screen )
-            radioButton.onMouseClicked = this
-            gridPaneScreen.children.addAll(radioButton)
-        }*/
-        //for (i in 0 until listScreen.size){
+
 
 
         var index = 0
@@ -59,7 +54,7 @@ class RoleController :Initializable, BaseController(),EventHandler<MouseEvent>{
             }
         //}
         nameCol.setCellValueFactory { data -> SimpleStringProperty(data.value.name) }
-        screensCol.setCellValueFactory { data->SimpleStringProperty(data.value.screens.joinToString(","){it.screen.name.toLowerCase().replace("_"," ").replaceFirstChar { it.uppercase() }}) }
+        screensCol.setCellValueFactory { d->SimpleStringProperty(d.value.screens.joinToString(", "){ resources?.getString( it.screen.name.toLowerCase() ) ?:"not translate" }) }
 
         tableView.items = RoleDao.roles
 

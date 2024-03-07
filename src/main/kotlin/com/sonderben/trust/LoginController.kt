@@ -6,6 +6,7 @@ import entity.EmployeeEntity
 import entity.enterprise.EnterpriseInfo
 import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.ListChangeListener
+import javafx.collections.ObservableList
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -31,7 +32,7 @@ class LoginController : Initializable{
 
     @FXML
     private lateinit var newSystemLabel: Label
-    val employees = EmployeeDao.employees
+    private val employees: ObservableList<EmployeeEntity> = EmployeeDao.employees
 
 
 

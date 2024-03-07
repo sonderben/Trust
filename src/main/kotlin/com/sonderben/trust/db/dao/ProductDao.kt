@@ -1,8 +1,10 @@
 package com.sonderben.trust.db.dao
 
 import Database.DATABASE_NAME
+import com.sonderben.trust.Context
 import com.sonderben.trust.Util
 import com.sonderben.trust.db.SqlCreateTables
+import com.sonderben.trust.toTimestamp
 import entity.CategoryEntity
 import entity.EmployeeEntity
 import entity.ProductEntity
@@ -68,7 +70,21 @@ object ProductDao : CrudDao<ProductEntity> {
     }
 
     override fun delete(idEntity: Long): Completable {
-        return Completable.create {  }
+        return Completable.create { emitter->
+            val deleteProduct = "delete from ${SqlCreateTables.products} where id = ?"
+            Database.connect("").use { connection ->
+                connection.prepareStatement( deleteProduct ).use { preparedStatement ->
+                    preparedStatement.setLong(1,idEntity)
+                    val rowCount = preparedStatement.executeUpdate()
+                    if (rowCount>0){
+                        emitter.onComplete()
+                        products.removeIf{it.id == idEntity}
+                    }else {
+                        emitter.onError( Throwable( "can not delete product of id: $idEntity" ) )
+                    }
+                }
+            }
+        }
             .subscribeOn(Schedulers.io())
             .observeOn(JavaFxScheduler.platform())
     }
@@ -118,6 +134,7 @@ object ProductDao : CrudDao<ProductEntity> {
                             category,
                             employee
                         )
+                        prod.id = resultSet.getLong("id")
                         tempProduct.add(prod)
                     }
                     products.addAll(tempProduct)
@@ -131,7 +148,48 @@ object ProductDao : CrudDao<ProductEntity> {
     }
 
     override fun update(entity: ProductEntity): Completable {
-        return Completable.create {  }
+        if(entity.id == null)
+            throw RuntimeException(" id product can not be null")
+        val update = """update  ${SqlCreateTables.products} 
+            set discount = ?, 
+            itbis = ?, 
+            purchasePrice = ?, 
+            quantity = ?, 
+            sellingPrice = ?,
+            id_category = ?,  
+            id_employee = ?, 
+            expirationDate = ?, 
+            code = ?, 
+            description = ?,
+            quantityRemaining = ? 
+            where id = ?;""".trimMargin()
+        return Completable.create { emitter->
+            Database.connect("").use { connection ->
+                connection.prepareStatement( update ).use { preparedStatement ->
+                    preparedStatement.setDouble(1,entity.discount)
+                    preparedStatement.setDouble(2,entity.itbis)
+                    preparedStatement.setDouble(3,entity.purchasePrice)
+                    preparedStatement.setInt(4,entity.quantity)
+                    preparedStatement.setDouble(5,entity.sellingPrice)
+                    preparedStatement.setLong(6,entity.category.id)
+                    preparedStatement.setLong(7,Context.currentEmployee.value.id)
+                    preparedStatement.setTimestamp(8,entity.expirationDate.toTimestamp())
+                    preparedStatement.setString(9,entity.code)
+                    preparedStatement.setString(10,entity.description)
+                    preparedStatement.setInt(11,entity.quantityRemaining)
+                    preparedStatement.setLong(12,entity.id)
+
+                    val rowCount = preparedStatement.executeUpdate()
+
+                    if (rowCount>0 ) {
+                        products[ products.indexOf( entity ) ] = entity
+                        emitter.onComplete()
+                    }else{
+                        emitter.onError( Throwable( "Can not update product: $entity" ) )
+                    }
+                }
+            }
+        }
             .subscribeOn(Schedulers.io())
             .observeOn(JavaFxScheduler.platform())
     }

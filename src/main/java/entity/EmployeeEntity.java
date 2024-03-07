@@ -72,7 +72,11 @@ public class EmployeeEntity extends PersonEntity {
 
     @Override
     public String toString() {
-        return "EmployeeEntity{bankAccount='%s', userName='%s', password='%s', passport='%s', roleList=%s, schedules=%s, passport='%s', firstName='%s', lastName='%s', genre='%s', direction='%s', email='%s', telephone='%s', birthDay=%s, id=%d}".formatted(bankAccount, userName, password, passport, role, schedules, passport, firstName, lastName, genre, direction, email, telephone, birthDay.getTime().getTime(), id);
+        Long bd = 0L;
+        if (birthDay == null){
+            bd = birthDay.getTime().getTime();
+        }
+        return "EmployeeEntity{bankAccount='%s', userName='%s', password='%s', passport='%s', roleList=%s, schedules=%s, passport='%s', firstName='%s', lastName='%s', genre='%s', direction='%s', email='%s', telephone='%s', birthDay=%s, id=%d}".formatted(bankAccount, userName, password, passport, role, schedules, passport, firstName, lastName, genre, direction, email, telephone, bd, id);
     }
 
     public void setSchedule(List<ScheduleEntity> schedule) {
