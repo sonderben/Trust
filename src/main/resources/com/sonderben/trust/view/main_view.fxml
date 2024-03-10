@@ -170,7 +170,7 @@
                   <Menu fx:id="menuView1" mnemonicParsing="false" text="%window">
                      <items>
                         <MenuItem mnemonicParsing="false" onAction="#lateralBarOnAction" text="Lateral bar" />
-                        <MenuItem mnemonicParsing="false" text="Bottom bar" />
+                        <MenuItem mnemonicParsing="false" fx:id="bottombar" text="Bottom bar" />
                      </items>
                   </Menu>
                 <Menu mnemonicParsing="false" text="%help">

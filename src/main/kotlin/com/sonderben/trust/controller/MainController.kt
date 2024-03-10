@@ -131,6 +131,12 @@ class MainController : Initializable {
 
 
     }
+
+
+    lateinit var bottombar: MenuItem
+
+
+
     @FXML
     private lateinit var vboxLateral: VBox
 
