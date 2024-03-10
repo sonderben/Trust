@@ -28,8 +28,8 @@ object ProductDao : CrudDao<ProductEntity> {
         return  Completable.create { emitter->
             var insertProduct = """
             INSERT INTO ${SqlCreateTables.products} 
-            (discount, itbis, purchasePrice, quantity, sellingPrice,id_category, dateAdded, id_employee, expirationDate, code, description,quantityRemaining ) 
-            values(?,?,?,?,?,?,?,?,?,?,?,?)
+            (discount, itbis, purchasePrice, quantity, sellingPrice,id_category, dateAdded, id_employee, expirationDate, code, description,quantityRemaining,sellby ) 
+            values(?,?,?,?,?,?,?,?,?,?,?,?,?)
         """.trimIndent()
             Database.connect(DATABASE_NAME).use { connection ->
                 connection.prepareStatement(insertProduct).use { preparedStatement ->
@@ -46,6 +46,7 @@ object ProductDao : CrudDao<ProductEntity> {
                     preparedStatement.setString(10, tempCode)
                     preparedStatement.setString(11, entity.description)
                     preparedStatement.setInt(12, entity.quantity)
+                    preparedStatement.setString(13,"sellby")
                     val rowCount = preparedStatement.executeUpdate()
                     val lastId = Database.getLastId()
                     entity.id = lastId
@@ -96,7 +97,7 @@ object ProductDao : CrudDao<ProductEntity> {
     override fun findAll(): Boolean {
         val tempProduct = mutableListOf<ProductEntity>()
         val selectAll = """
-            SELECT products.quantityRemaining,products.id,products.discount as discount_product,quantity,itbis,sellingPrice,purchaseprice,
+            SELECT products.quantityRemaining,products.sellby,products.id,products.discount as discount_product,quantity,itbis,sellingPrice,purchaseprice,
             id_category,products.dateAdded,id_employee,expirationDate,products.code as code_product,products.description as description_product,
             Categories.discount as discount_category,Categories.code as code_categpry,Categories.description as description_category,userName
              from ${SqlCreateTables.products} INNER JOIN Employee  on 
@@ -122,6 +123,7 @@ object ProductDao : CrudDao<ProductEntity> {
                         }
                         val prod = ProductEntity(
                             resultSet.getString("code_product"),
+                            resultSet.getString("sellby"),
                             resultSet.getString("description_product"),
                             resultSet.getDouble("sellingPrice"),
                             resultSet.getDouble("purchaseprice"),
@@ -225,6 +227,7 @@ object ProductDao : CrudDao<ProductEntity> {
                 }
                 val prod = ProductEntity(
                     resultSet.getString("code_product"),
+                    resultSet.getString("sellby"),
                     resultSet.getString("description_product"),
                     resultSet.getDouble("sellingPrice"),
                     resultSet.getDouble("purchaseprice"),
@@ -282,6 +285,7 @@ object ProductDao : CrudDao<ProductEntity> {
                         }
                         val prod = ProductEntity(
                             resultSet.getString("code_product"),
+                            resultSet.getString("sellby"),
                             resultSet.getString("description_product"),
                             resultSet.getDouble("sellingPrice"),
                             resultSet.getDouble("purchaseprice"),

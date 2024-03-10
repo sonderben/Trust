@@ -39,6 +39,7 @@ class LoginController : Initializable{
 
     @FXML
     fun onLoginButtonClick(event: ActionEvent?) {
+        Locale.setDefault( Locale.FRENCH )
 
         val loading = ViewUtil.loadingView()
         loading.show()
@@ -72,9 +73,9 @@ class LoginController : Initializable{
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         enterpriseCB.isVisible = false
         enterpriseCB.isManaged = false
-        HelloApplication.primary.isResizable = false
+        //HelloApplication.primary.isResizable = false
 
-        employees.addListener(ListChangeListener<EmployeeEntity> {
+        employees.addListener(ListChangeListener {
             if (employees.size>0){
                 login.isDisable = false
                 newSystemLabel.isDisable = true

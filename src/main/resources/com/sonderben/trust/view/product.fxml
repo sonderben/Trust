@@ -32,6 +32,7 @@
             <TableColumn fx:id="purchaseCol" prefWidth="75.0" text="%purchase_price" />
             <TableColumn fx:id="sellingCol" prefWidth="75.0" text="%selling_price" />
             <TableColumn fx:id="exp_dateCole" prefWidth="75.0" text="%exp_date" />
+            <TableColumn fx:id="howSaleCol" prefWidth="75.0" text="%sellby" />
             <TableColumn fx:id="qtyCol" prefWidth="75.0" text="%qty_weight" />
             <TableColumn fx:id="discountCol" prefWidth="75.0" text="%discount" />
             <TableColumn fx:id="itbisCol" prefWidth="75.0" text="%tax" />
@@ -75,10 +76,10 @@
                   <TextField fx:id="descriptionTf" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   <TextField fx:id="purchaseTf" GridPane.rowIndex="3" />
                   <TextField fx:id="sellingTf" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <TextField fx:id="qtyTf" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                  <TextField fx:id="discountTf" GridPane.rowIndex="5" />
-                  <TextField fx:id="itbisTf" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <TextField fx:id="employeeTf" editable="false" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                  <TextField fx:id="qtyTf" GridPane.rowIndex="5" />
+                  <TextField fx:id="discountTf" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <TextField fx:id="itbisTf" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                  <TextField fx:id="employeeTf" editable="false" GridPane.columnIndex="3" GridPane.rowIndex="5" />
                   <ChoiceBox fx:id="categoryCb" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                   <DatePicker fx:id="expDateDp" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                   <DatePicker fx:id="dateAddedDp" disable="true" editable="false" GridPane.rowIndex="1" />
@@ -89,10 +90,13 @@
                   <Label text="%purchase_price" textFill="WHITE" GridPane.rowIndex="2" />
                   <Label text="%selling_price" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label text="%exp_date" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                  <Label text="%qty_weight" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                  <Label text="%discount" textFill="WHITE" GridPane.rowIndex="4" />
-                  <Label text="%tax" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Label text="%employee" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                  <Label text="%qty_weight" textFill="WHITE" GridPane.rowIndex="4" />
+                  <Label text="%discount" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Label text="%tax" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                  <Label text="%employee" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                  <Label text="%how_product_sale" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                  <ChoiceBox fx:id="sellbyCb" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+
                </children>
                <VBox.margin>
                   <Insets />

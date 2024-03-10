@@ -26,6 +26,9 @@ import java.util.*
 
 class ProductController :Initializable,MessageListener,BaseController() {
 
+    lateinit var howSaleCol: TableColumn<ProductEntity, String>
+    lateinit var sellbyCb: ChoiceBox<String>
+
     //private var socketMesageEvent = SocketMessageEvent(this)
     private var currentProductSelected:ProductEntity?=null
     private val loading = ViewUtil.loadingView()
@@ -33,6 +36,12 @@ class ProductController :Initializable,MessageListener,BaseController() {
         println("init productController")
 
         editMenuItem()
+        MainController.hideBottomBar(false)
+         {
+            hideBottomPanelOnMouseClicked()
+        }
+
+        sellbyCb.items.addAll(resources?.getString("unit") ?: "unit",resources?.getString("weight")?:"weight" )
 
        // socketMesageEvent.startingListening()
 
@@ -57,7 +66,8 @@ class ProductController :Initializable,MessageListener,BaseController() {
         discountCol.setCellValueFactory { data -> SimpleStringProperty( data.value.discount.toString() ) }
         itbisCol.setCellValueFactory { data -> SimpleStringProperty( data.value.itbis.toString() ) }
         employeeCol.setCellValueFactory { data -> SimpleStringProperty( data.value.employee.userName ) }
-
+        howSaleCol.setCellValueFactory { data -> SimpleStringProperty(resources?.getString( data.value.sellBy.lowercase() )
+            ?: data.value.sellBy) }
         tableView.items = produtcs
 
         tableView.selectionModel.selectionMode = SelectionMode.SINGLE
@@ -84,7 +94,8 @@ class ProductController :Initializable,MessageListener,BaseController() {
                 itbisTf.text = newValue.itbis.toString()
                 employeeTf.text = newValue.employee.userName
 
-                categoryCb.selectionModel.select(categoryCb.items.indexOf(categoryCb.items.find { it.id == newValue.category.id }))
+                categoryCb.selectionModel.select(newValue.category)
+                sellbyCb.selectionModel.select( if( newValue.sellBy.equals("unit",true)) 0 else 1 )
             }
         }
 
@@ -192,8 +203,10 @@ class ProductController :Initializable,MessageListener,BaseController() {
 
 
        if ( validateProduct(tempEmployee,cc) ){
+           val kk = if(sellbyCb.selectionModel.selectedIndex==0) "1" else "gen"
            val pro = ProductEntity(
                codeTf.text,
+               if(sellbyCb.selectionModel.selectedIndex==0) "unit" else "weight",
                descriptionTf.text,
                sellingTf.text.toDouble(),
                purchaseTf.text.toDouble(),
@@ -224,6 +237,10 @@ class ProductController :Initializable,MessageListener,BaseController() {
             }
                 .show()
 
+            return false
+        }
+        if (sellbyCb.selectionModel.selectedIndex == -1){
+            ViewUtil.customAlert("Can't find how the product sold","Please choose how the product sold.").show()
             return false
         }
         if (category == null){

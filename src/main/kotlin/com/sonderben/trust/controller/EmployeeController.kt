@@ -26,6 +26,10 @@ class EmployeeController:Initializable, BaseController() {
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         editMenuItem()
+        MainController.hideBottomBar(false) {
+            hideBottomPanelOnMouseClicked()
+        }
+
         GenreCol.setCellValueFactory { employee -> SimpleStringProperty(employee.value.genre) }
         birthdayCol.setCellValueFactory { employee -> SimpleStringProperty( employee.value.birthDay.format() ) }
         firstNameCol.setCellValueFactory { employee -> SimpleStringProperty("${employee.value.fullName}") }
@@ -231,17 +235,6 @@ class EmployeeController:Initializable, BaseController() {
 
         EmployeeDao.update( employeeToSave )
             .subscribe({
-
-
-
-
-
-
-
-
-
-
-
                        clear()
                 userTableView.selectionModel.select(null)
             },{th-> println(th.message) })
@@ -269,7 +262,7 @@ class EmployeeController:Initializable, BaseController() {
         passwordField.text = ""
     }
 
-    fun hideBottomPanelOnMouseClicked(mouseEvent: MouseEvent) {
+    fun hideBottomPanelOnMouseClicked() {
         bottomPanelVBOx.hide()
     }
 

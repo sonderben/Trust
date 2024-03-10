@@ -144,11 +144,11 @@ public class Database {
         EmployeeEntity employee = new EmployeeEntity();
         employee.setId(1L);
         ProductDao.INSTANCE.save(
-                new ProductEntity("1","Pan",10,12,0,0,15,15,Calendar.getInstance(),Calendar.getInstance(),category,employee)
+                new ProductEntity("1","unit","Pan",10,12,0,0,15,15,Calendar.getInstance(),Calendar.getInstance(),category,employee)
         );
 
         ProductDao.INSTANCE.save(
-                new ProductEntity("2","Hard disk 2GB",3000,3601,0,21,5,5,Calendar.getInstance(),Calendar.getInstance(),category,employee)
+                new ProductEntity("2","unit","Hard disk 2GB",3000,3601,0,21,5,5,Calendar.getInstance(),Calendar.getInstance(),category,employee)
         );
     }
 

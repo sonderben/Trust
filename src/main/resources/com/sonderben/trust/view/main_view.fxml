@@ -8,6 +8,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -169,8 +170,14 @@
                   <Menu fx:id="menuView" mnemonicParsing="false" text="%view" />
                   <Menu fx:id="menuView1" mnemonicParsing="false" text="%window">
                      <items>
-                        <MenuItem mnemonicParsing="false" onAction="#lateralBarOnAction" text="Lateral bar" />
-                        <MenuItem mnemonicParsing="false" fx:id="bottombar" text="Bottom bar" />
+                        <MenuItem mnemonicParsing="false" onAction="#lateralBarOnAction" text="Lateral bar">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="L" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator></MenuItem>
+                        <MenuItem fx:id="bottombar" mnemonicParsing="false" text="Bottom bar">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="B" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator></MenuItem>
                      </items>
                   </Menu>
                 <Menu mnemonicParsing="false" text="%help">

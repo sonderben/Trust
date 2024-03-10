@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="mainNode" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.Sale">
+<VBox fx:id="mainNode" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.Sale">
    <children>
       <GridPane hgap="10.0" minHeight="30.0" VBox.vgrow="NEVER">
          <columnConstraints>
@@ -129,7 +129,6 @@
                   <Label text="%code" textFill="WHITE" GridPane.columnIndex="3" />
                   <Label text="%cash" textFill="WHITE" GridPane.rowIndex="3" />
                   <Label text="%change" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <TextField fx:id="descriptionProductTf" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                </children>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

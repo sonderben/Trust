@@ -29,6 +29,9 @@ class RoleController :Initializable, BaseController(),EventHandler<MouseEvent>{
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
         editMenuItem()
+        MainController.hideBottomBar(false) {
+            hideBottomPanelOnMouseClicked()
+        }
 
         val listScreen = ScreenEnum.values().toList()
         gridPaneScreen.children.clear()

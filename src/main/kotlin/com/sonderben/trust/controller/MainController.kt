@@ -38,11 +38,14 @@ class MainController : Initializable {
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
-        HelloApplication.primary.isResizable = true
+        //HelloApplication.primary.isResizable = true
+        hideLeftPanelOnMouseClicked()
+
         next = nextPage
         forward = forwardPage
 
         editMenu = menuEdit
+        _bottombar = bottombar
 
 
         //menuBar.useSystemMenuBarProperty().set(true)
@@ -94,13 +97,7 @@ class MainController : Initializable {
                         selecttAppropriateView( "configuration" )
                     }
                 }
-                "inventory_" -> {
-                   /* menuItem.accelerator = KeyCodeCombination(KeyCode.F5,KeyCombination.CONTROL_DOWN)
-                    menuItem.setOnAction {
-                        changeView("view/inventory.fxml")
-                        selecttAppropriateView( "inventory" )
-                    }*/
-                }
+
                 "role_" -> {
                     menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT5,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
@@ -166,6 +163,17 @@ class MainController : Initializable {
         lateinit var next:ImageView
         lateinit var forward:ImageView
         lateinit var editMenu: Menu
+        lateinit var _bottombar:MenuItem
+
+        fun hideBottomBar(hide:Boolean,onAction:( ()->Unit )?=null){
+            _bottombar.isDisable = hide
+
+            if (!hide)
+                _bottombar.setOnAction {
+                    onAction?.invoke()
+                }
+
+        }
     }
 
 

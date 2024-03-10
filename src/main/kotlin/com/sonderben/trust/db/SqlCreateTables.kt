@@ -131,6 +131,7 @@ object SqlCreateTables {
         id integer primary key autoincrement,  
         discount float default 0 check( discount >= 0 and discount < 100 ),
         itbis float not null,
+        sellby varchar(12) check( sellby IN ( 'unit', 'weight' ) ),
         purchasePrice float not null,
         quantity integer not null default 0 check( quantity>-1 ),
         quantityRemaining integer not null default 0 check( quantityRemaining >-1 and quantityRemaining <= quantity ),

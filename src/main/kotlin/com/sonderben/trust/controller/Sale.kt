@@ -23,6 +23,8 @@ import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCodeCombination
+import javafx.scene.input.KeyCombination
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.VBox
 import javafx.scene.media.Media
@@ -56,6 +58,7 @@ class Sale :Initializable,MessageListener,BaseController(){
         //socketMesageEvent.startingListening()
 
         editMenuItem()
+        MainController.hideBottomBar(true)
 
         //customerCode.onlyInt()
         codeProductTextField.onlyInt()
@@ -143,15 +146,21 @@ class Sale :Initializable,MessageListener,BaseController(){
 
 
         val saveMenuItem =  MenuItem("Pay")
+        saveMenuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT1, KeyCombination.CONTROL_DOWN,KeyCombination.SHIFT_DOWN )
+
         saveMenuItem.setOnAction {
             pay()
         }
         val clearMenuItems =  MenuItem("Clear")
+        clearMenuItems.accelerator = KeyCodeCombination(KeyCode.DIGIT2,KeyCombination.CONTROL_DOWN,KeyCombination.SHIFT_DOWN)
+
         clearMenuItems.setOnAction {
             clearTextS()
         }
 
         val cancelMenuItems =  MenuItem("Cancel")
+        cancelMenuItems.accelerator = KeyCodeCombination(KeyCode.DIGIT3,KeyCombination.CONTROL_DOWN,KeyCombination.SHIFT_DOWN)
+
         clearMenuItems.setOnAction {
             clearAll()
         }

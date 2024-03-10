@@ -9,6 +9,15 @@ public class ProductEntity extends BaseEntity {
 
 
     private  int quantityRemaining;
+    private String sellBy;
+
+    public String getSellBy() {
+        return sellBy;
+    }
+
+    public void setSellBy(String sellBy) {
+        this.sellBy = sellBy;
+    }
 
     public int getQuantityRemaining() {
         return quantityRemaining;
@@ -78,8 +87,9 @@ public class ProductEntity extends BaseEntity {
         return "ProductEntity{quantityRemaining=%d, code='%s', description='%s', sellingPrice=%s, purchasePrice=%s, discount=%s, itbis=%s, quantity=%d, dateAdded=%s, expirationDate=%s, category=%s, employee=%s, id=%d}".formatted(quantityRemaining, code, description, sellingPrice, purchasePrice, discount, itbis, quantity, dateAdded, expirationDate, category, employee.getFullName(), id);
     }
 
-    public ProductEntity(String code, String description, double sellingPrice, double purchasePrice, double discount, double itbis, int quantity, int quantityRemaining, Calendar dateAdded, Calendar expirationDate, CategoryEntity category, EmployeeEntity employee) {
+    public ProductEntity(String code, String sellBy ,String description, double sellingPrice, double purchasePrice, double discount, double itbis, int quantity, int quantityRemaining, Calendar dateAdded, Calendar expirationDate, CategoryEntity category, EmployeeEntity employee) {
         this.code = code;
+        this.sellBy = sellBy;
         this.description = description;
         this.sellingPrice = sellingPrice;
         this.purchasePrice = purchasePrice;
