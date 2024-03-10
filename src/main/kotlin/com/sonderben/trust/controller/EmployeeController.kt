@@ -211,8 +211,41 @@ class EmployeeController:Initializable, BaseController() {
     }
 
     @FXML
-    fun onUpdateButton(event: ActionEvent) {
-        userTableView.selectionModel.select(null)
+    fun onUpdateButton() {
+
+        employeeToSave.apply {
+            firstName = firstNameTextField.text
+            passport = passportTextField.text
+            lastName = lastNameTextField.text
+            genre = choiceBoxGender.value
+            direction = directionField.text
+            email = emailTextField.text
+            telephone = telephoneTextField.text
+            birthDay = birthdayDatePicker.value.toCalendar()
+            bankAccount = accountNumberTextField.text
+            userName = userNameTextField.text
+            password = passwordField.text
+            role = choiceBoxRole.value
+            /*mutableListOf()*/
+        }
+
+        EmployeeDao.update( employeeToSave )
+            .subscribe({
+
+
+
+
+
+
+
+
+
+
+
+                       clear()
+                userTableView.selectionModel.select(null)
+            },{th-> println(th.message) })
+
     }
     @FXML
     private lateinit var bottomPanelVBOx:VBox

@@ -4,24 +4,21 @@ import com.sonderben.trust.*
 import com.sonderben.trust.db.dao.CategoryDao
 import com.sonderben.trust.db.dao.ProductDao
 import com.sonderben.trust.qr_code.MessageListener
-import com.sonderben.trust.qr_code.SocketMessageEvent
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.CategoryEntity
 import entity.EmployeeEntity
 import entity.ProductEntity
 import javafx.beans.property.SimpleStringProperty
-import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
-import javafx.collections.FXCollections
-import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
-import javafx.event.ActionEvent
 import javafx.fxml.FXML
+import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
+import javafx.scene.Scene
 import javafx.scene.control.*
-import javafx.scene.input.MouseEvent
 import javafx.scene.layout.VBox
 import javafx.util.StringConverter
+import java.lang.Exception
+import java.lang.NumberFormatException
 import java.net.URL
 import java.time.LocalDate
 import java.time.ZoneId
@@ -31,6 +28,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
 
     //private var socketMesageEvent = SocketMessageEvent(this)
     private var currentProductSelected:ProductEntity?=null
+    private val loading = ViewUtil.loadingView()
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         println("init productController")
 
@@ -169,10 +167,18 @@ class ProductController :Initializable,MessageListener,BaseController() {
     @FXML
     fun onDeleteBtn() {
 
-        currentProductSelected?.let {
-            ProductDao.delete(it.id).subscribe({
+        if(currentProductSelected!=null) {
+            loading.show()
+            ProductDao.delete(currentProductSelected!!.id).subscribe({
                 clearAll()
-            },{th-> println( th.message ) })
+                loading.close()
+            },{
+                th-> println( th.message )
+                 loading.close()
+            })
+        }else{
+            ViewUtil.customAlert("No product selected","Please select a product first and try again.")
+            .show()
         }
 
 
@@ -182,10 +188,10 @@ class ProductController :Initializable,MessageListener,BaseController() {
     fun onSaveBtn() {
 
         val cc = categoryCb.selectionModel.selectedItem
-        tempEmployee = Context.currentEmployee.value
+        val tempEmployee = Context.currentEmployee.value
 
 
-       if (tempEmployee.id != null || tempEmployee.id != 0L ){
+       if ( validateProduct(tempEmployee,cc) ){
            val pro = ProductEntity(
                codeTf.text,
                descriptionTf.text,
@@ -203,7 +209,49 @@ class ProductController :Initializable,MessageListener,BaseController() {
 
            ProductDao.save( pro ).subscribe({ clearAll() },{ th-> println(th.message) } )
 
+       }else{
+           println("not validate")
        }
+    }
+
+    private fun validateProduct(employee: EmployeeEntity?, category: CategoryEntity?): Boolean {
+
+        if (employee == null){
+            ViewUtil.customAlert("Can't find current employee","can't find current employee,log in again to continue saving the product.") {
+                val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
+
+                HelloApplication.primary.scene = Scene(fxmlLoader.load(), 720.0, 440.0)
+            }
+                .show()
+
+            return false
+        }
+        if (category == null){
+            ViewUtil.customAlert("Can't find Category","Please select a category.").show()
+            return false
+        }
+        if (codeTf.text.isEmpty() || descriptionTf.text.isEmpty()){
+            ViewUtil.customAlert("Error on fields","please make sure you fill out all the text fields.").show()
+            return false
+        }
+
+        try {
+            GregorianCalendar.from( expDateDp.value.atStartOfDay( ZoneId.systemDefault() ) )
+            if (sellingTf.text.toDouble()<0 || purchaseTf.text.toDouble()<0 || purchaseTf.text.toDouble()<0 || discountTf.text.toDouble()<0 || itbisTf.text.toDouble()<0 || qtyTf.text.toInt() <= 0){
+                ViewUtil.customAlert("Error on fields","please make sure you fill out all the text fields.").show()
+                return false
+            }
+        }
+        catch (e:Exception){
+            ViewUtil.customAlert("Error on fields","please make sure you fill out all the text fields with the correct info").show()
+            return false
+        }
+        return true
+    }
+
+    @FXML
+    fun onClearBtn() {
+        clearAll()
     }
 
     private fun clearAll() {
@@ -220,7 +268,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
     }
 
     @FXML
-    fun goToCategoryOnMouseClicked(event: MouseEvent) {
+    fun goToCategoryOnMouseClicked() {
         val cc = CategoryDialog()
 
         cc.initOwner(HelloApplication.primary)
@@ -230,12 +278,8 @@ class ProductController :Initializable,MessageListener,BaseController() {
 
     @FXML
     fun onUpdateBtn() {
-        currentProductSelected?.let {
-
-
-            ///////
-
-            it.apply {
+        if(currentProductSelected!=null) {
+            currentProductSelected!!.apply {
                 code = codeTf.text
                 description = descriptionTf.text
                 sellingPrice = sellingTf.text.toDouble()
@@ -246,12 +290,12 @@ class ProductController :Initializable,MessageListener,BaseController() {
                 qtyTf.text.toInt()
 
             }
-
-
-
-            ProductDao.update(it) .subscribe({
+            ProductDao.update(currentProductSelected!!) .subscribe({
                                              clearAll()
             },{th-> println(th.message) })
+        }else{
+            ViewUtil.customAlert("No product selected","Please select a product first and try again.")
+                .show()
         }
     }
 
@@ -259,7 +303,6 @@ class ProductController :Initializable,MessageListener,BaseController() {
          bottomPanelVBOx.hide()
     }
     private  var produtcs:ObservableList<ProductEntity> = ProductDao.products//FXCollections.observableArrayList( ProductDao.products )
-    private lateinit var tempEmployee:EmployeeEntity
     private lateinit var categories:ObservableList<CategoryEntity>
 
 
@@ -289,24 +332,26 @@ class ProductController :Initializable,MessageListener,BaseController() {
 
         val saveMenuItem =  MenuItem("Save")
         saveMenuItem.setOnAction {
-
+            onSaveBtn()
         }
         val updateMenuItems =  MenuItem("Update")
         updateMenuItems.setOnAction {
-
+            onUpdateBtn()
         }
 
         val deleteMenuItems =  MenuItem("Delete")
         deleteMenuItems.setOnAction {
-
+            onDeleteBtn()
         }
         val clearMenuItems =  MenuItem("Clear")
         clearMenuItems.setOnAction {
-
+            clearAll()
         }
 
 
-        MainController.editMenu.items.addAll(  saveMenuItem,updateMenuItems,deleteMenuItems  )
+
+
+        MainController.editMenu.items.addAll(  saveMenuItem,updateMenuItems,deleteMenuItems,clearMenuItems  )
 
     }
 }

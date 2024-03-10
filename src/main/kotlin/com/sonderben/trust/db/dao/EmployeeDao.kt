@@ -267,7 +267,54 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
     }
 
     override fun update(entity: EmployeeEntity): Completable {
-        return Completable.create {  }
+        //bankAccount,direction,email,firstName,genre,lastName,passport,password,telephone,userName,birthDay,id_role
+        return Completable.create {emitter->
+            val update = """update ${SqlCreateTables.employees} set
+                 bankAccount = ?,
+                 direction = ?,
+                 email = ?,
+                 firstName = ?,
+                 genre = ?,
+                 lastName = ?,
+                 passport = ? 
+                 ,password = ?,
+                 telephone = ?,
+                 userName = ?,
+                 birthDay = ?,
+                 id_role = ? 
+                 where id = ?
+            """.trimMargin()
+            Database.connect("").use { connection ->
+                connection.prepareStatement(update).use {preparedStatement ->
+                    preparedStatement.setString(1,entity.bankAccount)
+                    preparedStatement.setString(2,entity.direction)
+                    preparedStatement.setString(3,entity.email)
+                    preparedStatement.setString(4,entity.firstName)
+                    preparedStatement.setString(5,entity.genre)
+                    preparedStatement.setString(6,entity.lastName)
+                    preparedStatement.setString(7,entity.passport)
+                    preparedStatement.setString(8,entity.password)
+                    preparedStatement.setString(9,entity.telephone)
+                    preparedStatement.setString(10,entity.userName)
+                    preparedStatement.setTimestamp(11,Timestamp(entity.birthDay.time.time))
+                    preparedStatement.setLong(12,entity.role.id)
+                    preparedStatement.setLong(13,entity.id)
+
+                    val rowCount = preparedStatement.executeUpdate()
+                    if (rowCount>0){
+
+                        employees[ employees.indexOf( entity ) ] = entity
+                        emitter.onComplete()
+
+                    }else{
+                        emitter.onError( Throwable("Can not update employee: $entity") )
+                    }
+
+
+
+                }
+            }
+        }
             .subscribeOn(Schedulers.io())
             .observeOn(JavaFxScheduler.platform())
     }

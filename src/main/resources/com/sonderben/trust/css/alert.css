@@ -1,0 +1,18 @@
+.main-bg{
+    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #032d3b,#3498db);
+}
+.button{
+    -fx-background-color: transparent;
+    -fx-background-radius:10;
+    -fx-border-color: #769cb6;
+    -fx-border-width: 1;
+}
+.texts{
+    -fx-fill: white;
+    -fx-background-color: green;
+    color:green;
+}
+.label{
+    -fx-text-fill: white;
+    -fx-font-size: 14pt;
+}

@@ -2,6 +2,7 @@ package com.sonderben.trust
 
 import com.sonderben.trust.controller.ConfigurationController
 import com.sonderben.trust.db.dao.EmployeeDao
+import com.sonderben.trust.viewUtil.ViewUtil
 import entity.EmployeeEntity
 import entity.enterprise.EnterpriseInfo
 import javafx.beans.property.SimpleObjectProperty
@@ -39,14 +40,18 @@ class LoginController : Initializable{
     @FXML
     fun onLoginButtonClick(event: ActionEvent?) {
 
+        val loading = ViewUtil.loadingView()
+        loading.show()
         EmployeeDao.login(userNameTextField.text.trim(),password.text.trim())
             .subscribe({employeeEntity ->
                 Context.currentEmployee = SimpleObjectProperty(employeeEntity)
                 val resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
                 val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/main_view.fxml"),resourceBundle)
                 val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
+                loading.close()
                 HelloApplication.primary.scene = scene
-            },{},{
+            },{loading.close()},{
+                loading.close()
                 infoLabel.isVisible = true
                 infoLabel.text = "username or password is wrong"
             })

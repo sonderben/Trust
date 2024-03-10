@@ -67,28 +67,28 @@ class MainController : Initializable {
 
             when ( menuItem.id.lowercase() ) {
                 "sale_" -> {
-                    menuItem.accelerator = KeyCodeCombination(KeyCode.F1,KeyCombination.CONTROL_DOWN)
+                    menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT1,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
                         changeView("view/sale.fxml")
                         selecttAppropriateView( "sale" )
                     }
                 }
                 "product_" -> {
-                    menuItem.accelerator = KeyCodeCombination(KeyCode.F2,KeyCombination.CONTROL_DOWN)
+                    menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT2,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
                         changeView("view/product.fxml")
                         selecttAppropriateView( "product" )
                     }
                 }
                 "employee_" -> {
-                    menuItem.accelerator = KeyCodeCombination(KeyCode.F3,KeyCombination.CONTROL_DOWN)
+                    menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT3,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
                         changeView("view/employee.fxml")
                         selecttAppropriateView( "employee" )
                     }
                 }
                 "configuration_" -> {
-                    menuItem.accelerator = KeyCodeCombination(KeyCode.F5,KeyCombination.CONTROL_DOWN)
+                    menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT4,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
                         changeView("view/configuration.fxml")
                         selecttAppropriateView( "configuration" )
@@ -102,21 +102,21 @@ class MainController : Initializable {
                     }*/
                 }
                 "role_" -> {
-                    menuItem.accelerator = KeyCodeCombination(KeyCode.F4,KeyCombination.CONTROL_DOWN)
+                    menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT5,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
                         changeView("view/role.fxml")
                         selecttAppropriateView( "role" )
                     }
                 }
                 "queries_" -> {
-                    menuItem.accelerator = KeyCodeCombination(KeyCode.F6,KeyCombination.CONTROL_DOWN)
+                    menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT6,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
                         changeView("view/queries/queries.fxml")
                         selecttAppropriateView( "queries" )
                     }
                 }
                 "customer_service_"->{
-                    menuItem.accelerator = KeyCodeCombination(KeyCode.F7,KeyCombination.CONTROL_DOWN)
+                    menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT7,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
                         changeView("view/customerService.fxml")
                         selecttAppropriateView( "customer_service" )
