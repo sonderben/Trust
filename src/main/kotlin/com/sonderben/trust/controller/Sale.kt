@@ -270,11 +270,9 @@ class Sale :Initializable,MessageListener,BaseController(){
     }
 
     private fun pay(){
-        if(mProducts.size>0){
-            if (cashTextField.text.isBlank()){
-                cashTextField.text = "0.0"
-            }
-            if (cashTextField.text.toDouble()>=grandTotal.text.toDouble()){
+        if( validatePayment() ){
+
+
                 val codeBar = Random.nextLong(LongRange(10_000_000,99_999_999))
                 InvoiceDao.save(
                     InvoiceEntity(mProducts, Context.currentEmployee.value, mCurrentCustomer, codeBar.toString(), Calendar.getInstance())
@@ -283,7 +281,7 @@ class Sale :Initializable,MessageListener,BaseController(){
                         mCurrentCustomer?.let {
                             val point = (grandTotal.text.toDouble()/100.0).toLong()
                             val success =  CustomerDao.updatePoint(it.id, point)
-                            println("update point: ${point} "+success)
+
                         }
 
                         ViewUtil.createAlert(Alert.AlertType.CONFIRMATION,"Payment","Pay with success").showAndWait()
@@ -293,13 +291,20 @@ class Sale :Initializable,MessageListener,BaseController(){
                 },{})
 
 
-            }else{
-                ViewUtil.createAlert(Alert.AlertType.WARNING,"Invalid Data","Cash must be greater than grand total").showAndWait()
 
-            }
-        }else{
-            ViewUtil.createAlert(Alert.AlertType.WARNING,"Invalid Data","There is no product to pay").showAndWait()
         }
+    }
+
+    private fun validatePayment(): Boolean {
+        if (mProducts.isEmpty()){
+            ViewUtil.createAlert(Alert.AlertType.WARNING,"No Products","There is no products to pay").showAndWait()
+            return false
+        }
+        if (cashTextField.text.isBlank() || cashTextField.text.toDouble()<grandTotal.text.toDouble() ){
+            ViewUtil.createAlert(Alert.AlertType.WARNING,"Invalid Data","Cash must be greater than grand total").showAndWait()
+            return false
+        }
+        return true
     }
 
     private fun clearAll(){
@@ -336,12 +341,9 @@ class Sale :Initializable,MessageListener,BaseController(){
         qtyTextField.text = ""
         codeProductTextField.text = ""
     }
-    private fun Double.toCurrency(): String {
-        val local = Locale("en","us");
-        val format = NumberFormat.getCurrencyInstance(local)
 
-        return format.format(this)
-    }
+
+
     var mProducts: ObservableList<ProductSaled> = FXCollections.observableArrayList(  )
     var mProductSaledSelected:ProductSaled?=null
 

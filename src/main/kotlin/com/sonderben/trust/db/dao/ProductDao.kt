@@ -46,7 +46,7 @@ object ProductDao : CrudDao<ProductEntity> {
                     preparedStatement.setString(10, tempCode)
                     preparedStatement.setString(11, entity.description)
                     preparedStatement.setInt(12, entity.quantity)
-                    preparedStatement.setString(13,"sellby")
+                    preparedStatement.setString(13,entity.sellBy)
                     val rowCount = preparedStatement.executeUpdate()
                     val lastId = Database.getLastId()
                     entity.id = lastId
@@ -163,7 +163,8 @@ object ProductDao : CrudDao<ProductEntity> {
             expirationDate = ?, 
             code = ?, 
             description = ?,
-            quantityRemaining = ? 
+            quantityRemaining = ? ,
+            sellby = ?
             where id = ?;""".trimMargin()
         return Completable.create { emitter->
             Database.connect("").use { connection ->
@@ -180,6 +181,7 @@ object ProductDao : CrudDao<ProductEntity> {
                     preparedStatement.setString(10,entity.description)
                     preparedStatement.setInt(11,entity.quantityRemaining)
                     preparedStatement.setLong(12,entity.id)
+                    preparedStatement.setString(13,entity.sellBy)
 
                     val rowCount = preparedStatement.executeUpdate()
 
@@ -199,7 +201,7 @@ object ProductDao : CrudDao<ProductEntity> {
     fun findProductByCode(code: String): ProductEntity? {
 
         val selectByCode = """
-            SELECT  products.id,products.quantityRemaining,products.discount as discount_product,quantity,itbis,sellingPrice,purchaseprice,
+            SELECT  products.id,products.sellby,products.quantityRemaining,products.discount as discount_product,quantity,itbis,sellingPrice,purchaseprice,
             id_category,products.dateAdded,id_employee,expirationDate,products.code as code_product,products.description as description_product,
             Categories.discount as discount_category,Categories.code as code_categpry,Categories.description as description_category
              from products 

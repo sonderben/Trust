@@ -5,6 +5,7 @@ import javafx.scene.control.TextFormatter
 import javafx.scene.layout.VBox
 import java.sql.Timestamp
 import java.text.DateFormat
+import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
@@ -52,4 +53,11 @@ fun Calendar.toTimestamp():Timestamp{
 
 fun TextField.onlyInt(){
     this.textFormatter = Factory.createFilterTextField()
+}
+
+ fun Double.toCurrency(): String {
+    //val local = Locale("en","us");
+    val format = NumberFormat.getCurrencyInstance()
+
+    return format.format(this)
 }

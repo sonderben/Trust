@@ -296,20 +296,22 @@ class ProductController :Initializable,MessageListener,BaseController() {
     @FXML
     fun onUpdateBtn() {
         if(currentProductSelected!=null) {
-            currentProductSelected!!.apply {
-                code = codeTf.text
-                description = descriptionTf.text
-                sellingPrice = sellingTf.text.toDouble()
-                purchasePrice = purchaseTf.text.toDouble()
-                discount = discountTf.text.toDouble()
-                itbis = itbisTf.text.toDouble()
-                quantity = qtyTf.text.toInt()
-                qtyTf.text.toInt()
+            if (validateProduct(Context.currentEmployee.value, categoryCb.selectionModel.selectedItem )){
+                currentProductSelected!!.apply {
+                    code = codeTf.text
+                    description = descriptionTf.text
+                    sellingPrice = sellingTf.text.toDouble()
+                    purchasePrice = purchaseTf.text.toDouble()
+                    discount = discountTf.text.toDouble()
+                    itbis = itbisTf.text.toDouble()
+                    quantity = qtyTf.text.toInt()
+                    qtyTf.text.toInt()
 
+                }
+                ProductDao.update(currentProductSelected!!) .subscribe({
+                    clearAll()
+                },{th-> println(th.message) })
             }
-            ProductDao.update(currentProductSelected!!) .subscribe({
-                                             clearAll()
-            },{th-> println(th.message) })
         }else{
             ViewUtil.customAlert("No product selected","Please select a product first and try again.")
                 .show()

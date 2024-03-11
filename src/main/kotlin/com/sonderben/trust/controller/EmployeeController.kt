@@ -4,6 +4,7 @@ import com.sonderben.trust.*
 import com.sonderben.trust.db.dao.EmployeeDao
 import com.sonderben.trust.db.dao.RoleDao
 import com.sonderben.trust.model.Role
+import com.sonderben.trust.viewUtil.ViewUtil
 import entity.EmployeeEntity
 import entity.ScheduleEntity
 import javafx.beans.property.SimpleStringProperty
@@ -23,6 +24,7 @@ import java.util.*
 
 class EmployeeController:Initializable, BaseController() {
     var days = arrayListOf<String>("Lunes","Martes","Miercroles","Jueves","Viernes","Sabado","Domingo")
+    var scheduleEntity: Optional<List<ScheduleEntity>>?  = null
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         editMenuItem()
@@ -74,6 +76,8 @@ class EmployeeController:Initializable, BaseController() {
 
                 birthdayDatePicker.value = newValue.birthDay.toLocalDate()
 
+                //scheduleEntity.
+
 
                 scheduleTextField.text = newValue.schedules.joinToString(separator = ", ") { scheduleEntity ->
                     days[scheduleEntity.workDay].substring(
@@ -89,7 +93,7 @@ class EmployeeController:Initializable, BaseController() {
 
     @FXML
     private lateinit var GenreCol: TableColumn<EmployeeEntity, String>
-    private var employeeToSave = EmployeeEntity()
+    private var employeeToSave: EmployeeEntity?=null
 
     @FXML
     private lateinit var PassportCol: TableColumn<EmployeeEntity, String>
@@ -176,9 +180,9 @@ class EmployeeController:Initializable, BaseController() {
     private lateinit var userTableView: TableView<EmployeeEntity>
 
     @FXML
-    fun onDeleteButton(event: ActionEvent) {
-        if (employeeToSave.id != null){
-            EmployeeDao.delete( employeeToSave.id ).subscribe(
+    fun onDeleteButton() {
+        if ( employeeToSave!=null && employeeToSave!!.id != null){
+            EmployeeDao.delete( employeeToSave!!.id ).subscribe(
                 {
                 clear()
                 userTableView.selectionModel.select(null)
@@ -190,64 +194,120 @@ class EmployeeController:Initializable, BaseController() {
 
     @FXML
     fun onSaveButton() {
+        employeeToSave = EmployeeEntity()
 
-         employeeToSave.apply {
-             firstName = firstNameTextField.text
-             passport = passportTextField.text
-             lastName = lastNameTextField.text
-             genre = choiceBoxGender.value
-             direction = directionField.text
-             email = emailTextField.text
-             telephone = telephoneTextField.text
-             birthDay = birthdayDatePicker.value.toCalendar()
-             bankAccount = accountNumberTextField.text
-             userName = userNameTextField.text
-             password = passwordField.text
-             role = choiceBoxRole.value
-             /*mutableListOf()*/
+        if (scheduleEntity != null) {
+            employeeToSave!!.schedules = scheduleEntity!!.get()
+        }
+
+
+         if(validateEmployee()){
+             employeeToSave!!.apply {
+                 firstName = firstNameTextField.text
+                 passport = passportTextField.text
+                 lastName = lastNameTextField.text
+                 genre = choiceBoxGender.value
+                 direction = directionField.text
+                 email = emailTextField.text
+                 telephone = telephoneTextField.text
+                 birthDay = birthdayDatePicker.value.toCalendar()
+                 bankAccount = accountNumberTextField.text
+                 userName = userNameTextField.text
+                 password = passwordField.text
+                 role = choiceBoxRole.value
+                 /*mutableListOf()*/
+             }
+             EmployeeDao.save(employeeToSave!!).subscribe({
+                 clear()
+                 userTableView.selectionModel.select(null)
+             },{th-> println(th.message) })
          }
-        EmployeeDao.save(employeeToSave).subscribe({
-            clear()
-            userTableView.selectionModel.select(null)
-        },{th-> println(th.message) })
 
 
+    }
+
+    private fun validateEmployee(): Boolean {
+         try {
+
+             if (scheduleEntity==null || scheduleEntity!!.get().isEmpty()){
+                 ViewUtil.createAlert(Alert.AlertType.WARNING,"Schedulers is obligatory","Please add Scheduler").showAndWait()
+                 return false
+             }
+
+
+             if( firstNameTextField.text.isBlank() || passportTextField.text.isBlank() || lastNameTextField.text.isBlank() ||
+                 choiceBoxGender.value.isBlank() || directionField.text.isBlank() || emailTextField.text.isBlank() ||
+                 telephoneTextField.text.isBlank() || accountNumberTextField.text.isBlank() || userNameTextField.text.isBlank() ||
+                 passwordField.text.isBlank()){
+                 ViewUtil.customAlert("Error on fields","please make sure you fill out all the text fields.").show()
+                 return false
+             }
+
+             if ( birthdayDatePicker.value == null){
+                 ViewUtil.customAlert("Error on fields","please enter a valid birthday.").show()
+                 return false
+             }
+
+
+             if(choiceBoxRole.value == null){
+                 ViewUtil.customAlert("Error on fields","please select a role and try again.").show()
+                 return false
+             }
+         }catch (e:Exception){
+             ViewUtil.customAlert("Error on fields","please make sure you fill out all the text fields.").show()
+             return false
+         }
+
+        return true
     }
 
     @FXML
     fun onUpdateButton() {
 
-        employeeToSave.apply {
-            firstName = firstNameTextField.text
-            passport = passportTextField.text
-            lastName = lastNameTextField.text
-            genre = choiceBoxGender.value
-            direction = directionField.text
-            email = emailTextField.text
-            telephone = telephoneTextField.text
-            birthDay = birthdayDatePicker.value.toCalendar()
-            bankAccount = accountNumberTextField.text
-            userName = userNameTextField.text
-            password = passwordField.text
-            role = choiceBoxRole.value
-            /*mutableListOf()*/
-        }
 
-        EmployeeDao.update( employeeToSave )
-            .subscribe({
-                       clear()
-                userTableView.selectionModel.select(null)
-            },{th-> println(th.message) })
+      if (employeeToSave != null){
+
+
+
+          if ( validateEmployee() ){
+              employeeToSave!!.schedules = scheduleEntity!!.get()
+              employeeToSave!!.apply {
+                  firstName = firstNameTextField.text
+                  passport = passportTextField.text
+                  lastName = lastNameTextField.text
+                  genre = choiceBoxGender.value
+                  direction = directionField.text
+                  email = emailTextField.text
+                  telephone = telephoneTextField.text
+                  birthDay = birthdayDatePicker.value.toCalendar()
+                  bankAccount = accountNumberTextField.text
+                  userName = userNameTextField.text
+                  password = passwordField.text
+                  role = choiceBoxRole.value
+              }
+
+              EmployeeDao.update( employeeToSave!! )
+                  .subscribe({
+                      clear()
+                      userTableView.selectionModel.select(null)
+                  },{th-> println(th.message) })
+          }
+      }else{
+
+      }
 
     }
     @FXML
     private lateinit var bottomPanelVBOx:VBox
     @FXML
-    fun scheduleOnMOuseClick(event: MouseEvent) {
-        val scheduleEntity = SchedulerController( employeeToSave.schedules?: mutableListOf() ).showAndWait()
-        println("$scheduleEntity : genial")
-        employeeToSave.schedules = scheduleEntity.get()
-        scheduleTextField.text = employeeToSave.schedules.joinToString(separator = ", "){ schedule->days[schedule.workDay].substring(0,2) }
+    fun scheduleOnMOuseClick() {
+        scheduleEntity = if (employeeToSave != null)
+            SchedulerController( employeeToSave!!.schedules?: mutableListOf() ).showAndWait()
+        else
+            SchedulerController( mutableListOf()).showAndWait()
+
+        //employeeToSave.schedules = scheduleEntity.get()
+        scheduleTextField.text = scheduleEntity!!.get().joinToString(separator = ", "){ schedule->days[schedule.workDay].substring(0,2) }
     }
 
     private fun clear(){
@@ -260,6 +320,8 @@ class EmployeeController:Initializable, BaseController() {
         accountNumberTextField.text = ""
         userNameTextField.text = ""
         passwordField.text = ""
+        employeeToSave = null
+        userTableView.selectionModel.select( null )
     }
 
     fun hideBottomPanelOnMouseClicked() {
