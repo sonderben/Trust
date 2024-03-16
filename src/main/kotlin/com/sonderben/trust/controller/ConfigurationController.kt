@@ -1,6 +1,5 @@
 package com.sonderben.trust.controller
 
-import SingletonView
 import com.sonderben.trust.CategoryEnum
 import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.controller.config.Admin
@@ -8,51 +7,98 @@ import com.sonderben.trust.controller.config.BusinessInfoController
 import com.sonderben.trust.controller.config.InvoiceController
 import com.sonderben.trust.db.dao.EnterpriseDao
 import entity.EnterpriseEntity
-import javafx.event.ActionEvent
+import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Label
+import javafx.scene.control.MenuItem
 import javafx.scene.control.Pagination
 import javafx.scene.image.ImageView
 import javafx.scene.layout.VBox
-import org.sqlite.ExtendedCommand.SQLExtension
 import java.net.URL
 import java.time.ZoneId
 import java.util.*
 
 class ConfigurationController:Initializable, BaseController() {
 
-    private var enterprise:EnterpriseEntity? =null
+    lateinit var mainPane: VBox
+    private lateinit var enterprise:EnterpriseEntity
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        editMenuItem()
         HelloApplication.primary.isResizable = true
-        setFromLoginPage(false)
 
-        if (!fromLoginPage){
-            try {
-                enterprise = EnterpriseDao.enterprises[0]
-            }catch (_:Throwable){
-                enterprise = EnterpriseEntity()
-            }
+
+
+        if ( EnterpriseDao.enterprises.isNotEmpty() ){
+            back.isVisible = true
+            back.isManaged = true
+            enterprise = EnterpriseDao.enterprises[0]
+            pagination.setPageFactory { index ->createPage(index) }
+        }else{
+            back.isVisible = false
+            back.isManaged = false
+            enterprise = EnterpriseEntity()
+            pagination.setPageFactory { index ->createPage(index) }
         }
 
+
+         EnterpriseDao.enterprises.addListener (  ListChangeListener  {change->
+             if (change.next()){
+                 enterpriseInfo=null
+                 nodeAdmin=null
+                 invoice=null
+
+                 back.isVisible = true
+                 back.isManaged = true
+                 enterprise = EnterpriseDao.enterprises[0]
+                 pagination.setPageFactory { index ->createPage(index) }
+             }
+
+         } )
+
+
         pagination.pageCount = 3
-        pagination.setPageFactory { index ->createPage(index) }
+
+    }
+
+    private fun editMenuItem() {
+        MainController.editMenu?.items?.clear()
+
+
+        val saveMenuItem = MenuItem("Save")
+        saveMenuItem.setOnAction {
+            onSave()
+        }
+        val updateMenuItems = MenuItem("Update")
+        updateMenuItems.setOnAction {
+
+        }
+
+
+        val clearMenuItems = MenuItem("Clear")
+        clearMenuItems.setOnAction {
+            clear(mainPane)
+        }
+
+
+        MainController.editMenu?.items?.addAll(saveMenuItem, updateMenuItems)
+
     }
 
     lateinit var screenTitle: Label
 
-    private var fromLoginPage = false
+
 
     @FXML
     private lateinit var pagination:Pagination
     @FXML
     private lateinit var back:ImageView
-    var businessInfoController:BusinessInfoController?=null
-    var admin:Admin?=null
-    val invoiceController:InvoiceController?=null
+    private var businessInfoController:BusinessInfoController?=null
+    private var admin:Admin?=null
+    private val invoiceController:InvoiceController?=null
 
     private var nodeAdmin:Node?=null
     private var enterpriseInfo:Node?=null
@@ -100,12 +146,7 @@ class ConfigurationController:Initializable, BaseController() {
 
     }
 
-    fun setFromLoginPage( v:Boolean ){
-            fromLoginPage = v
-            back.isVisible = v
-            back.isManaged = v
 
-    }
 
     override fun onDestroy() {
 
@@ -116,11 +157,8 @@ class ConfigurationController:Initializable, BaseController() {
         HelloApplication.primary.scene = Scene(fxmlLoader.load(), 720.0, 440.0)
     }
 
-    fun onSave(actionEvent: ActionEvent) {
-
-
-
-        enterprise?.apply {
+    fun onSave() {
+        enterprise.apply {
             name = businessInfoController!!.nameTextField.text
             telephone =  businessInfoController!!.telephoneTextField.text
             website =  businessInfoController!!.websiteTextField.text
@@ -145,7 +183,7 @@ class ConfigurationController:Initializable, BaseController() {
 
         }
 
-        EnterpriseDao.save( enterprise!! )
+        EnterpriseDao.save(enterprise)
             .subscribe({
                 val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
                 val scene = Scene(fxmlLoader.load(), 720.0, 440.0)

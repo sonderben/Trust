@@ -17,7 +17,7 @@ class RDButton( var name:ScreenEnum,var isChecked:Boolean = false):Pane(),EventH
     private val resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
 
     //private val label = Label(name.name.toLowerCase().replace("_"," ").replaceFirstChar { it.uppercase() })
-    private val label = Label( resourceBundle.getString( name.name.toLowerCase() ) )
+    private val label = Label( resourceBundle.getString(name.name.lowercase()) )
 
     init {
         label.style = "-fx-text-fill: white;"
@@ -31,7 +31,7 @@ class RDButton( var name:ScreenEnum,var isChecked:Boolean = false):Pane(),EventH
         outerCircle.strokeType = StrokeType.OUTSIDE
 
         innerCircle = Circle(4.0)
-        innerCircle.fill = Color.RED
+        innerCircle.fill = Color.web("#3498db")//Color.RED
 
         innerCircle.isVisible = isChecked
 

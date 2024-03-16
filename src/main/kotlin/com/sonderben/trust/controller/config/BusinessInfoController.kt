@@ -20,7 +20,6 @@ class BusinessInfoController : Initializable {
          set(value) {
              field=value
              setBusiness()
-             println(" li kouri: "+value)
          }
 
 
@@ -39,7 +38,7 @@ class BusinessInfoController : Initializable {
                 foundationDatePicker.value = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH))
 
                 if (enterprise!!.category!=null){
-                    val cat = enterprise!!.category.name.toLowerCase().replaceFirstChar { it.toUpperCase() }
+                    val cat = enterprise!!.category.name.lowercase().replaceFirstChar { it.uppercaseChar() }
                     categoryChoiceBox.selectionModel.select( categoryChoiceBox.items.indexOf( cat ) )
                 }
 

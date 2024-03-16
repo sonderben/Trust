@@ -3,11 +3,9 @@ package com.sonderben.trust.controller
 import SingletonView
 import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
-import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
-import javafx.geometry.Rectangle2D
 import javafx.scene.Node
 import javafx.scene.Scene
 import javafx.scene.control.Label
@@ -23,8 +21,6 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
-import javafx.stage.Screen
-import javafx.stage.Stage
 import java.net.URL
 import java.util.*
 
@@ -45,7 +41,7 @@ class MainController : Initializable {
         forward = forwardPage
 
         editMenu = menuEdit
-        _bottombar = bottombar
+        bottomBarMenuItem = bottomBar
 
 
         //menuBar.useSystemMenuBarProperty().set(true)
@@ -130,7 +126,8 @@ class MainController : Initializable {
     }
 
 
-    lateinit var bottombar: MenuItem
+    lateinit var bottomBar: MenuItem
+    //lateinit var bottombar: MenuItem
 
 
 
@@ -160,18 +157,20 @@ class MainController : Initializable {
 
 
     companion object {
-        lateinit var next:ImageView
-        lateinit var forward:ImageView
-        lateinit var editMenu: Menu
-        lateinit var _bottombar:MenuItem
+          var next:ImageView?=null
+          var forward:ImageView?=null
+          var editMenu: Menu?=null
+          var bottomBarMenuItem:MenuItem?=null
 
         fun hideBottomBar(hide:Boolean,onAction:( ()->Unit )?=null){
-            _bottombar.isDisable = hide
+            if (bottomBarMenuItem!=null){
+                bottomBarMenuItem!!.isDisable = hide
 
-            if (!hide)
-                _bottombar.setOnAction {
-                    onAction?.invoke()
-                }
+                if (!hide)
+                    bottomBarMenuItem!!.setOnAction {
+                        onAction?.invoke()
+                    }
+            }
 
         }
     }
@@ -189,7 +188,7 @@ class MainController : Initializable {
                         "sale" -> changeView("view/sale.fxml")
                         "product" -> changeView("view/product.fxml")
                         "employee" -> changeView("view/employee.fxml")
-                        "configuration" -> changeView("view/configuration.fxml")
+                        "enterprise" -> changeView("view/configuration.fxml")
                         "inventory" -> changeView("view/inventory.fxml")
                         "role" -> changeView("view/role.fxml")
                         "queries" -> changeView("view/queries/queries.fxml")
@@ -253,7 +252,7 @@ class MainController : Initializable {
     }
 
     @FXML
-    fun lateralBarOnAction(event: ActionEvent) {
+    fun lateralBarOnAction() {
         if (borderpane.left.isVisible){
             borderpane.left.isVisible = false
             borderpane.left.managedProperty().set(false)
@@ -263,7 +262,7 @@ class MainController : Initializable {
         }
     }
 
-    fun disconnectOnMouseClicked(mouseEvent: MouseEvent) {
+    @FXML fun disconnectOnMouseClicked() {
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
         val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
         HelloApplication.primary.scene = scene

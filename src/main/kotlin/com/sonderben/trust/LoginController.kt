@@ -17,6 +17,7 @@ import javafx.scene.control.*
 import javafx.util.StringConverter
 import java.net.URL
 import java.util.*
+import javax.script.ScriptEngineManager
 
 class LoginController : Initializable{
     @FXML
@@ -38,7 +39,7 @@ class LoginController : Initializable{
 
 
     @FXML
-    fun onLoginButtonClick(event: ActionEvent?) {
+    fun onLoginButtonClick() {
         Locale.setDefault( Locale.FRENCH )
 
         val loading = ViewUtil.loadingView()
@@ -64,13 +65,30 @@ class LoginController : Initializable{
     fun onCreateNewSystemMouseClicked() {
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/configuration.fxml"))
         val scene = Scene(fxmlLoader.load(), 920.0, 640.0)
-
-        val configurationController = fxmlLoader.getController<ConfigurationController>()
-        configurationController.setFromLoginPage(true)
+        fxmlLoader.getController<ConfigurationController>()
         HelloApplication.primary.scene = scene
     }
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        val scriptEngineManager = ScriptEngineManager()
+        val engineFactories = scriptEngineManager.engineFactories
+        val eng = scriptEngineManager.getEngineByExtension("js")
+        println("3+2= "+ eng.eval("3+2") )
+        val i = 0
+
+        println("name: $")
+        for (en in engineFactories){
+            println("name: ${en.engineName}")
+            println("engineVersion: ${en.engineVersion}")
+            println("languageVersion: ${en.languageVersion}")
+            println("names: ${en.names}")
+            println("mimeTypes: ${en.mimeTypes}")
+        }
+
+
+
+
+
         enterpriseCB.isVisible = false
         enterpriseCB.isManaged = false
         //HelloApplication.primary.isResizable = false
@@ -89,7 +107,7 @@ class LoginController : Initializable{
 
 
 
-        enterpriseCB.selectionModel.selectedItemProperty().addListener { p0, p1, newValue ->
+        enterpriseCB.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
             if (newValue != null) {
                 login.isDisable = false
             }

@@ -8,7 +8,7 @@ import java.util.Calendar;
 public class ProductEntity extends BaseEntity {
 
 
-    private  int quantityRemaining;
+    private  float quantityRemaining;
     private String sellBy;
 
     public String getSellBy() {
@@ -19,18 +19,18 @@ public class ProductEntity extends BaseEntity {
         this.sellBy = sellBy;
     }
 
-    public int getQuantityRemaining() {
+    public float getQuantityRemaining() {
         return quantityRemaining;
     }
 
-    public void setQuantityRemaining(int quantityRemaining) {
+    public void setQuantityRemaining(float quantityRemaining) {
         this.quantityRemaining = quantityRemaining;
     }
 
     private String code;
     private String description;
     private double sellingPrice,purchasePrice, discount, itbis;
-    private int quantity;
+    private float quantity;
     private Calendar dateAdded,expirationDate;
 
     public double getPurchasePrice() {
@@ -87,7 +87,7 @@ public class ProductEntity extends BaseEntity {
         return "ProductEntity{quantityRemaining=%d, code='%s', description='%s', sellingPrice=%s, purchasePrice=%s, discount=%s, itbis=%s, quantity=%d, dateAdded=%s, expirationDate=%s, category=%s, employee=%s, id=%d}".formatted(quantityRemaining, code, description, sellingPrice, purchasePrice, discount, itbis, quantity, dateAdded, expirationDate, category, employee.getFullName(), id);
     }
 
-    public ProductEntity(String code, String sellBy ,String description, double sellingPrice, double purchasePrice, double discount, double itbis, int quantity, int quantityRemaining, Calendar dateAdded, Calendar expirationDate, CategoryEntity category, EmployeeEntity employee) {
+    public ProductEntity(String code, String sellBy ,String description, double sellingPrice, double purchasePrice, double discount, double itbis, float quantity, float quantityRemaining, Calendar dateAdded, Calendar expirationDate, CategoryEntity category, EmployeeEntity employee) {
         this.code = code;
         this.sellBy = sellBy;
         this.description = description;
@@ -145,11 +145,11 @@ public class ProductEntity extends BaseEntity {
         this.itbis = itbis;
     }
 
-    public int getQuantity() {
+    public float getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(float quantity) {
         this.quantity = quantity;
     }
 

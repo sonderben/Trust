@@ -1,19 +1,13 @@
 package com.sonderben.trust.controller.config
 
-import com.sonderben.trust.controller.BaseController
-import com.sonderben.trust.db.dao.EnterpriseDao
 import entity.EnterpriseEntity
-import javafx.collections.ListChangeListener
-import javafx.collections.ObservableList
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.*
-import javafx.scene.input.MouseEvent
 import javafx.scene.layout.VBox
 import java.net.URL
 import java.time.LocalDate
-import java.time.ZoneId
 import java.util.*
 
 class Admin :Initializable {
@@ -59,7 +53,7 @@ class Admin :Initializable {
 
     }
 
-    fun onUpdateButton(actionEvent: ActionEvent) {
+    fun onUpdateButton() {
 
     }
 
@@ -67,11 +61,11 @@ class Admin :Initializable {
 
     }
 
-    fun onSaveButton(actionEvent: ActionEvent) {
+    fun onSaveButton() {
 
     }
 
-    fun scheduleOnMOuseClick(mouseEvent: MouseEvent) {
+    fun scheduleOnMOuseClick() {
 
     }
 

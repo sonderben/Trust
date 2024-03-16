@@ -8,6 +8,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -16,79 +17,82 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.config.Admin">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.config.Admin">
    <children>
-      <VBox fx:id="bottomPanelVBOx" layoutX="10.0" layoutY="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <GridPane hgap="10.0" minHeight="200.0" vgap="10.0">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
+      <ScrollPane fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <content>
+            <VBox fx:id="bottomPanelVBOx" maxWidth="1.7976931348623157E308">
                <children>
-                  <TextField fx:id="firstNameTextField" promptText="%first_name" text="Ben" GridPane.rowIndex="1" />
-                  <TextField fx:id="lastNameTextField" promptText="%last_name" text="Pha" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <TextField fx:id="emailTextField" promptText="%email" text="ben@gmail.com" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextField fx:id="accountNumberTextField" promptText="%account_number" text="23123" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                  <TextField fx:id="telephoneTextField" promptText="%phone" text="123465" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                  <TextField fx:id="userNameTextField" editable="false" promptText="%username" text="root" GridPane.rowIndex="3" />
-                  <TextField fx:id="scheduleTextField" editable="false" onMouseClicked="#scheduleOnMOuseClick" promptText="%schedules" GridPane.rowIndex="5" />
-                  <DatePicker fx:id="birthdayDatePicker" promptText="%birthday" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <PasswordField fx:id="passwordField" promptText="%password" text="1234" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                  <ChoiceBox fx:id="choiceBoxGender" prefWidth="150.0" value="%select_gender" GridPane.columnIndex="3" GridPane.rowIndex="5">
-                     <items>
-                        <FXCollections fx:factory="observableArrayList">
-                           <String fx:value="Male" />
-                           <String fx:value="Female" />
-                           <String fx:value="No binary" />
-                        </FXCollections>
-                     </items>
-                  </ChoiceBox>
-                  <TextField fx:id="directionField" promptText="%direction" text="lascirie" GridPane.rowIndex="7" />
-                  <TextField fx:id="passportTextField" promptText="%passport" text="12345" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <ChoiceBox fx:id="choiceBoxRole" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <Label text="%first_name" textFill="WHITE" />
-                  <Label text="%last_name" textFill="WHITE" GridPane.columnIndex="2" />
-                  <Label text="%birthday" textFill="WHITE" GridPane.columnIndex="3" />
-                  <Label text="%email" textFill="WHITE" GridPane.columnIndex="1" />
-                  <Label text="%account_number" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                  <Label text="%phone" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                  <Label text="%username" textFill="WHITE" GridPane.rowIndex="2" />
-                  <Label text="%password" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                  <Label text="%gender" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                  <Label text="%schedules" textFill="WHITE" GridPane.rowIndex="4" />
-                  <Label text="%role" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Label text="%direction" textFill="WHITE" GridPane.rowIndex="6" />
-                  <Label text="%passport" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <GridPane hgap="10.0" minHeight="200.0" vgap="5.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <TextField fx:id="firstNameTextField" promptText="%first_name" text="Ben" GridPane.rowIndex="1" />
+                        <TextField fx:id="lastNameTextField" promptText="%last_name" text="Pha" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <TextField fx:id="emailTextField" promptText="%email" text="ben@gmail.com" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="accountNumberTextField" promptText="%account_number" text="23123" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <TextField fx:id="telephoneTextField" promptText="%phone" text="123465" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <TextField fx:id="userNameTextField" editable="false" promptText="%username" text="root" GridPane.rowIndex="3" />
+                        <TextField fx:id="scheduleTextField" editable="false" onMouseClicked="#scheduleOnMOuseClick" promptText="%schedules" GridPane.rowIndex="5" />
+                        <DatePicker fx:id="birthdayDatePicker" promptText="%birthday" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <PasswordField fx:id="passwordField" promptText="%password" text="1234" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                        <ChoiceBox fx:id="choiceBoxGender" prefWidth="150.0" value="%select_gender" GridPane.columnIndex="3" GridPane.rowIndex="5">
+                           <items>
+                              <FXCollections fx:factory="observableArrayList">
+                                 <String fx:value="Male" />
+                                 <String fx:value="Female" />
+                                 <String fx:value="No binary" />
+                              </FXCollections>
+                           </items>
+                        </ChoiceBox>
+                        <TextField fx:id="directionField" promptText="%direction" text="lascirie" GridPane.rowIndex="7" />
+                        <TextField fx:id="passportTextField" promptText="%passport" text="12345" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <ChoiceBox fx:id="choiceBoxRole" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label text="%first_name" textFill="WHITE" />
+                        <Label text="%last_name" textFill="WHITE" GridPane.columnIndex="2" />
+                        <Label text="%birthday" textFill="WHITE" GridPane.columnIndex="3" />
+                        <Label text="%email" textFill="WHITE" GridPane.columnIndex="1" />
+                        <Label text="%account_number" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label text="%phone" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <Label text="%username" textFill="WHITE" GridPane.rowIndex="2" />
+                        <Label text="%password" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                        <Label text="%gender" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                        <Label text="%schedules" textFill="WHITE" GridPane.rowIndex="4" />
+                        <Label text="%role" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label text="%direction" textFill="WHITE" GridPane.rowIndex="6" />
+                        <Label text="%passport" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </GridPane>
+                  <HBox alignment="CENTER_RIGHT" minHeight="40.0" spacing="10.0" VBox.vgrow="NEVER">
+                     <children>
+                        <Button fx:id="updateButton" mnemonicParsing="false" onAction="#onUpdateButton" text="%update" />
+                        <Button fx:id="deleteButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteButton" text="%delete" />
+                        <Button fx:id="saveButton" layoutX="65.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveButton" text="%save" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" right="10.0" />
+                     </padding>
+                  </HBox>
                </children>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </GridPane>
-            <HBox alignment="CENTER_RIGHT" minHeight="40.0" spacing="10.0" VBox.vgrow="NEVER">
-               <children>
-                  <Button layoutX="313.0" layoutY="20.0" mnemonicParsing="false" text="%print_credential" />
-                  <Button fx:id="updateButton" mnemonicParsing="false" onAction="#onUpdateButton" text="%update" />
-                  <Button fx:id="deleteButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteButton" text="%delete" />
-                  <Button fx:id="saveButton" layoutX="65.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveButton" text="%save" />
-               </children>
-               <padding>
-                  <Insets bottom="10.0" right="10.0" />
-               </padding>
-            </HBox>
-         </children>
-      </VBox>
+            </VBox>
+         </content>
+      </ScrollPane>
    </children>
 </AnchorPane>

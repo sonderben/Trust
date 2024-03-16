@@ -2,10 +2,15 @@ package com.sonderben.trust.db.dao
 
 import Database
 import Database.DATABASE_NAME
-import com.sonderben.trust.db.SqlCreateTables
+import com.sonderben.trust.db.SqlDdl
+import com.sonderben.trust.db.SqlDml.DELETE_ROLE
+import com.sonderben.trust.db.SqlDml.INSERT_ROLE
+import com.sonderben.trust.db.SqlDml.INSERT_SCREEN
+import com.sonderben.trust.db.SqlDml.SELECT_ALL_ROLE
 import com.sonderben.trust.model.Role
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.collections.FXCollections
@@ -17,17 +22,7 @@ object RoleDao:CrudDao<Role> {
         findAll()
     }
 
-    private  val insertRole = buildString {
-        append("INSERT INTO ")
-        append(SqlCreateTables.roles)
-        append(" (name) values (?)")
-    }
-    private  val insertScreen = buildString {
-        append(" INSERT INTO ")
-        append(SqlCreateTables.screen)
-        append(" (screenEnum,actions,id_role) values (?,?,?)")
-    }
-    private const val selectAllRoles = "SELECT * FROM ${SqlCreateTables.roles}"
+
 
 
     override fun save(entity:Role):Completable{
@@ -38,7 +33,7 @@ object RoleDao:CrudDao<Role> {
 
                 connection.autoCommit = false
 
-                connection.prepareStatement( insertRole ).use { preparedStatement ->
+                connection.prepareStatement( INSERT_ROLE ).use { preparedStatement ->
                     preparedStatement.setString(1,entity.name)
                     val intRow = preparedStatement.executeUpdate()
                     if ( intRow>0 ){
@@ -46,7 +41,7 @@ object RoleDao:CrudDao<Role> {
                         tempRole.id = roleId
 
                         for (screen in entity.screens){
-                            connection.prepareStatement( insertScreen ).use { ps ->
+                            connection.prepareStatement( INSERT_SCREEN ).use { ps ->
                                 ps.setString(1,screen.screen.name)
                                 ps.setString(2,screen.actions.map { it.name }.joinToString ("," ) )
                                 ps.setLong(3,roleId)
@@ -87,7 +82,7 @@ object RoleDao:CrudDao<Role> {
 
         return Completable.create {emitter->
             Database.connect(DATABASE_NAME).use { connection ->
-                connection.prepareStatement("delete from ${SqlCreateTables.roles} where id = ?").use { preparedStatement ->
+                connection.prepareStatement( DELETE_ROLE ).use { preparedStatement ->
                     preparedStatement.setLong(1,idEntity)
                     val rowCount = preparedStatement.executeUpdate()
                     if (rowCount>0){
@@ -109,34 +104,37 @@ object RoleDao:CrudDao<Role> {
         return Maybe.create {}
     }
 
-    override fun findAll():Boolean {
+    override fun findAll() {
 
-        val tempRoleList = mutableListOf<Role>()
-        Database.connect(DATABASE_NAME).use { connection ->
-            connection.autoCommit = true
-            connection.createStatement().use { statement ->
+        Single.create {emitter->
+
+            Database.connect(DATABASE_NAME).use { connection ->
+                connection.autoCommit = true
+                connection.createStatement().use { statement ->
 
 
+                    statement.executeQuery(SELECT_ALL_ROLE).use { resultSet ->
 
-                statement.executeQuery(selectAllRoles).use { resultSet ->
+                        while ( resultSet.next() ){
+                            val role = Role()
+                            role.id = resultSet.getLong("id")
+                            role.name = resultSet.getString("name")
+                            role.screens = Database.findScreenByIdRole(role.id)
 
-                    while ( resultSet.next() ){
-                        val role = Role()
-                        role.id = resultSet.getLong("id")
-                        role.name = resultSet.getString("name")
-                        role.screens = Database.findScreenByIdRole(role.id)
+                            roles.add( role )
+                        }
+                        emitter.onSuccess( roles )
 
-                        tempRoleList.add( role )
                     }
-                    roles.addAll( tempRoleList )
-
 
                 }
 
             }
-
         }
-        return true
+            .subscribeOn(Schedulers.io())
+            .observeOn( JavaFxScheduler.platform() )
+            .subscribe ()
+
     }
 
     override fun update(entity: Role): Completable {

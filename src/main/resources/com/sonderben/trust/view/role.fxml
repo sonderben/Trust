@@ -16,9 +16,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.RoleController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.RoleController">
    <children>
-      <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox fx:id="mainPane" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
               <columns>
@@ -81,10 +81,10 @@
                   </HBox>
                   <HBox alignment="CENTER_RIGHT" spacing="10.0">
                      <children>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onSaveRole" text="%save" />
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onUpdateRole" text="%update" />
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onClearRole" text="%clear" />
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onDeleteRole" text="%delete" />
+                        <Button fx:id="saveBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onSaveRole" text="%save" />
+                        <Button fx:id="updateBtn" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onUpdateRole" text="%update" />
+                        <Button fx:id="deleteBtn" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onDeleteRole" text="%delete" />
+                        <Button fx:id="clearbtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onClearRole" text="%clear" />
                      </children>
                      <padding>
                         <Insets bottom="2.0" right="5.0" top="10.0" />

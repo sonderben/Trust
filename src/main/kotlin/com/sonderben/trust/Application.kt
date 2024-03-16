@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader
 import javafx.print.Printer
 import javafx.scene.Scene
 import javafx.stage.Stage
+import javax.script.ScriptEngineManager
 
 class HelloApplication : Application() {
 
@@ -16,6 +17,8 @@ class HelloApplication : Application() {
         Database.createTable()
 
         Context.readJson()
+
+
 
 
         primary = stage
@@ -44,6 +47,10 @@ class HelloApplication : Application() {
         stage.isAlwaysOnTop = true
         stage.show()
 
+
+
+
+
     }
 
     companion object {
@@ -53,4 +60,5 @@ class HelloApplication : Application() {
 
 fun main() {
     Application.launch(HelloApplication::class.java)
+    println("kooooooool")
 }

@@ -1,6 +1,7 @@
 package com.sonderben.trust.controller.queries
 
 import com.sonderben.trust.controller.BaseController
+import com.sonderben.trust.controller.ProductDetails
 import com.sonderben.trust.db.dao.ProductDao
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
@@ -25,7 +26,7 @@ class BestSellingProduct:Initializable, BaseController() {
 
 
 
-        val pds = ProductDao.bestSellers(qty =  2f, frequency = 3, benefit = 1f)
+        val pds = ProductDetails.bestSellers(qty =  2f, frequency = 3, benefit = 1f)
         tableView.items = FXCollections.observableArrayList( pds )
 
         for (a in pds) {
@@ -51,24 +52,24 @@ class BestSellingProduct:Initializable, BaseController() {
     private lateinit var barchart: BarChart<String, Double>
 
     @FXML
-    private lateinit var benefitCol: TableColumn<ProductDao.BestSeller, String>
+    private lateinit var benefitCol: TableColumn<ProductDetails.BestSeller, String>
 
     @FXML
-    private lateinit var codeCol: TableColumn<ProductDao.BestSeller, String>
+    private lateinit var codeCol: TableColumn<ProductDetails.BestSeller, String>
 
     @FXML
-    private lateinit var descriptionCol: TableColumn<ProductDao.BestSeller, String>
+    private lateinit var descriptionCol: TableColumn<ProductDetails.BestSeller, String>
 
     @FXML
-    private lateinit var frequencyCol: TableColumn<ProductDao.BestSeller, String>
+    private lateinit var frequencyCol: TableColumn<ProductDetails.BestSeller, String>
 
     @FXML
-    private lateinit var pointCol: TableColumn<ProductDao.BestSeller, String>
+    private lateinit var pointCol: TableColumn<ProductDetails.BestSeller, String>
 
     @FXML
-    private lateinit var quantityCol: TableColumn<ProductDao.BestSeller, String>
+    private lateinit var quantityCol: TableColumn<ProductDetails.BestSeller, String>
 
     @FXML
-    private lateinit var tableView: TableView<ProductDao.BestSeller>
+    private lateinit var tableView: TableView<ProductDetails.BestSeller>
 
 }

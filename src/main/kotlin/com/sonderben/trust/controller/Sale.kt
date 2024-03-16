@@ -3,13 +3,10 @@ package com.sonderben.trust.controller
 import com.sonderben.trust.*
 import com.sonderben.trust.db.dao.CustomerDao
 import com.sonderben.trust.db.dao.InvoiceDao
-import com.sonderben.trust.db.dao.ProductDao
-import com.sonderben.trust.printer.TPrinter
 import com.sonderben.trust.qr_code.MessageListener
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.CustomerEntity
 import entity.InvoiceEntity
-import entity.ProductEntity
 import entity.ProductSaled
 import javafx.application.Platform
 import javafx.beans.property.SimpleStringProperty
@@ -18,7 +15,6 @@ import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
-import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.*
@@ -30,9 +26,7 @@ import javafx.scene.layout.VBox
 import javafx.scene.media.Media
 import javafx.scene.media.MediaPlayer
 import javafx.scene.text.Text
-
 import java.net.URL
-import java.text.NumberFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -62,7 +56,7 @@ class Sale :Initializable,MessageListener,BaseController(){
 
         //customerCode.onlyInt()
         codeProductTextField.onlyInt()
-        qtyTextField.onlyInt()
+        qtyTextField//.onlyInt()
         cashTextField.onlyInt()
 
 
@@ -100,7 +94,9 @@ class Sale :Initializable,MessageListener,BaseController(){
         itbisCol.setCellValueFactory{data-> SimpleStringProperty( data.value.itbis.toString()) }
         discountCol.setCellValueFactory{data-> SimpleStringProperty( data.value.discount.toString() ) }
         priceCol.setCellValueFactory{data-> SimpleStringProperty( data.value.price.toString() ) }
-        qtyCol.setCellValueFactory{data-> SimpleStringProperty( data.value.qty.toString()) }
+
+        qtyCol.setCellValueFactory{data-> SimpleStringProperty( if (data.value.sellBy.equals("unit",true)) data.value.qty.toString() else "${data.value.qty} Lb") }
+
         descriptionCol.setCellValueFactory{data-> SimpleStringProperty( data.value.description.replaceFirstChar { it.uppercase() } ) }
         totalCol.setCellValueFactory {
             SimpleStringProperty( it.value.total.toCurrency() )
@@ -134,7 +130,7 @@ class Sale :Initializable,MessageListener,BaseController(){
             }
         }
 
-        createTimeLine( hour )
+        createTimeLine()
 
 
 
@@ -142,7 +138,7 @@ class Sale :Initializable,MessageListener,BaseController(){
     }
 
     private fun editMenuItem() {
-        MainController.editMenu.items.clear()
+        MainController.editMenu?.items?.clear()
 
 
         val saveMenuItem =  MenuItem("Pay")
@@ -166,7 +162,7 @@ class Sale :Initializable,MessageListener,BaseController(){
         }
 
 
-        MainController.editMenu.items.addAll(  saveMenuItem,/*updateMenuItem,deleteMenuItem,*/clearMenuItems,cancelMenuItems  )
+        MainController.editMenu?.items?.addAll(  saveMenuItem,/*updateMenuItem,deleteMenuItem,*/clearMenuItems,cancelMenuItems  )
 
     }
 
@@ -235,7 +231,7 @@ class Sale :Initializable,MessageListener,BaseController(){
 
 
     @FXML
-    fun onDeleteProductButtonClick(event: ActionEvent) {
+    fun onDeleteProductButtonClick() {
         mProducts.remove(mProductSaledSelected)
         clearTextS()
     }
@@ -264,7 +260,7 @@ class Sale :Initializable,MessageListener,BaseController(){
         }
     }
     @FXML
-    fun onPay(event: ActionEvent) {
+    fun onPay() {
        pay()
 
     }
@@ -280,7 +276,7 @@ class Sale :Initializable,MessageListener,BaseController(){
 
                         mCurrentCustomer?.let {
                             val point = (grandTotal.text.toDouble()/100.0).toLong()
-                            val success =  CustomerDao.updatePoint(it.id, point)
+                            CustomerDao.updatePoint(it.id, point)
 
                         }
 
@@ -347,7 +343,7 @@ class Sale :Initializable,MessageListener,BaseController(){
     var mProducts: ObservableList<ProductSaled> = FXCollections.observableArrayList(  )
     var mProductSaledSelected:ProductSaled?=null
 
-    private fun createTimeLine(text:Text){
+    private fun createTimeLine() {
         val timer = Timer()
         timer.scheduleAtFixedRate(object: TimerTask(){
             override fun run() {
@@ -362,8 +358,8 @@ class Sale :Initializable,MessageListener,BaseController(){
             text.text = formatTime
         }
     }
-    val mMedia = Media(HelloApplication.javaClass.getResource("audio/beep7.mp3").toString())
-    var mMediaplayer = MediaPlayer(mMedia)
+    private val mMedia = Media(HelloApplication.javaClass.getResource("audio/beep7.mp3").toString())
+    private var mMediaplayer = MediaPlayer(mMedia)
 
     private fun beep(){
 
@@ -416,7 +412,7 @@ class Sale :Initializable,MessageListener,BaseController(){
 
 
         if (productFind!=null ){
-            if ( isEnough(qtyWantBye = qtyTextField.text.toInt(), productQty = productFind.qtyRemaining, codeProduct = tempCode) ){
+            if ( isEnough(qtyWantBye = qtyTextField.text.toFloat(), productQty = productFind.qtyRemaining, codeProduct = tempCode, sellBy = productFind.sellBy) ){
                 val index = mProducts.indexOf( productFind )
                 productFind.qty += qtyTextField.text.toInt()
                 mProducts[index] = productFind
@@ -425,23 +421,30 @@ class Sale :Initializable,MessageListener,BaseController(){
             }
         }
         else{
-            val product:ProductEntity? = ProductDao.findProductByCode( codeProductTextField.text )
-            if ( product != null ){
-                if ( isEnough(qtyWantBye = qtyTextField.text.toInt(), productQty = product.quantityRemaining, codeProduct = tempCode) ){
-                    product.quantity = qtyTextField.text.toInt()
-                    val t = ProductSaled( product,false )
-                    t.qtyRemaining = product.quantityRemaining
-                    mProducts.add( t )
-                    clearTextS()
-                    beep()
-                }
-            }else{
-                ViewUtil.createAlert(
-                    Alert.AlertType.WARNING,
-                    "Product not found",
-                    "code prod. : $tempCode"
-                ).showAndWait()
-            }
+             ProductDetails.findProductByCode( codeProductTextField.text )
+                 .subscribe(
+                     {
+                         if ( isEnough(qtyWantBye = qtyTextField.text.toFloat(), productQty = it.quantityRemaining, codeProduct = tempCode, sellBy = it.sellBy) ){
+                             it.quantity = qtyTextField.text.toFloat()
+                             val t = ProductSaled( it,false )
+                             t.qtyRemaining = it.quantityRemaining
+                             mProducts.add( t )
+                             clearTextS()
+                             beep()
+                         }
+                 },{
+                     th-> println( th.message )
+                   },
+                     {
+
+                     ViewUtil.createAlert(
+                         Alert.AlertType.WARNING,
+                         "Product not found",
+                         "code prod. : $tempCode"
+                     ).showAndWait()
+
+                 })
+
         }
 
     }
@@ -450,7 +453,7 @@ class Sale :Initializable,MessageListener,BaseController(){
         bottomPanelVBOx.hide()
     }
 
-    private fun isEnough(qtyWantBye:Int, productQty:Int, codeProduct:String):Boolean{
+    private fun isEnough(qtyWantBye:Float, productQty:Float, codeProduct:String,sellBy:String):Boolean{
 
         val qtyBought = mProducts.filtered { it.code.equals( codeProduct ) }.sumOf { it.qty.toInt() }
 
@@ -461,6 +464,17 @@ class Sale :Initializable,MessageListener,BaseController(){
                 "There is only: $productQty and you already bought $qtyBought"
             ).showAndWait()
             return false
+        }
+        if (sellBy.equals("unit",true)){
+            if(qtyWantBye % 1>0){
+                ViewUtil.createAlert(
+                    Alert.AlertType.WARNING,
+                    "Bad data",
+                    "This product is sold per unit."
+                ).showAndWait()
+                return false
+            }
+
         }
 
         return true

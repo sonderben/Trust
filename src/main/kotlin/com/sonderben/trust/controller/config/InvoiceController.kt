@@ -43,7 +43,7 @@ class InvoiceController:Initializable {
 
 
         val first = htmlEditor.lookup(".tool-bar")
-        val gridPane = htmlEditor.lookup(".grid") as GridPane
+        //val gridPane = htmlEditor.lookup(".grid") as GridPane
         //gridPane.children.clear()
         println(first !=null)
         if (first !=null){
@@ -55,7 +55,7 @@ class InvoiceController:Initializable {
 
 
         readContent(htmlEditor)
-        htmlEditor.addEventFilter(KeyEvent.KEY_TYPED){ event->
+        htmlEditor.addEventFilter(KeyEvent.KEY_TYPED){
             //ScenicView.show(htmlEditor)
             /*val caretPosition = textArea.caretPosition
             val currentLine =textArea.text.substring(0,caretPosition).lines().last()

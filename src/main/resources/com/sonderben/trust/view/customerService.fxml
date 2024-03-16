@@ -22,15 +22,15 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.CustomerService">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.CustomerService">
    <children>
-      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
-          <Tab text="%customer">
+          <Tab fx:id="customerTab" text="%customer">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox fx:id="customerMainPane" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <TableView fx:id="cTableview" prefHeight="200.0" prefWidth="200.0">
                                 <columns>
@@ -83,7 +83,7 @@
                                     <TextField fx:id="cDirectionTtf" GridPane.rowIndex="3" />
                                     <TextField fx:id="cEmailTf" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                     <TextField fx:id="cTelTf" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                                    <ChoiceBox fx:id="cGenderCb" value="%select_gender" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                    <ChoiceBox fx:id="cGenderCb" prefWidth="150.0" value="%select_gender" GridPane.columnIndex="3" GridPane.rowIndex="1">
                                         <items>
                                             <FXCollections fx:factory="observableArrayList">
                                                 <String fx:value="Male" />
@@ -97,10 +97,10 @@
                               </GridPane>
                               <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                                  <children>
-                                    <Button layoutX="382.0" layoutY="44.0" mnemonicParsing="false" onAction="#onSaveCustomer" text="%save" />
-                                    <Button mnemonicParsing="false" onAction="#onUpdateCustomer" text="%update" />
-                                    <Button mnemonicParsing="false" onAction="#onDeleteCustomer" text="%delete" />
-                                    <Button layoutX="387.0" layoutY="44.0" mnemonicParsing="false" onAction="#onClearCustomer" text="%clear" />
+                                    <Button fx:id="customer_saveBtn" layoutX="382.0" layoutY="44.0" mnemonicParsing="false" onAction="#onSaveCustomer" text="%save" />
+                                    <Button fx:id="customer_updateBtn" disable="true" mnemonicParsing="false" onAction="#onUpdateCustomer" text="%update" />
+                                    <Button fx:id="customer_deleteBtn" disable="true" mnemonicParsing="false" onAction="#onDeleteCustomer" text="%delete" />
+                                    <Button fx:id="customer_clearBtn" layoutX="387.0" layoutY="44.0" mnemonicParsing="false" onAction="#onClearCustomer" text="%clear" />
                                  </children>
                               </HBox>
                            </children>
@@ -108,11 +108,11 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-          <Tab text="%return_product">
+          <Tab fx:id="returnProductTab" text="%return_product">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox fx:id="returnProductMainPane" prefHeight="200.0" prefWidth="100.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <GridPane minHeight="50.0" VBox.vgrow="SOMETIMES">
                                  <columnConstraints>
@@ -188,11 +188,11 @@
                      </children></AnchorPane>
             </content>
           </Tab>
-            <Tab text="%change_points">
+            <Tab fx:id="changePointTab" text="%change_points">
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox fx:id="changePointMainPane" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <GridPane>
                                  <columnConstraints>
@@ -251,7 +251,7 @@
                               </HBox>
                               <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                                  <children>
-                                    <Button fx:id="cpOnSave" layoutX="387.0" layoutY="44.0" mnemonicParsing="false" text="%clear" />
+                                    <Button layoutX="387.0" layoutY="44.0" mnemonicParsing="false" onAction="#cpOnClear" text="%clear" />
                                     <Button fx:id="changePointOnSave" disable="true" layoutX="544.0" layoutY="44.0" mnemonicParsing="false" text="%change_points" />
                                  </children>
                               </HBox>

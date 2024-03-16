@@ -9,25 +9,37 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
-import javafx.event.ActionEvent
+import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.*
+import javafx.scene.layout.VBox
 import javafx.util.Callback
 import java.net.URL
 import java.util.*
 import kotlin.collections.List
 
 class CustomerService:Initializable,BaseController() {
+    lateinit var tabPane: TabPane
+    lateinit var changePointTab: Tab
+    lateinit var returnProductTab: Tab
+    lateinit var customerTab: Tab
+
+    lateinit var changePointMainPane: VBox
+    lateinit var returnProductMainPane: VBox
+    lateinit var customerMainPane: VBox
+
+
     private  var customers = CustomerDao.customers
     private var selectedCustomer:CustomerEntity?=null
     private var customerToChangePoint:CustomerEntity?=null
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
 
+        editMenuItem()
 
         rTableview.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
-        rTableview.rowFactory = Callback<TableView<InvoiceDao.ProductToReturned>,TableRow<InvoiceDao.ProductToReturned>>{ tablevieww ->
+        rTableview.rowFactory = Callback<TableView<InvoiceDao.ProductToReturned>,TableRow<InvoiceDao.ProductToReturned>>{
             object :TableRow<InvoiceDao.ProductToReturned>(){
                 override fun updateItem(p0: InvoiceDao.ProductToReturned?, p1: Boolean) {
                     super.updateItem(p0, p1)
@@ -72,6 +84,42 @@ class CustomerService:Initializable,BaseController() {
 
 
         cTableview.items = customers
+
+    }
+
+    private fun editMenuItem() {
+        MainController.editMenu?.items?.clear()
+
+
+        val saveMenuItem = MenuItem("Save")
+        saveMenuItem.setOnAction {
+
+        }
+        val updateMenuItems = MenuItem("Update")
+        updateMenuItems.setOnAction {
+
+        }
+
+        val deleteMenuItems = MenuItem("Delete")
+        deleteMenuItems.setOnAction {
+
+        }
+        val clearMenuItems = MenuItem("Clear")
+        clearMenuItems.setOnAction {
+            clear()
+        }
+
+
+        MainController.editMenu?.items?.addAll(saveMenuItem, updateMenuItems, deleteMenuItems,clearMenuItems)
+
+        cTableview.selectionModel.selectedIndices.addListener(ListChangeListener{change->
+            if ( change.list.isEmpty() ){
+                enableActionButton(customerMainPane,true)
+            }
+            else{
+                enableActionButton(customerMainPane,false)
+            }
+        })
 
     }
 
@@ -147,8 +195,7 @@ class CustomerService:Initializable,BaseController() {
     @FXML
     private lateinit var cpLastnameTf: TextField
 
-    @FXML
-    private lateinit var cpOnSave: Button
+
 
     @FXML
     private lateinit var cpPassportTf: TextField
@@ -190,7 +237,7 @@ class CustomerService:Initializable,BaseController() {
     var productsReturned: List<InvoiceDao.ProductToReturned> = mutableListOf()
 
     @FXML
-    fun cpOnsearch(event: ActionEvent) {
+    fun cpOnsearch() {
         customerToChangePoint = CustomerDao.findByCode( cpCodeTf.textTrim() )
         if (customerToChangePoint != null){
             cpFirstnameTf.text = customerToChangePoint!!.firstName
@@ -205,85 +252,108 @@ class CustomerService:Initializable,BaseController() {
     }
 
     @FXML
-    fun onClearCustomer(event: ActionEvent) {
-        selectedCustomer?.id=null
-        selectedCustomer = null
-    }
-
-    @FXML
-    fun onDeleteCustomer(event: ActionEvent) {
-
-
-        selectedCustomer?.let { CustomerDao.delete( it.id )
-            cTableview.selectionModel.select(null)
-        }
-
-
-
+    fun onClearCustomer() {
+        clear()
 
     }
 
     @FXML
-    fun onSaveCustomer(event: ActionEvent) {
-        val cal = Calendar.getInstance()
-        val customer = CustomerEntity()
+    fun onDeleteCustomer() {
 
-        customer.apply {
-            firstName = cFirstnameTf.textTrim()
-            lastName = cLastNameTf.textTrim()
-            genre = cGenderCb.selectionModel.selectedItem
-            birthDay = cBirthdayDp.value.toCalendar()
-            code = cpCodeTf.textTrim()
-            telephone = cTelTf.textTrim()
-            email = cEmailTf.textTrim()
-            direction = cDirectionTtf.textTrim()
-            passport = cPassportTf.textTrim()
-            code =  "${cal.get(Calendar.MONTH)+1}${cal.get(Calendar.YEAR)}${cTelTf.textTrim()}"
-            point = 0
-            CustomerDao.save(this)
-        }
-
-
-
-
-    }
-
-    @FXML
-    fun onUpdateCustomer(event: ActionEvent) {
         selectedCustomer?.let {
+            CustomerDao.delete( it.id )
+                .subscribe({ clear() },{th-> println(th.message) })
+        }
 
+    }
 
+    @FXML
+    fun onSaveCustomer() {
+        if (validateCustomer() ){
+            val cal = Calendar.getInstance()
             val customer = CustomerEntity()
-
             customer.apply {
-                id = selectedCustomer!!.id
                 firstName = cFirstnameTf.textTrim()
                 lastName = cLastNameTf.textTrim()
                 genre = cGenderCb.selectionModel.selectedItem
                 birthDay = cBirthdayDp.value.toCalendar()
-                code = cpCodeTf.textTrim()
                 telephone = cTelTf.textTrim()
                 email = cEmailTf.textTrim()
                 direction = cDirectionTtf.textTrim()
                 passport = cPassportTf.textTrim()
-                point= selectedCustomer!!.point
-                CustomerDao.update(this)
+                code =  "${cal.get(Calendar.MONTH)+1}${cal.get(Calendar.YEAR)}${cTelTf.textTrim()}"
+                point = 0
+
             }
+            CustomerDao.save(customer)
+                .subscribe({ clear( customerMainPane ) },{th-> println(th.message) })
+        }
 
 
+    }
 
-           println("li update ? "+ CustomerDao.update( customer ))
-            cTableview.selectionModel.clearSelection()
+    private fun validateCustomer(): Boolean {
+        if(cFirstnameTf.textTrim().isBlank() || cLastNameTf.textTrim().isBlank() ||
+        cTelTf.textTrim().isBlank() || cEmailTf.textTrim().isBlank() ||
+            cDirectionTtf.textTrim().isBlank() || cPassportTf.textTrim().isBlank()  ){
+            ViewUtil.customAlert("Error on fields","please make sure you fill out all the text fields.").show()
+            return false
+        }
+
+        if( cGenderCb.selectionModel.selectedItem == null ){
+            ViewUtil.createAlert(Alert.AlertType.WARNING,"Error on Gender","Please select a gender").show()
+            return false
+        }
+        if(  cBirthdayDp.value==null){
+            ViewUtil.createAlert(Alert.AlertType.WARNING,"Error on birthday","Please select a birthday").show()
+            return false
+        }
+
+
+        return true
+    }
+
+    @FXML
+    fun onUpdateCustomer() {
+        if (selectedCustomer!=null){
+            if ( validateCustomer() ){
+                selectedCustomer?.let {
+
+                    val customer = CustomerEntity()
+
+                    customer.apply {
+                        id = selectedCustomer!!.id
+                        firstName = cFirstnameTf.textTrim()
+                        lastName = cLastNameTf.textTrim()
+                        genre = cGenderCb.selectionModel.selectedItem
+                        birthDay = cBirthdayDp.value.toCalendar()
+                        code = cpCodeTf.textTrim()
+                        telephone = cTelTf.textTrim()
+                        email = cEmailTf.textTrim()
+                        direction = cDirectionTtf.textTrim()
+                        passport = cPassportTf.textTrim()
+                        point= selectedCustomer!!.point
+
+                    }
+                    CustomerDao.update(customer)
+                        .subscribe({ clear() },{th-> println(th.message) })
+
+
+                }
+            }
+        }else{
+            ViewUtil.createAlert(Alert.AlertType.WARNING,"No data","Please select a customer first.").showAndWait()
+
         }
     }
 
     @FXML
-    fun rOnClear(event: ActionEvent) {
-
+    fun rOnClear() {
+        clear()
     }
 
     @FXML
-    fun rOnSave(event: ActionEvent) {
+    fun rOnSave() {
         val itemSelected = rTableview.selectionModel.selectedItems
 
         if (itemSelected.isNotEmpty()){
@@ -301,7 +371,7 @@ class CustomerService:Initializable,BaseController() {
     }
 
     @FXML
-    fun rOnSearch(event: ActionEvent) {
+    fun rOnSearch() {
          productsReturned =InvoiceDao.findByInvoiceCode(rInvoiceTf.textTrim())
 
         if (productsReturned.isNotEmpty()){
@@ -323,5 +393,22 @@ class CustomerService:Initializable,BaseController() {
 
     override fun onDestroy() {
 
+    }
+
+    fun clear(){
+        when( tabPane.selectionModel.selectedItem ){
+            customerTab -> {
+                clear( customerMainPane )
+                selectedCustomer?.id=null
+                selectedCustomer = null
+            }
+            changePointTab -> clear( changePointMainPane )
+            returnProductTab -> clear( returnProductMainPane )
+            else -> throw Exception("bad pane")
+        }
+    }
+
+    fun cpOnClear() {
+        clear()
     }
 }

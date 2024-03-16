@@ -2,7 +2,7 @@ package com.sonderben.trust.db
 
 
 
-object SqlCreateTables {
+object SqlDdl {
     const val enterprise = "enterprise"
     const val categories = "Categories"
     const val screen = "Screens"
@@ -133,8 +133,8 @@ object SqlCreateTables {
         itbis float not null,
         sellby varchar(12) check( sellby IN ( 'unit', 'weight' ) ),
         purchasePrice float not null,
-        quantity integer not null default 0 check( quantity>-1 ),
-        quantityRemaining integer not null default 0 check( quantityRemaining >-1 and quantityRemaining <= quantity ),
+        quantity float not null default 0 check( quantity>=0 ),
+        quantityRemaining float not null default 0 check( quantityRemaining >-1 and quantityRemaining <= quantity ),
         sellingPrice float not null,
         id_category bigint ,
         dateAdded timestamp,
@@ -172,6 +172,7 @@ object SqlCreateTables {
         category varchar,
         price float,
         expirationDate timestamp,
+        sellby varchar(12) ,
         quantity float,
         discount float,
         itbis float,

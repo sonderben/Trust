@@ -4,26 +4,28 @@ package com.sonderben.trust.db.dao
 import Database
 import Database.DATABASE_NAME
 import com.sonderben.trust.Util
-import com.sonderben.trust.db.SqlCreateTables
+import com.sonderben.trust.db.SqlDdl
+import com.sonderben.trust.db.SqlDml.SELECT_ALL_ENTERPRISE
 import com.sonderben.trust.model.Role
 import entity.EmployeeEntity
 import entity.EnterpriseEntity
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.collections.FXCollections
+import javafx.collections.ObservableList
 import java.sql.Timestamp
 
 object EnterpriseDao:CrudDao<EnterpriseEntity> {
-    val enterprises = FXCollections.observableArrayList<EnterpriseEntity>()
-    //var DATABASE_NAME = ""
-
+    val enterprises: ObservableList<EnterpriseEntity> = FXCollections.observableArrayList()
 
     init {
        try {
            findAll()
-       }catch (e:Exception){}
+
+       }catch (_:Exception){}
     }
     override fun save(entity: EnterpriseEntity): Completable {
         Database.connect(DATABASE_NAME).autoCommit = false
@@ -34,17 +36,17 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
                 throw Exception("Role can not be null")
             }
             val insertEmployee = buildString {
-                append("Insert into ${SqlCreateTables.employees} ")//passport
+                append("Insert into ${SqlDdl.employees} ")//passport
                 append("(bankAccount,direction,email,firstName,genre,lastName,passport,password,telephone,userName,birthDay,id_role) ")
                 append("values (?,?,?,?,?,?,?,?,?,?,?,?) ")
             }
             val insertIntoSchedule = buildString {
-                append("INSERT INTO ${SqlCreateTables.schedules }")
+                append("INSERT INTO ${SqlDdl.schedules }")
                 append(" (workDay,start_hour,end_hour,id_employee) ")
                 append(" values( ?,?,?,?);")
             }
             val insertEnterprise = buildString {
-                append("Insert into ${SqlCreateTables.enterprise} ")
+                append("Insert into ${SqlDdl.enterprise} ")
                 append("(name,direction,telephone,foundation,website,category,invoiceTemplate,invoiceTemplateHtml,id_employee) ")
                 append("values (?,?,?,?,?,?,?,?,?) ")
             }
@@ -82,7 +84,7 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
                                 if (rowCount2<0){
                                     connection.rollback()
                                     connection.autoCommit = true
-                                    emitter.onError( Throwable("unable to add  table: (${SqlCreateTables.schedules})") )
+                                    emitter.onError( Throwable("unable to add  table: (${SqlDdl.schedules})") )
 
                                 }else{
                                     schedule.id = Database.getLastId()
@@ -116,7 +118,7 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
                         }else{
                             connection.rollback()
                             connection.autoCommit = false
-                            emitter.onError( Throwable( "unable to add  table: (${SqlCreateTables.schedules})" ) )
+                            emitter.onError( Throwable( "unable to add  table: (${SqlDdl.schedules})" ) )
                         }
                     }
 
@@ -145,12 +147,12 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
     private fun saveRole(role:Role):Long{
           val insertRole = buildString {
             append("INSERT INTO ")
-            append(SqlCreateTables.roles)
+            append(SqlDdl.roles)
             append(" (name) values (?)")
     }
           val insertScreen = buildString {
             append(" INSERT INTO ")
-            append(SqlCreateTables.screen)
+            append(SqlDdl.screen)
             append(" (screenEnum,actions,id_role) values (?,?,?)")
         }
         val con = Database.connect(DATABASE_NAME)
@@ -182,70 +184,56 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
         return roleId
     }
 
-    override fun findAll(): Boolean {
-        val selectAll = """
-            SELECT enterprise.name as ne,enterprise.direction as ed,enterprise.telephone as et,enterprise.foundation as ef ,enterprise.website as ew,
-            enterprise.category as ec ,enterprise.invoiceTemplate as ei,enterprise.invoiceTemplateHtml as ein,
-            Employee.birthDay as empb,Employee.bankAccount as empbank,Employee.direction as empd,Employee.email as empe,Employee.firstName as empf,Employee.lastName as empl,
-            Employee.genre as empg,Employee.passport as empp,Employee.password as emppwd,Employee.telephone as emptel,Employee.userName as empu,
-            Roles.name as rm,Roles.id as ri
-            from enterprise
-            INNER JOIN Employee on enterprise.id_employee == Employee.id
-            INNER join Roles on Roles.id = Employee.id_role
-        """.trimIndent()
-        Database.connect(DATABASE_NAME).use { connection ->
-            connection.createStatement().use { statement ->
-               val result = statement.executeQuery(selectAll)
+    override fun findAll() {
+        Single.create { emitter ->
+            Database.connect(DATABASE_NAME).use { connection->
+                connection.createStatement().use { statement ->
 
+                    statement.executeQuery( SELECT_ALL_ENTERPRISE ).use { resultSet ->
+                        while (resultSet.next()){
+                            val role = Role()
+                            role.id = resultSet.getLong("ri")
+                            role.name = resultSet.getString("rm")
 
-                 Database.connect(DATABASE_NAME).use { connection->
-                     connection.createStatement().use { statement ->
+                            val emp = EmployeeEntity(
+                                resultSet.getString("empf"),
+                                resultSet.getString("empp"),
+                                resultSet.getString("empl"),
+                                resultSet.getString("empg"),
+                                resultSet.getString("empd"),
+                                resultSet.getString("empe"),
+                                resultSet.getString("emptel"),
+                                Util.timeStampToCalendar( resultSet.getTimestamp("empb")),
+                                resultSet.getString("empbank"),
+                                resultSet.getString("empu"),
+                                resultSet.getString("emppwd"),
+                                role,
+                                listOf()
+                            )
+                            enterprises.add(
+                                EnterpriseEntity(
+                                    resultSet.getString("ne"),
+                                    resultSet.getString("ed"),
+                                    resultSet.getString("et"),
+                                    Util.timeStampToCalendar( resultSet.getTimestamp("ef") ),
+                                    resultSet.getString("ew"),
+                                    resultSet.getString("ec"),
+                                    emp,
+                                    resultSet.getString("ei"),
+                                    resultSet.getString("ein"),
+                                )
+                            )
+                            println( "hey: ${enterprises[0].name}." )
+                            emitter.onSuccess(enterprises)
+                        }
+                    }
 
-                         statement.executeQuery(selectAll).use { resultSet ->
-
-                             if (resultSet.next()){
-                                 val role = Role()
-                                 role.id = resultSet.getLong("ri")
-                                 role.name = resultSet.getString("rm")
-
-                                 val emp = EmployeeEntity(
-                                     resultSet.getString("empf"),
-                                     resultSet.getString("empp"),
-                                     resultSet.getString("empl"),
-                                     resultSet.getString("empg"),
-                                     resultSet.getString("empd"),
-                                     resultSet.getString("empe"),
-                                     resultSet.getString("emptel"),
-                                     Util.timeStampToCalendar( resultSet.getTimestamp("empb")),
-                                     resultSet.getString("empbank"),
-                                     resultSet.getString("empu"),
-                                     resultSet.getString("emppwd"),
-                                     role,
-                                     listOf()
-                                 )
-                                 enterprises.add(
-                                     EnterpriseEntity(
-                                         result.getString("ne"),
-                                         result.getString("ed"),
-                                         result.getString("et"),
-                                         Util.timeStampToCalendar( result.getTimestamp("ef") ),
-                                         result.getString("ew"),
-                                         result.getString("ec"),
-                                         emp,
-                                         result.getString("ei"),
-                                         result.getString("ein"),
-                                     )
-                                 )
-                                 //println("enterprise: "+enterprises)
-                             }
-                         }
-
-                     }
-                 }
-
+                }
             }
         }
-        return true
+            .subscribeOn(Schedulers.io())
+            .observeOn( JavaFxScheduler.platform() )
+            .subscribe ()
     }
 
     override fun update(entity: EnterpriseEntity): Completable {

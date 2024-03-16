@@ -2,6 +2,7 @@ package com.sonderben.trust.controller.queries
 
 import com.sonderben.trust.Util
 import com.sonderben.trust.controller.BaseController
+import com.sonderben.trust.controller.ProductDetails
 import com.sonderben.trust.db.dao.ProductDao
 import com.sonderben.trust.format
 import entity.ProductEntity
@@ -23,7 +24,7 @@ class ProductExpired:Initializable, BaseController() {
         qtyRemainingCol.setCellValueFactory { data-> SimpleStringProperty(data.value.quantityRemaining.toString()) }
         expirationCol.setCellValueFactory { data -> SimpleStringProperty( data.value.expirationDate.format()) }
 
-        tableView.items.addAll( ProductDao.findProductsExpired() )
+        tableView.items.addAll( ProductDetails.findProductsExpired() )
 
 
     }

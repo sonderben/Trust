@@ -2,6 +2,7 @@
 
 <?import java.lang.String?>
 <?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.DialogPane?>
@@ -17,7 +18,7 @@
 
 <DialogPane prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <content>
-      <VBox prefHeight="200.0" prefWidth="100.0">
+      <VBox prefHeight="200.0" prefWidth="100.0" styleClass="main-bg" stylesheets="@../css/general.css">
          <children>
             <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0">
               <columns>
@@ -71,12 +72,15 @@
                   </VBox>
                </children>
             </GridPane>
-            <HBox alignment="TOP_RIGHT">
+            <HBox alignment="TOP_RIGHT" spacing="10.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#onSave" text="Save" />
+                  <Button mnemonicParsing="false" onAction="#onSave" text="Add" />
                   <Button mnemonicParsing="false" onAction="#onUpdate" text="Update" />
                   <Button mnemonicParsing="false" onAction="#onDelete" text="Delete" />
                </children>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
             </HBox>
          </children>
       </VBox>

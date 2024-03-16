@@ -151,7 +151,7 @@ public class EnterpriseEntity extends BaseEntity{
         calendar.set(Calendar.YEAR,2006);
 
             return   new EmployeeEntity("","","",null,"","","", calendar,"","root","",
-                role, List.of( new ScheduleEntity(null,1,11.30f,1f) ));
+                role, List.of( new ScheduleEntity(1L,null,1,11.30f,1f) ));
     }
 
 

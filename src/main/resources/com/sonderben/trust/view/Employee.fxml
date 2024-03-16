@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.EmployeeController">
+<VBox fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.EmployeeController">
    <children>
       <TableView fx:id="userTableView" editable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="50.0" VBox.vgrow="SOMETIMES">
          <columns>
@@ -112,10 +112,10 @@
             </GridPane>
             <HBox alignment="CENTER_RIGHT" minHeight="40.0" spacing="10.0" VBox.vgrow="NEVER">
                <children>
-                  <Button layoutX="313.0" layoutY="20.0" mnemonicParsing="false" text="%print_credential" />
-                  <Button fx:id="updateButton" mnemonicParsing="false" onAction="#onUpdateButton" text="%update" />
-                  <Button fx:id="deleteButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteButton" text="%delete" />
-                  <Button fx:id="saveButton" layoutX="65.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveButton" text="%save" />
+                  <Button fx:id="saveBtn" layoutX="65.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveButton" text="%save" />
+                  <Button fx:id="updateBtn" disable="true" mnemonicParsing="false" onAction="#onUpdateButton" text="%update" />
+                  <Button fx:id="deleteBtn" disable="true" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteButton" text="%delete" />
+                  <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#clearButton" text="Clear" />
                </children>
                <padding>
                   <Insets bottom="10.0" right="10.0" />

@@ -26,18 +26,16 @@ object TPrinter {
 
         println("Height: $height")
 
-        val scale = 0.791
+        //val scale = 0.791
 
         //node.transforms.add(Scale(scale, scale))
 
-        if (printerJob != null) {
-            val success = printerJob.printPage(pageLayout, node)
-            if (success) {
-                printerJob.endJob()
+        val success = printerJob.printPage(pageLayout, node)
+        if (success) {
+            printerJob.endJob()
 
-                // System.exit(0);
-            }
-            println("end")
+            // System.exit(0);
         }
+        println("end")
     }
 }

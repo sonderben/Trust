@@ -10,7 +10,7 @@ import com.sonderben.trust.model.Screen
 import entity.CategoryEntity
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.ObservableList
-import javafx.event.ActionEvent
+
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
@@ -76,28 +76,30 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
     private lateinit var tableView: TableView<CategoryEntity>
 
     @FXML
-    fun deleteBtn(event: ActionEvent) {
+    fun deleteBtn() {
         if (categorySelected != null && categorySelected!!.id != null){
-           val isDelete = CategoryDao.delete( categorySelected!!.id )
-            if (isDelete){
-                //categories.remove( categorySelected )
-                clearTextField()
-            }
+            CategoryDao.delete( categorySelected!!.id )
+                .subscribe({
+                    clearTextField()
+                },{th-> println(th.message) })
+
         }
     }
 
     @FXML
-    fun saveBtn(event: ActionEvent) {
+    fun saveBtn() {
 
         CategoryDao.save(
             CategoryEntity(codeTf.text,descriptionTf.text,discountTf.text.toDouble())
-        )
+        ).subscribe({
+                    clearTextField()
+        },{th-> println(th.message) })
 
         clearTextField()
     }
 
     @FXML
-    fun updateBtn(event: ActionEvent) {
+    fun updateBtn() {
         val index = categories.indexOf( categorySelected )
         if (index>=0){
             /*val cat = mCategoryDto.update( CategoryEntity(codeTf.text,descriptionTf.text,discountTf.text.toDouble()) )
@@ -112,7 +114,7 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
 
         tableView.items = categories
 
-        tableView.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+        tableView.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
             if (newValue != null) {
                 categorySelected = newValue
                 codeTf.text = newValue.code

@@ -3,18 +3,20 @@ package com.sonderben.trust.controller
 import com.sonderben.trust.*
 import com.sonderben.trust.db.dao.EmployeeDao
 import com.sonderben.trust.db.dao.RoleDao
+import com.sonderben.trust.db.dao.ScheduleDao
 import com.sonderben.trust.model.Role
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.EmployeeEntity
 import entity.ScheduleEntity
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
-import javafx.event.ActionEvent
+import javafx.collections.ListChangeListener
+
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.control.*
-import javafx.scene.input.MouseEvent
+
 import javafx.scene.layout.VBox
 import javafx.util.Callback
 import javafx.util.StringConverter
@@ -23,11 +25,24 @@ import java.util.*
 
 
 class EmployeeController:Initializable, BaseController() {
+    @FXML
+    lateinit var mainPane: VBox
     var days = arrayListOf<String>("Lunes","Martes","Miercroles","Jueves","Viernes","Sabado","Domingo")
-    var scheduleEntity: Optional<List<ScheduleEntity>>?  = null
+    //var scheduleEntity: Optional<List<ScheduleEntity>>?  = null
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         editMenuItem()
+
+
+        userTableView.selectionModel.selectedIndices.addListener( ListChangeListener { change->
+            if ( change.list.isEmpty() ){
+                enableActionButton(mainPane,true)
+            }
+            else{
+                enableActionButton(mainPane,false)
+            }
+        } )
+
         MainController.hideBottomBar(false) {
             hideBottomPanelOnMouseClicked()
         }
@@ -184,7 +199,7 @@ class EmployeeController:Initializable, BaseController() {
         if ( employeeToSave!=null && employeeToSave!!.id != null){
             EmployeeDao.delete( employeeToSave!!.id ).subscribe(
                 {
-                clear()
+                clear( mainPane )
                 userTableView.selectionModel.select(null)
             },{th-> println(th.message) })
 
@@ -194,12 +209,7 @@ class EmployeeController:Initializable, BaseController() {
 
     @FXML
     fun onSaveButton() {
-        employeeToSave = EmployeeEntity()
-
-        if (scheduleEntity != null) {
-            employeeToSave!!.schedules = scheduleEntity!!.get()
-        }
-
+        //employeeToSave = EmployeeEntity()
 
          if(validateEmployee()){
              employeeToSave!!.apply {
@@ -218,7 +228,7 @@ class EmployeeController:Initializable, BaseController() {
                  /*mutableListOf()*/
              }
              EmployeeDao.save(employeeToSave!!).subscribe({
-                 clear()
+                 clear(mainPane)
                  userTableView.selectionModel.select(null)
              },{th-> println(th.message) })
          }
@@ -229,7 +239,7 @@ class EmployeeController:Initializable, BaseController() {
     private fun validateEmployee(): Boolean {
          try {
 
-             if (scheduleEntity==null || scheduleEntity!!.get().isEmpty()){
+             if (employeeToSave==null || employeeToSave!!.schedules.isEmpty()){
                  ViewUtil.createAlert(Alert.AlertType.WARNING,"Schedulers is obligatory","Please add Scheduler").showAndWait()
                  return false
              }
@@ -266,11 +276,11 @@ class EmployeeController:Initializable, BaseController() {
 
 
       if (employeeToSave != null){
-
-
-
           if ( validateEmployee() ){
-              employeeToSave!!.schedules = scheduleEntity!!.get()
+              if ( employeeToSave!!.schedules==null || employeeToSave!!.schedules.isEmpty() ){
+                  ViewUtil.createAlert(Alert.AlertType.WARNING,"Schedulers is obligatory","Please add Scheduler").showAndWait()
+                  return
+              }
               employeeToSave!!.apply {
                   firstName = firstNameTextField.text
                   passport = passportTextField.text
@@ -288,12 +298,12 @@ class EmployeeController:Initializable, BaseController() {
 
               EmployeeDao.update( employeeToSave!! )
                   .subscribe({
-                      clear()
+                      clear(mainPane)
                       userTableView.selectionModel.select(null)
                   },{th-> println(th.message) })
           }
       }else{
-
+          ViewUtil.createAlert(Alert.AlertType.WARNING,"No data","Please select a employee first.").showAndWait()
       }
 
     }
@@ -301,28 +311,17 @@ class EmployeeController:Initializable, BaseController() {
     private lateinit var bottomPanelVBOx:VBox
     @FXML
     fun scheduleOnMOuseClick() {
-        scheduleEntity = if (employeeToSave != null)
-            SchedulerController( employeeToSave!!.schedules?: mutableListOf() ).showAndWait()
-        else
-            SchedulerController( mutableListOf()).showAndWait()
+        if (employeeToSave==null){
+            employeeToSave = EmployeeEntity()
+        }
+        val scheduleEntity =
+            SchedulerController( employeeToSave!!.schedules ).showAndWait()
+        employeeToSave!!.schedules = scheduleEntity.get()
 
-        //employeeToSave.schedules = scheduleEntity.get()
-        scheduleTextField.text = scheduleEntity!!.get().joinToString(separator = ", "){ schedule->days[schedule.workDay].substring(0,2) }
+        scheduleTextField.text = scheduleEntity.get().joinToString(separator = ", "){ schedule->days[schedule.workDay].substring(0,2) }
     }
 
-    private fun clear(){
-        firstNameTextField.text = ""
-        lastNameTextField.text = ""
-        passportTextField.text = ""
-        directionField.text = ""
-        emailTextField.text = ""
-        telephoneTextField.text = ""
-        accountNumberTextField.text = ""
-        userNameTextField.text = ""
-        passwordField.text = ""
-        employeeToSave = null
-        userTableView.selectionModel.select( null )
-    }
+
 
     fun hideBottomPanelOnMouseClicked() {
         bottomPanelVBOx.hide()
@@ -339,8 +338,8 @@ class EmployeeController:Initializable, BaseController() {
 
     }
 
-    class SchedulerController(schedulers:List<ScheduleEntity>): Dialog<List<ScheduleEntity>>() {
-        var scheduleLoader = FXMLLoader(HelloApplication.javaClass.getResource("view/scheduler.fxml"))
+    class SchedulerController(var schedulers:List<ScheduleEntity>): Dialog<List<ScheduleEntity>>() {
+        private var scheduleLoader = FXMLLoader(HelloApplication.Companion::class.java.getResource("view/scheduler.fxml"))
         init {
             this.initOwner(HelloApplication.primary)
             scheduleLoader.setController(this)
@@ -385,23 +384,70 @@ class EmployeeController:Initializable, BaseController() {
 
 
         @FXML
-        fun onDelete(event: ActionEvent) {
+        fun onDelete() {
+            val selectedScheduler = tableView.selectionModel.selectedItem
+            if (selectedScheduler.id != null){
+                ScheduleDao.delete( selectedScheduler.id )
+                    .subscribe({
+                        tableView.items.remove( selectedScheduler )
+                        clear(  )
+                    },{th-> println(th.message) })
+            }else{
+                tableView.items.remove( selectedScheduler )
+            }
+
         }
 
         @FXML
-        fun onSave(event: ActionEvent) {
+        fun onSave() {
             val schedule = ScheduleEntity(
+                Context.currentEmployee.get().id,
                 null,
                 dayChoicebox.items.indexOf(dayChoicebox.value),
                 startHourTf.text.toFloat(),endHourTf.text.toFloat()
             )
+            if ( tableView.items.isNotEmpty() && tableView.items.filter { it.idEmployee!=null }.isNotEmpty() ){
+                ScheduleDao.save(
+                    ScheduleEntity(
+                        Context.currentEmployee.get().id,
+                        null,
+                        dayChoicebox.items.indexOf(dayChoicebox.value),
+                        startHourTf.text.toFloat(),endHourTf.text.toFloat()
+                    )
+                ).subscribe({ clear() },{th-> println(th.message) })
+            }
+
+
             tableView.items.add( schedule )
 
 
         }
 
+        private fun clear(){
+            dayChoicebox.selectionModel.clearSelection()
+            startHourTf.text = ""
+            endHourTf.text = ""
+            tableView.selectionModel.clearSelection()
+        }
         @FXML
-        fun onUpdate(event: ActionEvent) {
+        fun onUpdate() {
+            val selectedScheduler = tableView.selectionModel.selectedItem
+            if (selectedScheduler != null){
+                if (selectedScheduler.id != null){
+                    ScheduleDao.update(selectedScheduler)
+                        .subscribe({
+                            clear()
+                            tableView.items[ tableView.items.indexOf( selectedScheduler ) ] =
+                                ScheduleEntity(
+                                    selectedScheduler.idEmployee,selectedScheduler.id,dayChoicebox.items.indexOf(dayChoicebox.value),
+                                    startHourTf.text.toFloat(),endHourTf.text.toFloat()
+                                )
+
+                        },{th-> println(th.message) })
+                }
+            }else{
+                //select first
+            }
         }
 
     }
@@ -411,7 +457,7 @@ class EmployeeController:Initializable, BaseController() {
     }
 
     private fun editMenuItem() {
-        MainController.editMenu.items.clear()
+        MainController.editMenu?.items?.clear()
 
 
         val saveMenuItem =  MenuItem("Save")
@@ -429,11 +475,16 @@ class EmployeeController:Initializable, BaseController() {
         }
         val clearMenuItems =  MenuItem("Clear")
         clearMenuItems.setOnAction {
-
+            clear(mainPane)
         }
 
 
-        MainController.editMenu.items.addAll(  saveMenuItem,updateMenuItems,deleteMenuItems  )
+        MainController.editMenu?.items?.addAll(  saveMenuItem,updateMenuItems,deleteMenuItems  )
 
+    }
+
+    @FXML
+    fun clearButton() {
+        clear(mainPane)
     }
 }

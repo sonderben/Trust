@@ -102,7 +102,7 @@
                               <Insets bottom="5.0" />
                            </VBox.margin>
                         </HBox>
-                        <HBox fx:id="configuration" spacing="5.0" styleClass="lateral-button">
+                        <HBox fx:id="enterprise" spacing="5.0" styleClass="lateral-button">
                            <children>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -174,7 +174,7 @@
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="L" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator></MenuItem>
-                        <MenuItem fx:id="bottombar" mnemonicParsing="false" text="Bottom bar">
+                        <MenuItem fx:id="bottomBar" mnemonicParsing="false" text="Bottom bar">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="B" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator></MenuItem>

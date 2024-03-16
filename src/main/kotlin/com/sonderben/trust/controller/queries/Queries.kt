@@ -17,8 +17,8 @@ import java.util.*
 
 class Queries :Initializable, BaseController(),EventHandler<MouseEvent> {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        MainController.next.onMouseClicked = this
-        MainController.forward.onMouseClicked = this
+        MainController.next!!.onMouseClicked   = this
+        MainController.forward!!.onMouseClicked   = this
 
 
         vboxContainer.children.forEach { node ->
@@ -79,18 +79,18 @@ class Queries :Initializable, BaseController(),EventHandler<MouseEvent> {
                        pageBefore = SingletonView.get(path)
 
                        mainLayoutStackPane.children.add( pageBefore )
-                       MainController.forward.opacity =1.0
+                       MainController.forward!!.opacity =1.0
                    }
                 }else if ( (event.source as Node).id.equals("forwardPage") ){
 
                     mainLayoutStackPane.children.remove(pageBefore)
-                    MainController.forward.opacity = 0.26
-                    MainController.next.opacity = 1.0
+                    MainController.forward!!.opacity = 0.26
+                    MainController.next!!.opacity = 1.0
                 }else if ( (event.source as  Node).id.equals("nextPage") ){
 
                     mainLayoutStackPane.children.add(pageBefore)
-                    MainController.forward.opacity = 1.00
-                    MainController.next.opacity = 0.26
+                    MainController.forward!!.opacity = 1.00
+                    MainController.next!!.opacity = 0.26
                 }
 
             }

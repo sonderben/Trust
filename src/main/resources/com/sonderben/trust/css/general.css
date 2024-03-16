@@ -134,3 +134,10 @@
 .calendar-grid{
 -fx-background-color:#3498db;
 }
+
+.check-box .mark{
+    -fx-background-color:#3498db;
+}
+.radio-button:selected .radio .dot{
+    -fx-background-color:#3498db;
+}

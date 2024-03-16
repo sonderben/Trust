@@ -52,7 +52,7 @@ class SocketMessageEvent(private var messageListener:MessageListener) {
     fun removeListener(){
        if (serverSocket!=null){
            condition = false
-           serverSocket!!.close()
+           serverSocket.close()
            println("socketMessage close")
        }
     }

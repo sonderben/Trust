@@ -2,7 +2,13 @@ package com.sonderben.trust.db.dao
 
 import Database
 import Database.DATABASE_NAME
-import com.sonderben.trust.db.SqlCreateTables
+import com.sonderben.trust.controller.ProductDetails
+import com.sonderben.trust.db.SqlDdl
+import com.sonderben.trust.db.SqlDml.FIND_BY_INVOICE_CODE
+import com.sonderben.trust.db.SqlDml.INSERT_PRODUCT_RETURN
+import com.sonderben.trust.db.SqlDml.PRODUCT_SOLD_BY_CODE
+import com.sonderben.trust.db.SqlDml.SELECT_PRODUCT_RETURNED
+import com.sonderben.trust.db.SqlDml.UPDATE_STATUS_PRODUCT_IS_RETURNED
 import com.sonderben.trust.toCalendar
 import com.sonderben.trust.toTimestamp
 import entity.InvoiceEntity
@@ -11,7 +17,6 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
-import javafx.collections.FXCollections
 import java.sql.SQLException
 import java.sql.Timestamp
 import java.util.Calendar
@@ -24,17 +29,17 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
 
     override fun save(entity: InvoiceEntity): Completable {
         return Completable.create { emitter->
-            val insertInvoice = "insert into ${SqlCreateTables.invoices} (dateCreated, codeBar, id_employee, id_customer) values (?,?,?,?)"
+            val insertInvoice = "insert into ${SqlDdl.invoices} (dateCreated, codeBar, id_employee, id_customer) values (?,?,?,?)"
 
-            val insertProductSealed = "Insert into ${SqlCreateTables.productSealed}" +
-                    " (code,description,price,quantity,discount,itbis,total,wasDiscountCategory,category,expirationDate)  values(?,?,?,?,?,?,?,?,?,?);"
+            val insertProductSealed = "Insert into ${SqlDdl.productSealed}" +
+                    " (code,description,price,quantity,discount,itbis,total,wasDiscountCategory,category,expirationDate,sellby)  values(?,?,?,?,?,?,?,?,?,?,?);"
 
-            val insertInvoiceProductSealed = "Insert into  ${SqlCreateTables.invoiceProductSealed} (id_invoice,id_product_sealed) values(?,?);"
+            val insertInvoiceProductSealed = "Insert into  ${SqlDdl.invoiceProductSealed} (id_invoice,id_product_sealed) values(?,?);"
 
 
             Database.connect(DATABASE_NAME).use { connection ->
                 connection.autoCommit = false
-                var idInvoice = 0L
+                var idInvoice: Long
                 connection.prepareStatement(insertInvoice).use { statement ->
                     statement.setTimestamp(1,Timestamp(entity.date.timeInMillis))
                     statement.setString(2,entity.codeBar)
@@ -67,9 +72,11 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
                             preparedStatement.setBoolean(8,productSale.isWasDiscountCategory)
                             preparedStatement.setString(9,productSale.category)
                             preparedStatement.setTimestamp(10,productSale.expirationDate.toTimestamp())
+                            preparedStatement.setString(11,productSale.sellBy)
+
                             val rc = preparedStatement.executeUpdate()
                             if (rc>0){
-                                val r = ProductDao.updateQuantityRemaining(productSale.code,productSale.qty)
+                                val r = ProductDetails.updateQuantityRemaining(productSale.code,productSale.qty)
 
                                 if (r<=0){
                                     connection.rollback()
@@ -131,8 +138,8 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
         return Maybe.create {  }
     }
 
-    override fun findAll(): Boolean {
-        return false
+    override fun findAll() {
+
     }
 
     override fun update(entity: InvoiceEntity): Completable {
@@ -143,25 +150,10 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
 
     fun productSealed():List<ProductSealed>{
         val productsSealed = mutableListOf<ProductSealed>()
-        val ps = """
-            SELECT ps.code,
-            ps.description,
-            SUM(ps.price * ps.quantity) as total_price,
-            SUM(ps.quantity) as total_quantity,
-            ps.category,
-            ip.id_invoice,
-            iv.dateCreated
-            FROM ${SqlCreateTables.productSealed} as ps
-            INNER JOIN ${SqlCreateTables.invoiceProductSealed}  as ip ON ip.id_product_sealed = ps.id
-            INNER JOIN ${SqlCreateTables.invoices} as iv ON iv.id = ip.id_invoice
-            INNER JOIN ${SqlCreateTables.employees} as emp ON emp.id = iv.id_employee
-            /*WHERE Date(iv.dateCreated/1000,'unixepoch') = date('now')*/
-            GROUP BY ps.code;
 
-        """.trimIndent()
        Database.connect(DATABASE_NAME).use { connection ->
            connection.createStatement().use { statement ->
-               statement.executeQuery(ps).use { resultSet ->
+               statement.executeQuery(PRODUCT_SOLD_BY_CODE).use { resultSet ->
                    while (resultSet.next()){
 
 
@@ -184,25 +176,9 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
 
     fun findByInvoiceCode(invoiceCode: String):List<ProductToReturned> {
         val list = mutableListOf<ProductToReturned>()
-        val select = """
-            SELECT ps.code,
-            ps.description,
-			ps.price,ps.quantity,
-			(ps.price * ps.quantity) as total_price,
-            ps.category,
-            iv.dateCreated,
-			ps.id as productSoldId,
-			iv.id as invoicesId,
-            ps.isReturned
-			
-            FROM productSealed as ps
-            INNER JOIN invoiceProductSealed as ip ON ip.id_product_sealed = ps.id
-            INNER JOIN invoices as iv ON iv.id = ip.id_invoice
-			
-			WHERE  iv.codeBar = ?
-        """.trimIndent()
+
         Database.connect("").use { connection ->
-            connection.prepareStatement(select).use { preparedStatement ->
+            connection.prepareStatement( FIND_BY_INVOICE_CODE ).use { preparedStatement ->
                 preparedStatement.setString(1,invoiceCode)
                 preparedStatement.executeQuery().use { resultSet ->
                     while(resultSet.next()){
@@ -228,10 +204,9 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
 
     fun saveProductReturned(idInvoice:Long, idProductSealed:List<Long>, idEmployee:Long, reason:String, action:String):Boolean{
 
-        val insert = "insert into ${SqlCreateTables.productReturned} (id_invoice,id_employee,reason,action) values(?,?,?,?)"
         Database.connect("").use { connection ->
             connection.autoCommit = false
-            connection.prepareStatement(insert).use { preparedStatement ->
+            connection.prepareStatement( INSERT_PRODUCT_RETURN ).use { preparedStatement ->
                 preparedStatement.setLong(1,idInvoice)
                 preparedStatement.setLong(2,idEmployee)
                 preparedStatement.setString(3,reason)
@@ -252,20 +227,10 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
         }
     }
     fun getProductReturned():List<ProductReturned>{
-        val select = """
-            SELECT iv.codeBar as invoice_codebar, iv.dateCreated as dateBought,pr.dateCreate as dateReturned,pr.reason,pr.action,emp.firstName || ' ' || emp.lastName as employee,
-            customers.code as customerCode,ps.code as productCode,ps.description,ps.quantity,ps.total/*,ps.expirationDate*/
-            from productReturned as pr
-            INNER JOIN Employee as emp on pr.id_employee = emp.id
-            INNER join invoices as iv on pr.id_invoice
-            INNER join invoiceProductSealed as ips on ips.id_invoice = iv.id
-            inner JOIN  productSealed as ps on ps.id = ips.id_product_sealed
-            INNER join  customers on iv.id_customer = customers.id
-            where ps.isReturned = true
-        """.trimIndent()
+
         val productsReturned = mutableListOf<ProductReturned>()
         Database.connect("").use { connection ->
-            connection.prepareStatement(select).use { preparedStatement ->
+            connection.prepareStatement( SELECT_PRODUCT_RETURNED ).use { preparedStatement ->
                 preparedStatement.executeQuery().use { resultSet ->
                     while (resultSet.next()){
                         val pr = ProductReturned(
@@ -291,13 +256,13 @@ object InvoiceDao:CrudDao<InvoiceEntity> {
     }
 
     private fun productSoldReturned(id: Long) {
-        val updateIsReturned = "update ${SqlCreateTables.productSealed} set isReturned = 1 where id = ?"
 
-        Database.connect("").prepareStatement(updateIsReturned).use { preparedStatement ->
+
+        Database.connect("").prepareStatement( UPDATE_STATUS_PRODUCT_IS_RETURNED ).use { preparedStatement ->
             preparedStatement.setLong(1,id)
            val rowCount =  preparedStatement.executeUpdate()
             if (rowCount<=0)
-                throw SQLException("can not set isReturned in ${SqlCreateTables.productSealed} table")
+                throw SQLException("can not set isReturned in ${SqlDdl.productSealed} table")
         }
 
     }

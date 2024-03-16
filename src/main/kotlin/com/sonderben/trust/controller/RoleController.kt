@@ -11,8 +11,9 @@ import com.sonderben.trust.viewUtil.ViewUtil
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
+import javafx.collections.ListChangeListener
 import javafx.collections.transformation.FilteredList
-import javafx.event.ActionEvent
+
 import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
@@ -24,8 +25,9 @@ import javafx.scene.layout.VBox
 import java.net.URL
 import java.util.*
 
-class RoleController :Initializable, BaseController(),EventHandler<MouseEvent>{
-    private var roleSelectedOrToSave:Role? = null
+class RoleController : Initializable, BaseController(), EventHandler<MouseEvent> {
+    lateinit var mainPane: VBox
+    private var roleSelectedOrToSave: Role? = null
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
         editMenuItem()
@@ -37,46 +39,62 @@ class RoleController :Initializable, BaseController(),EventHandler<MouseEvent>{
         gridPaneScreen.children.clear()
 
 
-
         var index = 0
-            for (row in 0 until  (listScreen.size/4 +1 ) ){ // row
-                for (col in 0 until 4){// col
-                    if (index+1<=listScreen.size){
-                        val radioButton = RDButton( listScreen[index] )
-                        radioButton.onMouseClicked = this
-                        gridPaneScreen.children.add( radioButton )
+        for (row in 0 until (listScreen.size / 4 + 1)) { // row
+            for (col in 0 until 4) {// col
+                if (index + 1 <= listScreen.size) {
+                    val radioButton = RDButton(listScreen[index])
+                    radioButton.onMouseClicked = this
+                    gridPaneScreen.children.add(radioButton)
 
 
-                        GridPane.setColumnIndex(radioButton,col)
-                        GridPane.setRowIndex(radioButton,row)
-                        index+=1
-                    }else{
-                        break
-                    }
+                    GridPane.setColumnIndex(radioButton, col)
+                    GridPane.setRowIndex(radioButton, row)
+                    index += 1
+                } else {
+                    break
                 }
             }
+        }
         //}
         nameCol.setCellValueFactory { data -> SimpleStringProperty(data.value.name) }
-        screensCol.setCellValueFactory { d->SimpleStringProperty(d.value.screens.joinToString(", "){ resources?.getString( it.screen.name.toLowerCase() ) ?:"not translate" }) }
+        screensCol.setCellValueFactory { d ->
+            SimpleStringProperty(d.value.screens.joinToString(", ") {
+                resources?.getString(
+                    it.screen.name.lowercase()
+                ) ?: "not translate"
+            })
+        }
 
         tableView.items = RoleDao.roles
 
+
+        tableView.selectionModel.selectedIndices.addListener( ListChangeListener { change->
+            if ( change.list.isEmpty() ){
+                enableActionButton(mainPane,true)
+            }
+            else{
+                enableActionButton(mainPane,false)
+            }
+        } )
+
+
         tableView.selectionModel.selectionMode = SelectionMode.SINGLE
-        tableView.selectionModel.selectedItemProperty().addListener(object :ChangeListener<Role>{
+        tableView.selectionModel.selectedItemProperty().addListener(object : ChangeListener<Role> {
             override fun changed(observable: ObservableValue<out Role>?, oldValue: Role?, newValue: Role?) {
-                if (newValue != null){
+                if (newValue != null) {
                     clearRDButtons()
 
-                    if (! bottomPanelVBOx.isVisible ){
+                    if (!bottomPanelVBOx.isVisible) {
                         bottomPanelVBOx.hide()
                     }
 
                     roleSelectedOrToSave = newValue
                     nameTf.text = newValue.name
 
-                    for ( screen in  newValue.screens){
+                    for (screen in newValue.screens) {
                         gridPaneScreen.children.filtered {
-                             (it as RDButton).name == screen.screen
+                            (it as RDButton).name == screen.screen
                         }.forEach {
                             (it as RDButton).select()
                         }
@@ -89,10 +107,10 @@ class RoleController :Initializable, BaseController(),EventHandler<MouseEvent>{
 
     override fun handle(event: MouseEvent?) {
         if (event != null) {
-            if (event.source is RDButton){
-                if (event.eventType.equals( MouseEvent.MOUSE_CLICKED) ){
-                    val rdButton = event.source as RDButton
-                    if (roleSelectedOrToSave == null){
+            if (event.source is RDButton) {
+                if (event.eventType.equals(MouseEvent.MOUSE_CLICKED)) {
+                    //val rdButton = event.source as RDButton
+                    if (roleSelectedOrToSave == null) {
                         roleSelectedOrToSave
                     }
                 }
@@ -101,11 +119,12 @@ class RoleController :Initializable, BaseController(),EventHandler<MouseEvent>{
         }
     }
 
-    private fun clearRDButtons(){
+    private fun clearRDButtons() {
         gridPaneScreen.children.forEach {
             val rdButton = it as RDButton
             rdButton.clear()
         }
+
     }
 
     @FXML
@@ -125,59 +144,64 @@ class RoleController :Initializable, BaseController(),EventHandler<MouseEvent>{
 
     @FXML
     private lateinit var gridPaneScreen: GridPane
+
     @FXML
-    fun onClearRole(event: ActionEvent) {
+    fun onClearRole() {
         clearAll()
     }
 
     @FXML
-    private lateinit var bottomPanelVBOx:VBox
+    private lateinit var bottomPanelVBOx: VBox
 
-    private fun clearAll(){
+    private fun clearAll() {
         clearRDButtons()
-        nameTf.text = ""
+        clear(mainPane)
         roleSelectedOrToSave = null
-        tableView.selectionModel.clearSelection()
-    }
-    @FXML
-    fun onSaveRole(event: ActionEvent) {
 
-            val screens:MutableList<Screen> = mutableListOf()
+    }
+
+    @FXML
+    fun onSaveRole() {
+
+        val screens: MutableList<Screen> = mutableListOf()
         val rdButtonsChecked: FilteredList<Node> = gridPaneScreen.children.filtered { (it as RDButton).isChecked }
-            for (rdButton in rdButtonsChecked){
-                 rdButton as RDButton
-                screens.add(
-                    Screen(rdButton.name, mutableListOf( Action.ADD,Action.DELETE,Action.READ,Action.UPDATE ))
-                )
-            }
+        for (rdButton in rdButtonsChecked) {
+            rdButton as RDButton
+            screens.add(
+                Screen(rdButton.name, mutableListOf(Action.ADD, Action.DELETE, Action.READ, Action.UPDATE))
+            )
+        }
 
-            RoleDao.save(Role(nameTf.text,screens)).subscribe({
-                clearRDButtons()
-                nameTf.text = ""
-            },{})
+        RoleDao.save(Role(nameTf.text, screens)).subscribe({
+            clearRDButtons()
+        }, {})
 
 
     }
 
     @FXML
-    fun onUpdateRole(event: ActionEvent) {
-
-    }
-    @FXML
-    fun onDeleteRole(event: ActionEvent) {
+    fun onUpdateRole() {
         roleSelectedOrToSave?.let {
-            if (!it.name.equals("Admin")){
-                RoleDao.delete( it.id )
-                    .subscribe({clearAll()},{})
+            RoleDao.update(it)
+                .subscribe({ clear(mainPane) },{th-> println(th.message) })
+        }
+    }
 
-            }
-            else
-                ViewUtil.createAlert(Alert.AlertType.WARNING,"Delete role","Can not delete main role.").showAndWait()
+    @FXML
+    fun onDeleteRole() {
+        roleSelectedOrToSave?.let {
+            if (!it.name.equals("Admin")) {
+                RoleDao.delete(it.id)
+                    .subscribe({ clearAll() }, {})
+
+            } else
+                ViewUtil.createAlert(Alert.AlertType.WARNING, "Delete role", "Can not delete main role.").showAndWait()
         }
 
     }
+
     @FXML
-    fun hideBottomPanelOnMouseClicked(){
+    fun hideBottomPanelOnMouseClicked() {
         bottomPanelVBOx.hide()
     }
 
@@ -186,29 +210,29 @@ class RoleController :Initializable, BaseController(),EventHandler<MouseEvent>{
     }
 
     private fun editMenuItem() {
-        MainController.editMenu.items.clear()
+        MainController.editMenu?.items?.clear()
 
 
-        val saveMenuItem =  MenuItem("Save")
+        val saveMenuItem = MenuItem("Save")
         saveMenuItem.setOnAction {
-
+            onSaveRole()
         }
-        val updateMenuItems =  MenuItem("Update")
+        val updateMenuItems = MenuItem("Update")
         updateMenuItems.setOnAction {
-
+            onUpdateRole()
         }
 
-        val deleteMenuItems =  MenuItem("Delete")
+        val deleteMenuItems = MenuItem("Delete")
         deleteMenuItems.setOnAction {
-
+            onDeleteRole()
         }
-        val clearMenuItems =  MenuItem("Clear")
+        val clearMenuItems = MenuItem("Clear")
         clearMenuItems.setOnAction {
-
+            clearAll()
         }
 
 
-        MainController.editMenu.items.addAll(  saveMenuItem,updateMenuItems,deleteMenuItems  )
+        MainController.editMenu?.items?.addAll(saveMenuItem, updateMenuItems, deleteMenuItems,clearMenuItems)
 
     }
 }

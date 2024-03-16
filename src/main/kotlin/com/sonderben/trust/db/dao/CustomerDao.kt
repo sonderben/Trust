@@ -2,14 +2,21 @@ package com.sonderben.trust.db.dao
 
 import Database.DATABASE_NAME
 import com.sonderben.trust.Util
-import com.sonderben.trust.db.SqlCreateTables
+import com.sonderben.trust.db.SqlDdl
+import com.sonderben.trust.db.SqlDml.DELETE_CUSTOMER
+import com.sonderben.trust.db.SqlDml.FIND_CUSTOMER_BY_CODE
+import com.sonderben.trust.db.SqlDml.FIND_CUSTOMER_BY_ID
+import com.sonderben.trust.db.SqlDml.INSERT_CUSTOMER
+import com.sonderben.trust.db.SqlDml.SELECT_ALL_CUSTOMER
+import com.sonderben.trust.db.SqlDml.SPENDING_OR_FREQUENT_CUSTOMER
+import com.sonderben.trust.db.SqlDml.UPDATE_CUSTOMER
 import entity.CustomerEntity
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import java.sql.SQLException
 import java.sql.Timestamp
 
@@ -23,14 +30,10 @@ object CustomerDao : CrudDao<CustomerEntity> {
     }
     override fun save(entity: CustomerEntity): Completable {
         return Completable.create {emetter->
-            val insertEmployee = buildString {
-                append("Insert into ${SqlCreateTables.customers} ")
-                append("( birthDay,code,direction,point,email,firstName,genre,lastName,passport,telephone ) ")
-                append("values (?,?,?,?,?,?,?,?,?,?) ")
-            }
+
             Database.connect(DATABASE_NAME).use { connection ->
 
-                connection.prepareStatement(insertEmployee).use {preparedStatement ->
+                connection.prepareStatement(INSERT_CUSTOMER).use { preparedStatement ->
                     preparedStatement.setTimestamp(1,Timestamp(entity.birthDay.time.time))
                     val tempCode = entity.code.padStart(12,'0')
                     preparedStatement.setString(2,tempCode)
@@ -71,7 +74,7 @@ object CustomerDao : CrudDao<CustomerEntity> {
     override fun delete(idEntity: Long): Completable {
         return  Completable.create {emitter ->
             Database.connect("").use { connection ->
-                connection.prepareStatement("DELETE FROM ${SqlCreateTables.customers} WHERE id = ?").use { preparedStatement ->
+                connection.prepareStatement(DELETE_CUSTOMER).use { preparedStatement ->
                     preparedStatement.setLong(1,idEntity)
                     customers.removeIf { it.id==idEntity }
                     if (preparedStatement.executeUpdate()>0){
@@ -88,9 +91,8 @@ object CustomerDao : CrudDao<CustomerEntity> {
 
     override fun findById(iEntity: Long): Maybe<CustomerEntity> {
         return Maybe.create { emitter->
-            val selectAll = "SELECT * FROM ${SqlCreateTables.customers} WHERE id = ?"
             Database.connect(DATABASE_NAME).use {connection ->
-                connection.prepareStatement(selectAll).use {statement ->
+                connection.prepareStatement(FIND_CUSTOMER_BY_ID).use { statement ->
                     statement.setLong(1,iEntity)
                     statement.executeQuery().use {resultSet ->
                             val customer = CustomerEntity()
@@ -117,41 +119,44 @@ object CustomerDao : CrudDao<CustomerEntity> {
 
     }
 
-    override fun findAll(): Boolean {
-        val selectAll = "SELECT * FROM ${SqlCreateTables.customers}"
-        val tempEmployees = mutableListOf<CustomerEntity>()
-        Database.connect(DATABASE_NAME).use {connection ->
-            connection.createStatement().use {statement ->
-                statement.executeQuery(selectAll).use {resultSet ->
-                    while (resultSet.next()){
-                        val id = resultSet.getLong("id")
-                        val customer = CustomerEntity()
-                        customer.apply {
-                            this.id = id
-                            firstName = resultSet.getString("firstName")
-                            passport = resultSet.getString("passport")
-                            lastName = resultSet.getString("lastName")
-                            genre = resultSet.getString("genre")
-                            direction = resultSet.getString("direction")
-                            email = resultSet.getString("email")
-                            telephone = resultSet.getString("telephone")
-                            birthDay = Util.timeStampToCalendar( resultSet.getTimestamp("birthDay") )
-                            code = resultSet.getString("code")
-                            point = resultSet.getLong("point")
+    override fun findAll() {
+        Single.create { emitter->
 
+            Database.connect(DATABASE_NAME).use {connection ->
+                connection.createStatement().use {statement ->
+                    statement.executeQuery( SELECT_ALL_CUSTOMER ).use { resultSet ->
+                        while (resultSet.next()){
+                            val id = resultSet.getLong("id")
+                            val customer = CustomerEntity()
+                            customer.apply {
+                                this.id = id
+                                firstName = resultSet.getString("firstName")
+                                passport = resultSet.getString("passport")
+                                lastName = resultSet.getString("lastName")
+                                genre = resultSet.getString("genre")
+                                direction = resultSet.getString("direction")
+                                email = resultSet.getString("email")
+                                telephone = resultSet.getString("telephone")
+                                birthDay = Util.timeStampToCalendar( resultSet.getTimestamp("birthDay") )
+                                code = resultSet.getString("code")
+                                point = resultSet.getLong("point")
+
+                            }
+
+                            customers.add( customer )
                         }
+                        emitter.onSuccess( customers )
 
-                        tempEmployees.add( customer )
                     }
-                    customers.addAll( tempEmployees )
-                    tempEmployees.clear();
+                    println("findAll: "+customers)
+
+
                 }
-                println("findAll: "+customers)
-                return true
 
             }
-
-        }
+        }.subscribeOn(Schedulers.io())
+            .observeOn( JavaFxScheduler.platform() )
+            .subscribe()
     }
 
 
@@ -163,24 +168,12 @@ object CustomerDao : CrudDao<CustomerEntity> {
 
             if (findById(entity.id)==null)
                 throw SQLException("id entity don't exist")
-            val updateCustomer = """
-            update  ${SqlCreateTables.customers}
-             set birthDay =   ?,
-             direction = ? ,
-             email = ? ,
-             firstName = ? ,
-             genre = ? ,
-             lastName = ? ,
-             passport = ? ,
-             telephone = ? 
-             where id = ?
-        """.trimIndent()
 
 
             Database.connect(DATABASE_NAME).use { connection ->
 
 
-                connection.prepareStatement(updateCustomer).use { preparedStatement ->
+                connection.prepareStatement( UPDATE_CUSTOMER ).use { preparedStatement ->
                     preparedStatement.setTimestamp(1, Timestamp(entity.birthDay.time.time))
 
 
@@ -206,10 +199,6 @@ object CustomerDao : CrudDao<CustomerEntity> {
                     }
 
 
-
-
-
-
                 }
 
 
@@ -222,7 +211,7 @@ object CustomerDao : CrudDao<CustomerEntity> {
 
     fun findByCode(code: String):CustomerEntity?{
         Database.connect(DATABASE_NAME).use {connection ->
-            connection.prepareStatement("select * from ${SqlCreateTables.customers} where code = ?").use { preparedStatement ->
+            connection.prepareStatement( FIND_CUSTOMER_BY_CODE ).use { preparedStatement ->
                 preparedStatement.setString(1,code.padStart(12,'0'))
                 preparedStatement.executeQuery().use { resultSet ->
 
@@ -258,7 +247,7 @@ object CustomerDao : CrudDao<CustomerEntity> {
         return null;
     }
     fun updatePoint(id:Long,point: Long): Boolean {
-        val updateEmployee = "update  ${SqlCreateTables.customers} set point = point + ? where id = ?"
+        val updateEmployee = "update  ${SqlDdl.customers} set point = point + ? where id = ?"
 
         Database.connect(DATABASE_NAME).use { connection ->
 
@@ -279,17 +268,9 @@ object CustomerDao : CrudDao<CustomerEntity> {
 
     fun spendingOrFrequentCustomer(orderBy:String="totalSpend"):List<SpendingOrFrequentCustomer>{
         val sfc = mutableListOf<SpendingOrFrequentCustomer>()
-        val select = """
-            SELECT  c.code as customerCode,c.point,sum(ps.quantity) as totalProductBought,sum(ps.total) as totalSpend ,count(iv.id) as frequency
-            from customers as c
-            INNER JOIN invoices as iv on c.id = iv.id_customer
-            INNER join invoiceProductSealed as ips on ips.id_invoice = iv.id
-            INNER join productSealed as ps on ps.id = ips.id_product_sealed
-            GROUP BY customerCode
-            ORDER by ? DESC limit 100
-        """.trimIndent()
+
         Database.connect("").use { connection ->
-            connection.prepareStatement(select).use { preparedStatement ->
+            connection.prepareStatement( SPENDING_OR_FREQUENT_CUSTOMER ).use { preparedStatement ->
                 preparedStatement.setString(1,orderBy)
                 preparedStatement.executeQuery().use { resultSet ->
                     while (resultSet.next()){

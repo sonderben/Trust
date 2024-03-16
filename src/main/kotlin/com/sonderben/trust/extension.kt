@@ -22,7 +22,7 @@ fun VBox.hide(){
 }
 
 fun Calendar.format(style:Int=DateFormat.MEDIUM):String{
-    val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM,Locale.getDefault())
+    val dateFormat = DateFormat.getDateInstance(style,Locale.getDefault())
 
     return dateFormat.format(this.time)
 

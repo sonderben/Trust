@@ -124,7 +124,7 @@ class RolePane(screens: List<String>, actions: List<String>) : Pane(), EventHand
 
 
 
-        val rol1 = Role("Sale", mutableListOf(  Screen(ScreenEnum.SALE, mutableListOf( Action.ADD,Action.DELETE,Action.READ,Action.UPDATE ))  ) )
+        //val rol1 = Role("Sale", mutableListOf(  Screen(ScreenEnum.SALE, mutableListOf( Action.ADD,Action.DELETE,Action.READ,Action.UPDATE ))  ) )
 
 
         //val ps:List<Role> = roleCrud.findAll( Role::class.java )

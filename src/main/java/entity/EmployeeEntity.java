@@ -3,6 +3,7 @@ package entity;
 import com.sonderben.trust.model.Role;
 
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class EmployeeEntity extends PersonEntity {
 
 
     public EmployeeEntity() {
-
+        schedules = new ArrayList<>();
     }
 
     public String getBankAccount() {

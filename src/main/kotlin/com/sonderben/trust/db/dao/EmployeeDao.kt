@@ -3,7 +3,14 @@ package com.sonderben.trust.db.dao
 import Database
 import Database.DATABASE_NAME
 import com.sonderben.trust.Util
-import com.sonderben.trust.db.SqlCreateTables
+import com.sonderben.trust.db.SqlDdl
+import com.sonderben.trust.db.SqlDml.DELETE_EMPLOYEE
+import com.sonderben.trust.db.SqlDml.EMPLOYEE_LOGIN
+import com.sonderben.trust.db.SqlDml.FIND_EMPLOYEE_BY_ID
+import com.sonderben.trust.db.SqlDml.INSERT_EMPLOYEE
+import com.sonderben.trust.db.SqlDml.INSERT_SCHEDULE
+import com.sonderben.trust.db.SqlDml.SELECT_ALL_EMPLOYEE
+import com.sonderben.trust.db.SqlDml.UPDATE_EMPLOYEE
 import entity.EmployeeEntity
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
@@ -28,22 +35,12 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
            if (entity.role == null || entity.role.id == null){
                throw Exception("Role or Role.id can not be null")
            }
-           val insertEmployee = buildString {
-               append("Insert into ${SqlCreateTables.employees} ")//passport
-               append("(bankAccount,direction,email,firstName,genre,lastName,passport,password,telephone,userName,birthDay,id_role) ")
-               append("values (?,?,?,?,?,?,?,?,?,?,?,?) ")
-           }
 
-
-           val insertIntoSchedule = buildString {
-               append("INSERT INTO ${SqlCreateTables.schedules }")
-               append(" (workDay,start_hour,end_hour,id_employee) ")
-               append(" values( ?,?,?,?);")
-           }
-           var lastIdEmployeeAdded = 0L
+           var lastIdEmployeeAdded: Long
            Database.connect(DATABASE_NAME).use { connection ->
                connection.autoCommit = false
-               connection.prepareStatement(insertEmployee).use {preparedStatement ->
+
+               connection.prepareStatement(INSERT_EMPLOYEE).use { preparedStatement ->
                    preparedStatement.setString(1,entity.bankAccount)
                    preparedStatement.setString(2,entity.direction)
                    preparedStatement.setString(3,entity.email)
@@ -65,7 +62,7 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
                        entity.id = lastIdEmployeeAdded
 
                        for (schedule in entity.schedules){
-                           connection.prepareStatement(insertIntoSchedule).use {ps ->
+                           connection.prepareStatement(INSERT_SCHEDULE).use {ps ->
                                ps.setInt(1,schedule.workDay)
                                ps.setFloat(2,schedule.startHour)
                                ps.setFloat(3,schedule.endHour)
@@ -101,8 +98,8 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
 
         return Completable.create { emitter->
 
-            val deleteEmployee = "delete from ${SqlCreateTables.employees} where id = ?"
-            Database.connect(DATABASE_NAME).prepareStatement(deleteEmployee).use { ps ->
+
+            Database.connect(DATABASE_NAME).prepareStatement(DELETE_EMPLOYEE).use { ps ->
                 ps.setLong(1,idEntity)
                 val rowCount = ps.executeUpdate()
                 if (rowCount>0){
@@ -125,19 +122,17 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
 
     override fun findById(iEntity: Long): Maybe<EmployeeEntity> {
         return Maybe.create { emitter->
-            val selectAll = "SELECT * FROM ${SqlCreateTables.employees} where id = ?"
+
 
             Database.connect(DATABASE_NAME).use {connection ->
-                connection.prepareStatement(selectAll).use {statement ->
-                    statement.setLong(1,iEntity)
+                connection.prepareStatement(FIND_EMPLOYEE_BY_ID).use {preparedStatement ->
+                    preparedStatement.setLong(1,iEntity)
 
-                    statement.executeQuery(selectAll).use {resultSet ->
+                    preparedStatement.executeQuery().use { resultSet ->
 
-                        val id = resultSet.getLong("id")
                         val employee = EmployeeEntity()
-
                         employee.apply {
-                            this.id = id
+                            id = resultSet.getLong("id")
                             firstName = resultSet.getString("firstName")
                             passport = resultSet.getString("passport")
                             lastName = resultSet.getString("lastName")
@@ -153,11 +148,11 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
                             role = Database.findRolesByIdEmployee( resultSet.getLong("id_role") )
                             schedules =  Database.findScheduleByIdEmployee( id )
                         }
-
                         if (employee.id == null) emitter.onComplete() else emitter.onSuccess(employee)
 
-
                     }
+
+
 
 
                 }
@@ -167,23 +162,22 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
 
     }
 
-    override fun findAll(): Boolean {
-        var isSuccess = false
-         val selectAll = "SELECT * FROM ${SqlCreateTables.employees}"
-        val tempEmployees = mutableListOf<EmployeeEntity>()
+    override fun findAll() {
+
+
 
         Single.create< List<EmployeeEntity> > { emitter ->
 
 
             Database.connect(DATABASE_NAME).use {connection ->
                 connection.createStatement().use {statement ->
-                    statement.executeQuery(selectAll).use {resultSet ->
+                    statement.executeQuery(SELECT_ALL_EMPLOYEE).use {resultSet ->
                         while (resultSet.next()){
-                            val id = resultSet.getLong("id")
+
                             val employee = EmployeeEntity()
 
                             employee.apply {
-                                this.id = id
+                                id = resultSet.getLong("id")
                                 firstName = resultSet.getString("firstName")
                                 passport = resultSet.getString("passport")
                                 lastName = resultSet.getString("lastName")
@@ -200,13 +194,11 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
                                 schedules =  Database.findScheduleByIdEmployee( id )
                             }
 
-                            tempEmployees.add( employee )
+                            employees.add( employee )
                         }
-                        isSuccess = true
-                        emitter.onSuccess( tempEmployees )
 
-                        //employees.addAll( tempEmployees )
-                        //tempEmployees.clear();
+                        emitter.onSuccess( employees )
+
                     }
 
 
@@ -217,16 +209,14 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
         }
             .subscribeOn(Schedulers.io())
             .observeOn( JavaFxScheduler.platform() )
-            .subscribe { data ->
-                employees.addAll( data )
-            }
-        return isSuccess
+            .subscribe ()
+
     }
 
     fun login(userName:String,password:String):Maybe<EmployeeEntity>{
         return Maybe.create<EmployeeEntity> { emitter ->
             Database.connect(DATABASE_NAME).use {connection ->
-                connection.prepareStatement("select * from ${SqlCreateTables.employees} where userName= ? and password =? ;").use { preparedStatement ->
+                connection.prepareStatement( EMPLOYEE_LOGIN ).use { preparedStatement ->
                     preparedStatement.setString(1,userName)
                     preparedStatement.setString(2,password)
                     preparedStatement.executeQuery().use { resultSet ->
@@ -267,25 +257,11 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
     }
 
     override fun update(entity: EmployeeEntity): Completable {
-        //bankAccount,direction,email,firstName,genre,lastName,passport,password,telephone,userName,birthDay,id_role
         return Completable.create {emitter->
-            val update = """update ${SqlCreateTables.employees} set
-                 bankAccount = ?,
-                 direction = ?,
-                 email = ?,
-                 firstName = ?,
-                 genre = ?,
-                 lastName = ?,
-                 passport = ? 
-                 ,password = ?,
-                 telephone = ?,
-                 userName = ?,
-                 birthDay = ?,
-                 id_role = ? 
-                 where id = ?
-            """.trimMargin()
+
+
             Database.connect("").use { connection ->
-                connection.prepareStatement(update).use {preparedStatement ->
+                connection.prepareStatement( UPDATE_EMPLOYEE ).use {preparedStatement ->
                     preparedStatement.setString(1,entity.bankAccount)
                     preparedStatement.setString(2,entity.direction)
                     preparedStatement.setString(3,entity.email)

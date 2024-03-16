@@ -1,12 +1,10 @@
 import com.sonderben.trust.constant.Action;
 import com.sonderben.trust.constant.ScreenEnum;
-import com.sonderben.trust.db.SqlCreateTables;
+import com.sonderben.trust.db.SqlDdl;
 import com.sonderben.trust.db.dao.*;
 import com.sonderben.trust.model.Role;
 import com.sonderben.trust.model.Screen;
 import entity.*;
-import io.reactivex.rxjava3.core.Flowable;
-import io.reactivex.rxjavafx.schedulers.JavaFxScheduler;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -54,7 +52,7 @@ public class Database {
             connection1.setAutoCommit(false);
             statement = connection1.createStatement();
 
-            List<String> tables = SqlCreateTables.INSTANCE.getTables();
+            List<String> tables = SqlDdl.INSTANCE.getTables();
             for (String table : tables) {
                 tableError = table;
                 statement.execute(table);
@@ -79,7 +77,7 @@ public class Database {
         try(Connection conn = Database.connect(TRUST_DB)) {
             conn.setAutoCommit(false);
             Statement st = conn.createStatement();
-            List<String> tables = SqlCreateTables.INSTANCE.getTrustTables();
+            List<String> tables = SqlDdl.INSTANCE.getTrustTables();
             for (String table : tables){
                 tableError = table;
                 st.execute( table );
@@ -156,7 +154,7 @@ public class Database {
         Statement statement = null;
         try {
             statement = connection.createStatement();
-            statement.execute(SqlCreateTables.INSTANCE.getDeleteCategoryTable());
+            statement.execute(SqlDdl.INSTANCE.getDeleteCategoryTable());
             System.out.println("Tables delete successfully");
         } catch (SQLException e) {
             System.out.println("can not delete tables");
@@ -175,7 +173,7 @@ public class Database {
 
         Connection connection1 = Database.connect(DATABASE_NAME);
         List<Screen> screens = new ArrayList<>();
-        try(PreparedStatement ps = connection1.prepareStatement("SELECT * FROM "+SqlCreateTables.screen+" WHERE id_role = ?")){
+        try(PreparedStatement ps = connection1.prepareStatement("SELECT * FROM "+ SqlDdl.screen+" WHERE id_role = ?")){
             ps.setLong(1, roleId);
             ResultSet resultSet = ps.executeQuery();
 
@@ -202,7 +200,7 @@ public class Database {
 
 
         List<ScheduleEntity> schedules = new ArrayList<>();
-        try(PreparedStatement ps = Database.connect(DATABASE_NAME).prepareStatement("SELECT * FROM "+SqlCreateTables.schedules+" WHERE id_employee = ?")){
+        try(PreparedStatement ps = Database.connect(DATABASE_NAME).prepareStatement("SELECT * FROM "+ SqlDdl.schedules+" WHERE id_employee = ?")){
             ps.setLong(1, employeeId);
             ResultSet resultSet = ps.executeQuery();
 

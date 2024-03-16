@@ -2,99 +2,122 @@ package com.sonderben.trust.db.dao
 
 import Database
 import Database.DATABASE_NAME
-import com.sonderben.trust.db.SqlCreateTables
+import com.sonderben.trust.db.SqlDdl
+import com.sonderben.trust.db.SqlDml
 import entity.CategoryEntity
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.collections.FXCollections
 import java.sql.SQLException
 
 
-object CategoryDao {
+object CategoryDao : CrudDao<CategoryEntity>{
      val categories  = FXCollections.observableArrayList<CategoryEntity>()
 
     init {
         findAll()
     }
 
-    fun save(category:CategoryEntity) {
-        val sqlinsert = """
-            insert into
-             ${SqlCreateTables.categories}(code, description, discount) 
-            values (?, ?, ?)
-        """.trimIndent()
-
-        try {
-            val statement = Database.connect(DATABASE_NAME).prepareStatement(sqlinsert)
-                .apply {
-                setString(1,category.code)
-                setString(2,category.description)
-                setDouble(3,category.discount)
-
-            }
-            var res = statement.executeUpdate()
-            if (res>0){
-
-                Database.connect(DATABASE_NAME).createStatement().use {statement ->
-                    val resultSet =  statement.executeQuery( "SELECT last_insert_rowid() as last_id" )
-                    category.id=resultSet.getLong("last_id")
-
-                    categories.add(category)
+    override fun save(entity:CategoryEntity): Completable {
+        return  Completable.create { emitter->
+            Database.connect(DATABASE_NAME).use { connection ->
+                connection.prepareStatement( SqlDml.insertCategory ).use { preparedStatement ->
+                    preparedStatement.apply {
+                        setString(1,entity.code)
+                        setString(2,entity.description)
+                        setDouble(3,entity.discount)
+                    }
+                    if ( preparedStatement.executeUpdate()>0){
+                        entity.id = Database.getLastId()
+                        categories.add(entity)
+                        emitter.onComplete()
+                    }else{
+                        emitter.onError(Throwable("can not save category: $entity"))
+                    }
 
                 }
 
-
             }
-        }catch (e:Exception){
-            throw e
-        }finally {
-            Database.connect(DATABASE_NAME).close()
         }
     }
 
-    private fun findAll() {
-        val tempCategories: MutableList<CategoryEntity> = ArrayList()
-        try {
+    override fun findAll() {
 
-                val selectAll = "SELECT * FROM ${SqlCreateTables.categories}"
-            Database.connect(DATABASE_NAME).prepareStatement(selectAll).use { preparedStatement ->
-                    preparedStatement.executeQuery().use { resultSet ->
+
+         Single.create{emitter->
+            Database.connect(DATABASE_NAME).use { connection ->
+                connection.createStatement().use { statement ->
+                    statement.executeQuery(SqlDml.selectAllCategory).use { resultSet ->
                         while (resultSet.next()) {
 
                             val category = CategoryEntity()
                             category.apply {
-                                 id = resultSet.getLong("id")
-                                 code = resultSet.getString("code")
-                                 description = resultSet.getString("description")
-                                 discount = resultSet.getDouble("discount")
+                                id = resultSet.getLong("id")
+                                code = resultSet.getString("code")
+                                description = resultSet.getString("description")
+                                discount = resultSet.getDouble("discount")
                             }
 
-                            tempCategories.add(category)
-                            categories.addAll( tempCategories )
+                            categories.add(category)
                         }
+                        emitter.onSuccess(categories)
                     }
                 }
-
-        } catch (e: SQLException) {
-            e.printStackTrace()
+            }
         }
+            .subscribeOn(Schedulers.io())
+            .observeOn( JavaFxScheduler.platform() )
+             .subscribe()
+
 
     }
 
-    fun delete(idEntity:Long):Boolean{
-        Database.connect(DATABASE_NAME).use { connection ->
-            connection.prepareStatement(
-                "DELETE  FROM ${SqlCreateTables.categories} WHERE id = ?"
-            ).use { statement ->
-                statement.setLong(1,idEntity)
-                val res = statement.executeUpdate()
-                if (res>0){
-                    categories.removeIf {
-                        it.id == idEntity
+    override fun update(entity: CategoryEntity): Completable {
+        return Completable.create { emitter->
+            Database.connect("").use { connection ->
+                connection.prepareStatement(SqlDml.updateCategory).use { preparedStatement ->
+                    preparedStatement.setString(1,entity.code)
+                    preparedStatement.setString(2,entity.description)
+                    preparedStatement.setDouble(3,entity.discount)
+                    preparedStatement.setLong(4,entity.id)
+                    if (preparedStatement.executeUpdate()>0){
+                        emitter.onComplete()
+                    }
+                    else{
+                        emitter.onError( Throwable("can not update category: $entity") )
                     }
                 }
-                return res>0
             }
         }
+    }
 
+    override fun delete(idEntity:Long): Completable {
+        return Completable.create { emitter ->
+            Database.connect(DATABASE_NAME).use { connection ->
+                connection.prepareStatement(SqlDml.deleteCategory).use { statement ->
+                    statement.setLong(1,idEntity)
+                    val res = statement.executeUpdate()
+                    if (res>0){
+                        categories.removeIf {
+                            it.id == idEntity
+                        }
+                        emitter.onComplete()
+                    }else{
+                        emitter.onError( Throwable("can not delete category with id: $idEntity") )
+                    }
+                }
+            }
+
+        }.subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
+
+    }
+
+    override fun findById(iEntity: Long): Maybe<CategoryEntity> {
+        return Maybe.create {  }
     }
 
 

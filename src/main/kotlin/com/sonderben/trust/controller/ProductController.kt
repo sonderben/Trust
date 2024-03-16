@@ -9,6 +9,7 @@ import entity.CategoryEntity
 import entity.EmployeeEntity
 import entity.ProductEntity
 import javafx.beans.property.SimpleStringProperty
+import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -25,21 +26,12 @@ import java.time.ZoneId
 import java.util.*
 
 class ProductController :Initializable,MessageListener,BaseController() {
-
-    lateinit var howSaleCol: TableColumn<ProductEntity, String>
-    lateinit var sellbyCb: ChoiceBox<String>
-
     //private var socketMesageEvent = SocketMessageEvent(this)
     private var currentProductSelected:ProductEntity?=null
     private val loading = ViewUtil.loadingView()
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        println("init productController")
-
         editMenuItem()
-        MainController.hideBottomBar(false)
-         {
-            hideBottomPanelOnMouseClicked()
-        }
+        MainController.hideBottomBar(false) { hideBottomPanelOnMouseClicked() }
 
         sellbyCb.items.addAll(resources?.getString("unit") ?: "unit",resources?.getString("weight")?:"weight" )
 
@@ -48,10 +40,6 @@ class ProductController :Initializable,MessageListener,BaseController() {
         employeeTf.text = Context.currentEmployee.value.userName
 
         categories =  CategoryDao.categories
-
-
-
-
 
 
 
@@ -68,10 +56,11 @@ class ProductController :Initializable,MessageListener,BaseController() {
         employeeCol.setCellValueFactory { data -> SimpleStringProperty( data.value.employee.userName ) }
         howSaleCol.setCellValueFactory { data -> SimpleStringProperty(resources?.getString( data.value.sellBy.lowercase() )
             ?: data.value.sellBy) }
-        tableView.items = produtcs
+
+            tableView.items = produtcs
 
         tableView.selectionModel.selectionMode = SelectionMode.SINGLE
-        tableView.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+        tableView.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
             if (newValue != null) {
                 currentProductSelected = newValue
                 var year = newValue.dateAdded.get(Calendar.YEAR)
@@ -100,88 +89,91 @@ class ProductController :Initializable,MessageListener,BaseController() {
         }
 
         categoryCb.converter = CategoryConverter()
-        categoryCb.items = categories
+            categoryCb.items = categories
 
+        tableView.selectionModel.selectedIndices.addListener( ListChangeListener { change->
+            if ( change.list.isEmpty() ){
+                enableActionButton(mainPane,true)
+            }
+            else{
+                enableActionButton(mainPane,false)
+            }
+        } )
 
     }
-    @FXML
-    private lateinit var categoryCb: ChoiceBox<CategoryEntity>
 
-    @FXML
-    private lateinit var categoryCol: TableColumn<ProductEntity, String>
 
-    @FXML
-    private lateinit var codeCol: TableColumn<ProductEntity, String>
 
-    @FXML
-    private lateinit var codeTf: TextField
 
-    @FXML
-    private lateinit var dateAddedCol: TableColumn<ProductEntity, String>
 
-    @FXML
-    private lateinit var dateAddedDp: DatePicker
 
-    @FXML
-    private lateinit var descriptionCol: TableColumn<ProductEntity, String>
 
-    @FXML
-    private lateinit var descriptionTf: TextField
 
-    @FXML
-    private lateinit var discountCol: TableColumn<ProductEntity, String>
 
-    @FXML
-    private lateinit var discountTf: TextField
 
-    @FXML
-    private lateinit var employeeCol: TableColumn<ProductEntity, String>
 
-    @FXML
-    private lateinit var employeeTf: TextField
 
-    @FXML
-    private lateinit var expDateDp: DatePicker
 
-    @FXML
-    private lateinit var exp_dateCole: TableColumn<ProductEntity, String>
 
-    @FXML
-    private lateinit var itbisCol: TableColumn<ProductEntity, String>
 
-    @FXML
-    private lateinit var itbisTf: TextField
 
-    @FXML
-    private lateinit var purchaseCol: TableColumn<ProductEntity, String>
 
-    @FXML
-    private lateinit var purchaseTf: TextField
+    @FXML private lateinit var categoryCb: ChoiceBox<CategoryEntity>
 
-    @FXML
-    private lateinit var qtyCol: TableColumn<ProductEntity, String>
+    @FXML private lateinit var categoryCol: TableColumn<ProductEntity, String>
 
-    @FXML
-    private lateinit var qtyTf: TextField
+    @FXML private lateinit var codeCol: TableColumn<ProductEntity, String>
+
+    @FXML private lateinit var codeTf: TextField
+
+    @FXML private lateinit var dateAddedCol: TableColumn<ProductEntity, String>
+
+    @FXML private lateinit var dateAddedDp: DatePicker
+
+    @FXML private lateinit var descriptionCol: TableColumn<ProductEntity, String>
+
+    @FXML private lateinit var descriptionTf: TextField
+
+    @FXML private lateinit var discountCol: TableColumn<ProductEntity, String>
+
+    @FXML private lateinit var discountTf: TextField
+
+    @FXML private lateinit var employeeCol: TableColumn<ProductEntity, String>
+
+    @FXML private lateinit var employeeTf: TextField
+
+    @FXML private lateinit var expDateDp: DatePicker
+
+    @FXML private lateinit var exp_dateCole: TableColumn<ProductEntity, String>
+
+    @FXML private lateinit var itbisCol: TableColumn<ProductEntity, String>
+
+    @FXML private lateinit var itbisTf: TextField
+
+    @FXML private lateinit var purchaseCol: TableColumn<ProductEntity, String>
+
+    @FXML private lateinit var purchaseTf: TextField
+
+    @FXML private lateinit var qtyCol: TableColumn<ProductEntity, String>
+
+    @FXML private lateinit var qtyTf: TextField
 
     @FXML
     private lateinit var sellingCol: TableColumn<ProductEntity, String>
+    @FXML lateinit var mainPane: VBox
+    @FXML lateinit var howSaleCol: TableColumn<ProductEntity, String>
+    @FXML lateinit var sellbyCb: ChoiceBox<String>
+    @FXML private lateinit var sellingTf: TextField
+    @FXML private lateinit var bottomPanelVBOx:VBox
 
-    @FXML
-    private lateinit var sellingTf: TextField
-    @FXML
-    private lateinit var bottomPanelVBOx:VBox
+    @FXML private lateinit var tableView: TableView<ProductEntity>
 
-    @FXML
-    private lateinit var tableView: TableView<ProductEntity>
-
-    @FXML
-    fun onDeleteBtn() {
+    @FXML fun onDeleteBtn() {
 
         if(currentProductSelected!=null) {
             loading.show()
             ProductDao.delete(currentProductSelected!!.id).subscribe({
-                clearAll()
+                clear(mainPane)
                 loading.close()
             },{
                 th-> println( th.message )
@@ -195,15 +187,14 @@ class ProductController :Initializable,MessageListener,BaseController() {
 
     }
 
-    @FXML
-    fun onSaveBtn() {
+    @FXML fun onSaveBtn() {
 
         val cc = categoryCb.selectionModel.selectedItem
         val tempEmployee = Context.currentEmployee.value
 
 
        if ( validateProduct(tempEmployee,cc) ){
-           val kk = if(sellbyCb.selectionModel.selectedIndex==0) "1" else "gen"
+           //val kk = if(sellbyCb.selectionModel.selectedIndex==0) "1" else "gen"
            val pro = ProductEntity(
                codeTf.text,
                if(sellbyCb.selectionModel.selectedIndex==0) "unit" else "weight",
@@ -212,15 +203,15 @@ class ProductController :Initializable,MessageListener,BaseController() {
                purchaseTf.text.toDouble(),
                discountTf.text.toDouble(),
                itbisTf.text.toDouble(),
-               qtyTf.text.toInt(),
-               qtyTf.text.toInt(),
+               qtyTf.text.toFloat(),
+               qtyTf.text.toFloat(),
                GregorianCalendar.getInstance(),
                GregorianCalendar.from( expDateDp.value.atStartOfDay( ZoneId.systemDefault() ) ),
                cc,
                tempEmployee
            )
 
-           ProductDao.save( pro ).subscribe({ clearAll() },{ th-> println(th.message) } )
+           ProductDao.save( pro ).subscribe({ clear(mainPane) },{ th-> println(th.message) } )
 
        }else{
            println("not validate")
@@ -232,7 +223,6 @@ class ProductController :Initializable,MessageListener,BaseController() {
         if (employee == null){
             ViewUtil.customAlert("Can't find current employee","can't find current employee,log in again to continue saving the product.") {
                 val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
-
                 HelloApplication.primary.scene = Scene(fxmlLoader.load(), 720.0, 440.0)
             }
                 .show()
@@ -266,26 +256,13 @@ class ProductController :Initializable,MessageListener,BaseController() {
         return true
     }
 
-    @FXML
-    fun onClearBtn() {
-        clearAll()
+    @FXML fun onClearBtn() {
+        clear(mainPane)
     }
 
-    private fun clearAll() {
-        codeTf.text = ""
-        descriptionTf.text = ""
-        sellingTf.text = ""
-        purchaseTf.text = ""
-        discountTf.text = ""
-        itbisTf.text = ""
-        qtyTf.text = ""
-        qtyTf.text = ""
-        currentProductSelected = null
-        tableView.selectionModel.clearSelection()
-    }
 
-    @FXML
-    fun goToCategoryOnMouseClicked() {
+
+    @FXML fun goToCategoryOnMouseClicked() {
         val cc = CategoryDialog()
 
         cc.initOwner(HelloApplication.primary)
@@ -293,8 +270,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
 
     }
 
-    @FXML
-    fun onUpdateBtn() {
+    @FXML fun onUpdateBtn() {
         if(currentProductSelected!=null) {
             if (validateProduct(Context.currentEmployee.value, categoryCb.selectionModel.selectedItem )){
                 currentProductSelected!!.apply {
@@ -304,12 +280,12 @@ class ProductController :Initializable,MessageListener,BaseController() {
                     purchasePrice = purchaseTf.text.toDouble()
                     discount = discountTf.text.toDouble()
                     itbis = itbisTf.text.toDouble()
-                    quantity = qtyTf.text.toInt()
+                    quantity = qtyTf.text.toFloat()
                     qtyTf.text.toInt()
 
                 }
                 ProductDao.update(currentProductSelected!!) .subscribe({
-                    clearAll()
+                    clear(mainPane)
                 },{th-> println(th.message) })
             }
         }else{
@@ -321,7 +297,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
     fun hideBottomPanelOnMouseClicked(){
          bottomPanelVBOx.hide()
     }
-    private  var produtcs:ObservableList<ProductEntity> = ProductDao.products//FXCollections.observableArrayList( ProductDao.products )
+    private  var produtcs:ObservableList<ProductEntity> = ProductDao.products
     private lateinit var categories:ObservableList<CategoryEntity>
 
 
@@ -346,7 +322,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
     }
 
     private fun editMenuItem() {
-        MainController.editMenu.items.clear()
+        MainController.editMenu?.items?.clear()
 
 
         val saveMenuItem =  MenuItem("Save")
@@ -364,13 +340,13 @@ class ProductController :Initializable,MessageListener,BaseController() {
         }
         val clearMenuItems =  MenuItem("Clear")
         clearMenuItems.setOnAction {
-            clearAll()
+            clear(mainPane)
         }
 
 
 
 
-        MainController.editMenu.items.addAll(  saveMenuItem,updateMenuItems,deleteMenuItems,clearMenuItems  )
+        MainController.editMenu?.items?.addAll(  saveMenuItem,updateMenuItems,deleteMenuItems,clearMenuItems  )
 
     }
 }

@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.ProductController">
+<VBox fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.ProductController">
    <children>
       <HBox alignment="CENTER_LEFT" minHeight="30.0" prefHeight="30.0" prefWidth="200.0" VBox.vgrow="NEVER">
          <children>
@@ -107,10 +107,10 @@
             </GridPane>
             <HBox alignment="TOP_RIGHT" prefWidth="200.0" spacing="10.0" VBox.vgrow="NEVER">
                <children>
-                  <Button mnemonicParsing="false" onAction="#onSaveBtn" text="%save" />
-                  <Button mnemonicParsing="false" onAction="#onUpdateBtn" text="%update" />
-                  <Button mnemonicParsing="false" onAction="#onDeleteBtn" text="%delete" />
-                  <Button layoutX="776.0" layoutY="20.0" mnemonicParsing="false" onAction="#onClearBtn" text="%clear" />
+                  <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#onSaveBtn" text="%save" />
+                  <Button fx:id="updateBtn" disable="true" mnemonicParsing="false" onAction="#onUpdateBtn" text="%update" />
+                  <Button fx:id="deleteBtn" disable="true" mnemonicParsing="false" onAction="#onDeleteBtn" text="%delete" />
+                  <Button fx:id="clearBtn" layoutX="776.0" layoutY="20.0" mnemonicParsing="false" onAction="#onClearBtn" text="%clear" />
                </children>
                <padding>
                   <Insets bottom="10.0" top="10.0" />
