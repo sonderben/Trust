@@ -1,9 +1,7 @@
 package com.sonderben.trust.customView
 
-import com.sonderben.trust.constant.Action
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.model.Role
-import com.sonderben.trust.model.Screen
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
 import javafx.scene.control.Label
@@ -90,9 +88,9 @@ class RolePane(screens: List<String>, actions: List<String>) : Pane(), EventHand
                 this@RolePane.children.removeIf { it is LinkPoint }
                 nameTextField.text = newRole.name
 
-                val screenList: List<Screen> = newRole.screens
+                val screenList: List<ScreenEnum> = newRole.screens
                 for (screen in screenList) {
-                    val point: Point = getPointByName(startScreensPoint, screen.screen.name)
+                    val point: Point = getPointByName(startScreensPoint, screen.name)
                     val line = LinkPoint()
                     line.startXProperty().bind(namePoint.layoutXProperty())
                     line.startYProperty().bind(namePoint.layoutYProperty())
@@ -102,7 +100,7 @@ class RolePane(screens: List<String>, actions: List<String>) : Pane(), EventHand
                     this@RolePane.children.add(line)
 
 
-                    val actionList = screen.actions
+                    /*val actionList = screen.actions
                     for (action in actionList) {
                         val endPointScreen: Point = getPointByName(endScreensPoint, screen.screen.name)
                         val startPointAction: Point = getPointByName(startActionsPoint, action.name)
@@ -115,7 +113,7 @@ class RolePane(screens: List<String>, actions: List<String>) : Pane(), EventHand
                         line2.endYProperty().bind(startPointAction.layoutYProperty())
                         this@RolePane.children.add(line2)
 
-                    }
+                    }*/
                 }
 
 
@@ -267,7 +265,7 @@ class RolePane(screens: List<String>, actions: List<String>) : Pane(), EventHand
 
                         if (fakeLinkPoint.from.equals("name",true)  ){
                             val screenEnum:ScreenEnum = stringToScreenEnum( fakeLinkPoint.to )
-                            roleTemp.screens.add(Screen(screenEnum, mutableListOf()))
+                            roleTemp.screens.add(screenEnum)
                             val tmp = Role( roleTemp.name.repeat(2)+"b",roleTemp.screens )
                             role.set(null)
                             role.set(tmp)
@@ -289,10 +287,10 @@ class RolePane(screens: List<String>, actions: List<String>) : Pane(), EventHand
                         if (!fakeLinkPoint.from.equals("name",true)  ){
                             val screenEnum:ScreenEnum = stringToScreenEnum( "Login" )//es el point antes(Screen)
 
-                            val actionEnum:Action = stringToActionEnum( fakeLinkPoint.to )
-                            val tempScreens:Screen = roleTemp.screens.filter { it.screen == screenEnum }[0]
+                            //val actionEnum:Action = stringToActionEnum( fakeLinkPoint.to )
+                            //val tempScreens:Screen = roleTemp.screens.filter { it.screen == screenEnum }[0]
 
-                            tempScreens.actions.add( actionEnum )
+                            //tempScreens.actions.add( actionEnum )
 
                             role.set( null )
 
@@ -324,14 +322,6 @@ class RolePane(screens: List<String>, actions: List<String>) : Pane(), EventHand
         throw Exception("No encontre ese Screen Enum")
     }
 
-    private fun stringToActionEnum(from: String): Action {
-        val actionEnums:Array<Action> = Action.values()
-        val found = actionEnums.filter{ it.name.equals( from,ignoreCase = true ) }
 
-        if ( found.isNotEmpty()){
-            return found[0]
-        }
-        throw Exception("No encontre ese Action Enum")
-    }
 
 }

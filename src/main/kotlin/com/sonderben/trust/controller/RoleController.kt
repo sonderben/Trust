@@ -1,12 +1,10 @@
 package com.sonderben.trust.controller
 
-import com.sonderben.trust.constant.Action
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.customView.RDButton
 import com.sonderben.trust.db.dao.RoleDao
 import com.sonderben.trust.hide
 import com.sonderben.trust.model.Role
-import com.sonderben.trust.model.Screen
 import com.sonderben.trust.viewUtil.ViewUtil
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ChangeListener
@@ -61,7 +59,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
         screensCol.setCellValueFactory { d ->
             SimpleStringProperty(d.value.screens.joinToString(", ") {
                 resources?.getString(
-                    it.screen.name.lowercase()
+                    it.name.lowercase()
                 ) ?: "not translate"
             })
         }
@@ -94,7 +92,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
 
                     for (screen in newValue.screens) {
                         gridPaneScreen.children.filtered {
-                            (it as RDButton).name == screen.screen
+                            (it as RDButton).name == ScreenEnum.valueOf( screen.name )
                         }.forEach {
                             (it as RDButton).select()
                         }
@@ -163,24 +161,26 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
     @FXML
     fun onSaveRole() {
 
-        val screens: MutableList<Screen> = mutableListOf()
-        val rdButtonsChecked: FilteredList<Node> = gridPaneScreen.children.filtered { (it as RDButton).isChecked }
-        for (rdButton in rdButtonsChecked) {
-            rdButton as RDButton
-            screens.add(
-                Screen(rdButton.name, mutableListOf(Action.ADD, Action.DELETE, Action.READ, Action.UPDATE))
-            )
-        }
 
-        RoleDao.save(Role(nameTf.text, screens)).subscribe({
+        val rdButtonsChecked: FilteredList<Node> = gridPaneScreen.children.filtered { (it as RDButton).isChecked }
+
+        RoleDao.save( Role(nameTf.text, rdButtonsChecked.map {  (it as RDButton).name  }.toMutableList()) ).subscribe({
             clearRDButtons()
-        }, {})
+        }, {th-> println("error: $th") })
 
 
     }
 
     @FXML
     fun onUpdateRole() {
+
+
+
+        roleSelectedOrToSave!!.apply {
+            name = nameTf.text
+        }
+
+
         roleSelectedOrToSave?.let {
             RoleDao.update(it)
                 .subscribe({ clear(mainPane) },{th-> println(th.message) })

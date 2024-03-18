@@ -1,7 +1,7 @@
 package com.sonderben.trust.constant
 
 enum class ScreenEnum  {
-    LOGIN,
+    //LOGIN,
     SALE,
 /*    INVENTORY,*/
     PRODUCT,

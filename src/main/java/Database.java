@@ -1,9 +1,8 @@
-import com.sonderben.trust.constant.Action;
+
 import com.sonderben.trust.constant.ScreenEnum;
 import com.sonderben.trust.db.SqlDdl;
 import com.sonderben.trust.db.dao.*;
 import com.sonderben.trust.model.Role;
-import com.sonderben.trust.model.Screen;
 import entity.*;
 
 import java.sql.*;
@@ -101,20 +100,7 @@ public class Database {
 
         RoleDao.INSTANCE.save(
                 new Role(
-                        "Admin",List.of(
-                                new Screen( ScreenEnum.LOGIN,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
-                        new Screen( ScreenEnum.LOGIN,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
-                        //new Screen( ScreenEnum.INVENTORY,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
-                        new Screen( ScreenEnum.ROLE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
-                        new Screen( ScreenEnum.USER,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
-                        new Screen( ScreenEnum.SALE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
-                        new Screen( ScreenEnum.PRODUCT,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
-                        new Screen( ScreenEnum.EMPLOYEE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
-                        new Screen( ScreenEnum.CONFIGURATION,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
-                        new Screen( ScreenEnum.QUERIES,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) ),
-                        new Screen( ScreenEnum.CUSTOMER_SERVICE,List.of(Action.ADD,Action.READ,Action.UPDATE,Action.DELETE) )
-
-                )
+                        "Admin",Arrays.asList(ScreenEnum.values())
                 )
         );
         Role role = new Role();
@@ -122,11 +108,7 @@ public class Database {
 
 
         RoleDao.INSTANCE.save(
-                new Role("Saler",List.of(
-                        new Screen(ScreenEnum.SALE,List.of(
-                                Action.DELETE,Action.ADD,Action.UPDATE,Action.READ
-                        ))
-                ))
+                new Role("Saler",List.of(ScreenEnum.SALE))
         );
         Role role2 = new Role();
         role2.setId(2L);
@@ -169,32 +151,7 @@ public class Database {
 
     }
 
-    public static List<Screen> findScreenByIdRole(  Long roleId)  {
 
-        Connection connection1 = Database.connect(DATABASE_NAME);
-        List<Screen> screens = new ArrayList<>();
-        try(PreparedStatement ps = connection1.prepareStatement("SELECT * FROM "+ SqlDdl.screen+" WHERE id_role = ?")){
-            ps.setLong(1, roleId);
-            ResultSet resultSet = ps.executeQuery();
-
-           while (resultSet.next()){
-               Screen screen = new Screen();
-               screen.setId( resultSet.getLong("id") );
-               screen.setScreen(ScreenEnum.valueOf(resultSet.getString("screenEnum")));
-               List<Action> actionList = Arrays.stream(resultSet.getString("actions").split(","))
-                       .map(Action::valueOf)
-                       .collect(Collectors.toList());
-               screen.setActions( actionList );
-
-               screens.add( screen );
-
-           }
-
-
-        }catch (Exception e){}
-
-        return screens;
-    }
 
     public static List<ScheduleEntity> findScheduleByIdEmployee(  Long employeeId)  {
 
@@ -237,8 +194,15 @@ public class Database {
 
 
                 String roleName = resultSet.getString("name");
-                List<Screen> screens = findScreenByIdRole(roleId);
-                Role role = new Role(roleName,screens);
+
+
+            List<ScreenEnum> screensList = Arrays.stream(resultSet.getString("screens").split(","))
+                    //.map(String::trim)
+                    .map(ScreenEnum::valueOf)
+                    .toList();
+
+
+            Role role = new Role(roleName, screensList );
                 role.setId( roleId );
                 roleList.add( role );
 

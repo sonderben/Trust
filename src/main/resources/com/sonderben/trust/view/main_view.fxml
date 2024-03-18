@@ -24,7 +24,7 @@
          </padding></StackPane>
    </center>
    <left>
-      <VBox alignment="CENTER" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
+      <VBox style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
          <children>
             <ScrollPane maxHeight="1.7976931348623157E308" style="-fx-background-color: transparent;" vbarPolicy="NEVER">
                <content>
@@ -112,7 +112,7 @@
                                     <Insets left="5.0" />
                                  </HBox.margin>
                               </ImageView>
-                              <Label text="%configuration" />
+                              <Label text="%enterprise" />
                            </children>
                            <VBox.margin>
                               <Insets bottom="5.0" />

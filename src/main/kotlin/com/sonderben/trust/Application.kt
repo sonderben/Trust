@@ -4,10 +4,9 @@ import Database
 import Factory
 import javafx.application.Application
 import javafx.fxml.FXMLLoader
-import javafx.print.Printer
 import javafx.scene.Scene
 import javafx.stage.Stage
-import javax.script.ScriptEngineManager
+import org.scenicview.ScenicView
 
 class HelloApplication : Application() {
 
@@ -18,7 +17,8 @@ class HelloApplication : Application() {
 
         Context.readJson()
 
-
+        val Init = byteArrayOf(27, 64)
+        println( "test 1 2: ${String(Init)}" )
 
 
         primary = stage
@@ -60,5 +60,4 @@ class HelloApplication : Application() {
 
 fun main() {
     Application.launch(HelloApplication::class.java)
-    println("kooooooool")
 }

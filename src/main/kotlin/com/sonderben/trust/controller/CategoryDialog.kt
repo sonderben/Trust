@@ -1,12 +1,7 @@
 package com.sonderben.trust.controller
 
 import com.sonderben.trust.HelloApplication
-import com.sonderben.trust.constant.Action
-import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.db.dao.CategoryDao
-import com.sonderben.trust.db.dao.RoleDao
-import com.sonderben.trust.model.Role
-import com.sonderben.trust.model.Screen
 import entity.CategoryEntity
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.ObservableList

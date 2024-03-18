@@ -3,7 +3,6 @@
 <?import java.lang.String?>
 <?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -13,7 +12,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
@@ -23,6 +21,54 @@
          <content>
             <VBox fx:id="bottomPanelVBOx" maxWidth="1.7976931348623157E308">
                <children>
+                  <Label opacity="0.6" text="Enterprise">
+                     <padding>
+                        <Insets bottom="20.0" top="10.0" />
+                     </padding>
+                  </Label>
+                  <GridPane hgap="10.0" vgap="10.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label text="%name" textFill="WHITE" />
+                        <Label text="%direction" textFill="WHITE" GridPane.columnIndex="1" />
+                        <Label text="%phone" textFill="WHITE" GridPane.columnIndex="2" />
+                        <Label text="%foundation_date" textFill="WHITE" GridPane.rowIndex="2" />
+                        <Label text="%website" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label text="%category" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <TextField fx:id="nameTextField" text="Acra" GridPane.rowIndex="1" />
+                        <TextField fx:id="directionTextField" text="haiti" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="phoneTextField" text="509" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <TextField fx:id="websiteTextField" text="www.acra.com" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <ChoiceBox fx:id="categoryChoiceBox" maxWidth="1.7976931348623157E308" prefWidth="150.0" value="%select_type_company" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                           <items>
+                              <FXCollections fx:factory="observableArrayList">
+                                 <String fx:value="Supermarket" />
+                                 <String fx:value="Hardware store" />
+                                 <String fx:value="Pharmacy" />
+                              </FXCollections>
+                           </items>
+                        </ChoiceBox>
+                        <DatePicker fx:id="foundationDatePicker" GridPane.rowIndex="3" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </GridPane>
+                  <Label opacity="0.6" text="Admin">
+                     <padding>
+                        <Insets bottom="20.0" top="10.0" />
+                     </padding>
+                  </Label>
                   <GridPane hgap="10.0" minHeight="200.0" vgap="5.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -80,16 +126,6 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </GridPane>
-                  <HBox alignment="CENTER_RIGHT" minHeight="40.0" spacing="10.0" VBox.vgrow="NEVER">
-                     <children>
-                        <Button fx:id="updateButton" mnemonicParsing="false" onAction="#onUpdateButton" text="%update" />
-                        <Button fx:id="deleteButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteButton" text="%delete" />
-                        <Button fx:id="saveButton" layoutX="65.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveButton" text="%save" />
-                     </children>
-                     <padding>
-                        <Insets bottom="10.0" right="10.0" />
-                     </padding>
-                  </HBox>
                </children>
             </VBox>
          </content>

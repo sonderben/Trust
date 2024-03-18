@@ -209,7 +209,7 @@ class MainController : Initializable {
     }
 
     private fun screensByRole(){
-        val screensIdEmployee:List<String> = Context.currentEmployee.value.role.screens.map { screen -> screen.screen.name.lowercase() }
+        val screensIdEmployee:List<String> = Context.currentEmployee.value.role.screens.map { screen -> screen.name.lowercase() }
         vboxLateral.children.removeIf { !screensIdEmployee.contains(it.id.lowercase()) }
     }
 

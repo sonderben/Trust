@@ -40,7 +40,8 @@ object SqlDdl {
     private const val createRolesTable = """
         CREATE TABLE IF NOT EXISTS $roles(
         id integer primary key autoincrement,
-        name varchar(30) unique
+        name varchar(30) unique,
+        screens varchar
     );
     """
     private var createCustomerTable =  """

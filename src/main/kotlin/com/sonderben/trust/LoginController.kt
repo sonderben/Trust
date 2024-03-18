@@ -74,9 +74,7 @@ class LoginController : Initializable{
         val engineFactories = scriptEngineManager.engineFactories
         val eng = scriptEngineManager.getEngineByExtension("js")
         println("3+2= "+ eng.eval("3+2") )
-        val i = 0
 
-        println("name: $")
         for (en in engineFactories){
             println("name: ${en.engineName}")
             println("engineVersion: ${en.engineVersion}")

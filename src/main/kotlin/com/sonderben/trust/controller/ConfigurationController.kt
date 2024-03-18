@@ -3,7 +3,6 @@ package com.sonderben.trust.controller
 import com.sonderben.trust.CategoryEnum
 import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.controller.config.Admin
-import com.sonderben.trust.controller.config.BusinessInfoController
 import com.sonderben.trust.controller.config.InvoiceController
 import com.sonderben.trust.db.dao.EnterpriseDao
 import entity.EnterpriseEntity
@@ -29,6 +28,8 @@ class ConfigurationController:Initializable, BaseController() {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         editMenuItem()
         HelloApplication.primary.isResizable = true
+
+
 
 
 
@@ -60,7 +61,7 @@ class ConfigurationController:Initializable, BaseController() {
          } )
 
 
-        pagination.pageCount = 3
+        pagination.pageCount = 2
 
     }
 
@@ -96,7 +97,6 @@ class ConfigurationController:Initializable, BaseController() {
     private lateinit var pagination:Pagination
     @FXML
     private lateinit var back:ImageView
-    private var businessInfoController:BusinessInfoController?=null
     private var admin:Admin?=null
     private val invoiceController:InvoiceController?=null
 
@@ -108,26 +108,14 @@ class ConfigurationController:Initializable, BaseController() {
         val fxmlLoader: FXMLLoader
         when(index){
             0 -> {
-               if(enterpriseInfo==null){
-                    fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/config/businessInfo.fxml"),resourcesBundle)
-                   enterpriseInfo = fxmlLoader.load<Node>()
-                   businessInfoController=fxmlLoader.getController()
-                   businessInfoController?.enterprise = enterprise
-
-                   screenTitle.text = "Enterprise Info"
-               }
-                return enterpriseInfo!!
-            }
-            1 -> {
                if(nodeAdmin==null){
                     fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/config/admin.fxml"),resourcesBundle)
                    nodeAdmin = fxmlLoader.load<Node>()
                    admin = fxmlLoader.getController()
-
                    admin?.enterprise = enterprise
 
-                   screenTitle.text = "Administrator"
                }
+                screenTitle.text = "Administrator"
                 return nodeAdmin!!
             }
             else -> {
@@ -135,9 +123,8 @@ class ConfigurationController:Initializable, BaseController() {
                      fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/config/invoice.fxml"),resourcesBundle)
                     invoice = fxmlLoader.load<Node>()
                     invoiceController?.enterprise = enterprise
-
-                    screenTitle.text = "Setup your Invoice"
                 }
+                screenTitle.text = "Setup your Invoice"
                 return invoice!!
             }
 
@@ -159,12 +146,12 @@ class ConfigurationController:Initializable, BaseController() {
 
     fun onSave() {
         enterprise.apply {
-            name = businessInfoController!!.nameTextField.text
-            telephone =  businessInfoController!!.telephoneTextField.text
-            website =  businessInfoController!!.websiteTextField.text
-            direction =  businessInfoController!!.directionTextField.text
-            foundation =  GregorianCalendar.from( businessInfoController!!.foundationDatePicker.value.atStartOfDay(ZoneId.systemDefault()))
-            category = CategoryEnum.valueOf(  businessInfoController!!.categoryChoiceBox.selectionModel.selectedItem.uppercase() )
+            name = admin!!.nameTextField.text
+            telephone =  admin!!.telephoneTextField.text
+            website =  admin!!.websiteTextField.text
+            direction =  admin!!.directionTextField.text
+            foundation =  GregorianCalendar.from( admin!!.foundationDatePicker.value.atStartOfDay(ZoneId.systemDefault()))
+            category = CategoryEnum.valueOf(  admin!!.categoryChoiceBox.selectionModel.selectedItem.uppercase() )
 
             println("onsave buisiness info")
             employee?.apply {

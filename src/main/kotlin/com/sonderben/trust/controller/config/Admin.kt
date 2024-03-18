@@ -11,7 +11,8 @@ import java.time.LocalDate
 import java.util.*
 
 class Admin :Initializable {
-     var enterprise: EnterpriseEntity?=null
+    lateinit var phoneTextField: TextField
+    var enterprise: EnterpriseEntity?=null
          set(value) {
              field=value
              setEnterprise()
@@ -19,6 +20,7 @@ class Admin :Initializable {
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
 
         setEnterprise()
+        setBusiness()
 
 
 
@@ -47,7 +49,7 @@ class Admin :Initializable {
            lastNameTextField.text = emp.lastName
            passportTextField.text = emp.passport
            passwordField.text = emp.password
-           telephoneTextField.text = emp.telephone
+           phoneTextField.text = emp.telephone
            scheduleTextField.text = "Mon-Mon"
        }
 
@@ -122,4 +124,42 @@ class Admin :Initializable {
 
     @FXML
      lateinit var userNameTextField: TextField
+     ///////---------------\\\\\\\\\\\\\\\\\\\
+
+    @FXML
+    lateinit var categoryChoiceBox: ChoiceBox<String>
+
+    @FXML
+    lateinit var directionTextField: TextField
+
+    @FXML
+    lateinit var foundationDatePicker: DatePicker
+
+    @FXML
+    lateinit var nameTextField: TextField
+
+    /*@FXML
+    lateinit var telephoneTextField: TextField*/
+
+    @FXML
+    lateinit var websiteTextField: TextField
+
+    private fun setBusiness() {
+
+        if (enterprise!=null){
+            directionTextField.text = enterprise!!.direction
+            val cal = enterprise!!.foundation
+            foundationDatePicker.value = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH))
+
+            if (enterprise!!.category!=null){
+                val cat = enterprise!!.category.name.lowercase().replaceFirstChar { it.uppercaseChar() }
+                categoryChoiceBox.selectionModel.select( categoryChoiceBox.items.indexOf( cat ) )
+            }
+
+            nameTextField.text = enterprise!!.name
+            telephoneTextField.text = enterprise!!.telephone
+            websiteTextField.text = enterprise!!.website
+        }
+
+    }
 }

@@ -27,8 +27,7 @@ import java.util.*
 
 class InvoiceController:Initializable {
      var enterprise: EnterpriseEntity?=null
-    /*@FXML
-    private lateinit var textArea: TextArea*/
+
 
     @FXML
     private lateinit var mainhbox:HBox

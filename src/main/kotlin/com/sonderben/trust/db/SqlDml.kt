@@ -176,13 +176,22 @@ object SqlDml {
       val INSERT_ROLE = buildString {
         append("INSERT INTO ")
         append(SqlDdl.roles)
-        append(" (name) values (?)")
+        append(" (name,screens) values (?,?)")
     }
       val INSERT_SCREEN = buildString {
         append(" INSERT INTO ")
         append(SqlDdl.screen)
         append(" (screenEnum,actions,id_role) values (?,?,?)")
     }
+    val UPDATE_ROLE = "UPDATE ${SqlDdl.roles} SET name = ? WHERE id = ?;"
+    val UPDATE_SCREEN = buildString {
+        append("UPDATE ${SqlDdl.screen} SET ")
+        append("screenEnum = ?, ")
+        append("actions = ?, ")
+        append("WHERE id = ?; ")
+    }
+
+
      const val SELECT_ALL_ROLE = "SELECT * FROM ${SqlDdl.roles}"
 
     val DELETE_ROLE = "delete from ${SqlDdl.roles} where id = ?"

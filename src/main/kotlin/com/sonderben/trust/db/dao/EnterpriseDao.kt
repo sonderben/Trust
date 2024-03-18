@@ -5,6 +5,7 @@ import Database
 import Database.DATABASE_NAME
 import com.sonderben.trust.Util
 import com.sonderben.trust.db.SqlDdl
+import com.sonderben.trust.db.SqlDml.INSERT_ROLE
 import com.sonderben.trust.db.SqlDml.SELECT_ALL_ENTERPRISE
 import com.sonderben.trust.model.Role
 import entity.EmployeeEntity
@@ -145,19 +146,12 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
     }
 
     private fun saveRole(role:Role):Long{
-          val insertRole = buildString {
-            append("INSERT INTO ")
-            append(SqlDdl.roles)
-            append(" (name) values (?)")
-    }
-          val insertScreen = buildString {
-            append(" INSERT INTO ")
-            append(SqlDdl.screen)
-            append(" (screenEnum,actions,id_role) values (?,?,?)")
-        }
+
+
         val con = Database.connect(DATABASE_NAME)
-        val ps = con.prepareStatement(insertRole)
+        val ps = con.prepareStatement(INSERT_ROLE)
         ps.setString(1,role.name)
+        ps.setString(2,role.screens.joinToString(",") { it.name })
         val rowCount = ps.executeUpdate()
         if (rowCount<=0) {
             con.rollback()
@@ -167,20 +161,7 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
         val roleId = Database.getLastId()
         role.id = roleId
 
-        for (screen in role.screens){
-            val ps2=con.prepareStatement(insertScreen)
-            ps2.setString(1,screen.screen.name)
-            ps2.setString(2,screen.actions.map { it.name }.joinToString ("," ) )
-            ps2.setLong(3,roleId)
 
-            val rowCount2 = ps2.executeUpdate()
-            if (rowCount2<=0) {
-                con.rollback()
-                con.autoCommit = true
-                throw Exception("can't add screen: $screen")
-            }
-
-        }
         return roleId
     }
 
