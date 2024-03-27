@@ -30,13 +30,11 @@ class LoginController : Initializable{
     @FXML
     private lateinit var infoLabel: Label
     @FXML
-    private lateinit var enterpriseCB: ChoiceBox<EnterpriseInfo>
-
-    @FXML
     private lateinit var newSystemLabel: Label
     private val employees: ObservableList<EmployeeEntity> = EmployeeDao.employees
 
 
+    private lateinit var resourceBundle:ResourceBundle
 
     @FXML
     fun onLoginButtonClick() {
@@ -63,7 +61,7 @@ class LoginController : Initializable{
 
     @FXML
     fun onCreateNewSystemMouseClicked() {
-        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/configuration.fxml"))
+        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/configuration.fxml"),resourceBundle)
         val scene = Scene(fxmlLoader.load(), 920.0, 640.0)
         fxmlLoader.getController<ConfigurationController>()
         HelloApplication.primary.scene = scene
@@ -75,11 +73,12 @@ class LoginController : Initializable{
             newSystemLabel.isDisable = true
         }
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+    override fun initialize(location: URL?, resources: ResourceBundle) {
+        resourceBundle = resources
         val scriptEngineManager = ScriptEngineManager()
         val engineFactories = scriptEngineManager.engineFactories
         val eng = scriptEngineManager.getEngineByExtension("js")
-        println("3+2= "+ eng.eval("3+2") )
+        /*println("3+2= "+ eng.eval("3+2") )
 
         for (en in engineFactories){
             println("name: ${en.engineName}")
@@ -87,15 +86,7 @@ class LoginController : Initializable{
             println("languageVersion: ${en.languageVersion}")
             println("names: ${en.names}")
             println("mimeTypes: ${en.mimeTypes}")
-        }
-
-
-
-
-
-        enterpriseCB.isVisible = false
-        enterpriseCB.isManaged = false
-        //HelloApplication.primary.isResizable = false
+        }*/
 
         employees.addListener(ListChangeListener {
             if (employees.size >0 ){
@@ -110,24 +101,7 @@ class LoginController : Initializable{
         }
 
 
-
-        enterpriseCB.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
-            if (newValue != null) {
-                login.isDisable = false
-            }
-        }
-
-        enterpriseCB.converter = EnterpriseStringConverter()
-        //enterpriseCB.items = enterPrisesInfos
     }
 
-    class  EnterpriseStringConverter:StringConverter<EnterpriseInfo>(){
-        override fun toString(p0: EnterpriseInfo?): String {
-            return p0?.name ?: "Select a Enterprise"
-        }
 
-        override fun fromString(p0: String?): EnterpriseInfo {
-            return EnterpriseInfo()
-        }
-    }
 }

@@ -11,7 +11,6 @@
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -210,7 +209,7 @@
                         <Image url="@../image/arrow.png" />
                      </image>
                   </ImageView>
-                  <ImageView fitHeight="17.0" fitWidth="17.0" onMouseClicked="#hideLeftPanelOnMouseClicked" pickOnBounds="true" preserveRatio="true" rotate="90.0">
+                  <ImageView fx:id="hideLeftPanel" fitHeight="17.0" fitWidth="17.0" onMouseClicked="#hideLeftPanelOnMouseClicked" pickOnBounds="true" preserveRatio="true" rotate="90.0">
                      <image>
                         <Image url="@../image/hide_panel.PNG" />
                      </image>
@@ -218,8 +217,16 @@
                         <Insets left="9.0" />
                      </HBox.margin>
                   </ImageView>
-                  <Pane maxWidth="1.7976931348623157E308" prefHeight="0.1" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <ImageView fitHeight="17.0" fitWidth="17.0" layoutX="100.0" layoutY="15.0" onMouseClicked="#disconnectOnMouseClicked" pickOnBounds="true" preserveRatio="true">
+                  <HBox alignment="CENTER" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label fx:id="windowTitle" text="%sale">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <ImageView fx:id="closeSession" fitHeight="17.0" fitWidth="17.0" layoutX="100.0" layoutY="15.0" onMouseClicked="#disconnectOnMouseClicked" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../image/logout.PNG" />
                      </image>

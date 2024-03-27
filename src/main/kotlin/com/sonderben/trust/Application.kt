@@ -7,6 +7,8 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
 import javafx.stage.Stage
 import printer.thermal.PrinterOptions
+import java.util.ResourceBundle
+import java.util.ResourceBundle.getBundle
 
 
 class HelloApplication : Application() {
@@ -23,7 +25,8 @@ class HelloApplication : Application() {
 
 
         primary = stage
-        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
+        val resource:ResourceBundle = getBundle("com.sonderben.trust.i18n.string")
+        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"),resource)
         val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
 
         //println("printer: ${Printer.getDefaultPrinter()}" )

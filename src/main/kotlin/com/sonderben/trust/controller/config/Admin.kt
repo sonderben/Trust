@@ -12,7 +12,7 @@ import java.util.*
 
 class Admin :Initializable {
     lateinit var phoneTextField: TextField
-     var bundle:ResourceBundle?=null;
+    private var bundle:ResourceBundle?=null;
     var enterprise: EnterpriseEntity?=null
          set(value) {
              field=value
@@ -23,16 +23,13 @@ class Admin :Initializable {
 
         bundle = p1
 
+        categoryChoiceBox.items.clear()
         categoryChoiceBox.items.addAll(
             p1?.getString("supermarket") ?: "Supermarket",
             p1?.getString("hardware_store") ?: "Hardware store",
             p1?.getString("pharmacy") ?: "Pharmacy",
+            p1?.getString("general") ?: "General"
         )
-
-
-
-
-
     }
 
 
@@ -131,8 +128,7 @@ class Admin :Initializable {
     @FXML
      lateinit var telephoneTextField: TextField
 
-    @FXML
-     lateinit var updateButton: Button
+
 
     @FXML
      lateinit var userNameTextField: TextField

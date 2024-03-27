@@ -30,8 +30,10 @@ class ConfigurationController:Initializable, BaseController() {
     lateinit var saveButton: Button
     lateinit var mainPane: VBox
     private lateinit var enterprise:EnterpriseEntity
+    private lateinit var resourceBundle: ResourceBundle
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+    override fun initialize(location: URL?, resources: ResourceBundle) {
+        resourceBundle = resources
         editMenuItem()
         HelloApplication.primary.isResizable = true
 
@@ -50,7 +52,7 @@ class ConfigurationController:Initializable, BaseController() {
         }
 
 
-         EnterpriseDao.enterprises.addListener (  ListChangeListener  {change->
+         /*EnterpriseDao.enterprises.addListener (  ListChangeListener  {change->
              if (change.next()){
                  enterpriseInfo=null
                  nodeAdmin=null
@@ -62,7 +64,7 @@ class ConfigurationController:Initializable, BaseController() {
                  pagination.setPageFactory { index ->createPage(index) }
              }
 
-         } )
+         } )*/
 
 
         pagination.pageCount = 2
@@ -77,10 +79,10 @@ class ConfigurationController:Initializable, BaseController() {
         saveMenuItem.setOnAction {
             onSave()
         }
-        val updateMenuItems = MenuItem("Update")
+        /*val updateMenuItems = MenuItem("Update")
         updateMenuItems.setOnAction {
 
-        }
+        }*/
 
 
         val clearMenuItems = MenuItem("Clear")
@@ -89,7 +91,7 @@ class ConfigurationController:Initializable, BaseController() {
         }
 
 
-        MainController.editMenu?.items?.addAll(saveMenuItem, updateMenuItems)
+        MainController.editMenu?.items?.addAll(saveMenuItem/*, updateMenuItems*/)
 
     }
 
@@ -117,8 +119,7 @@ class ConfigurationController:Initializable, BaseController() {
                    nodeAdmin = fxmlLoader.load<Node>()
                    admin = fxmlLoader.getController()
                    admin?.enterprise = enterprise
-                   if (admin == null)
-                   println( "enterprise nullllll depi la")
+
 
                }
                 return nodeAdmin!!
@@ -151,17 +152,16 @@ class ConfigurationController:Initializable, BaseController() {
     fun onSave() {
 
         if (validateEmployee() ){
+            val catString = getCategoryEnumFromIndex( admin!!.categoryChoiceBox.selectionModel.selectedIndex )
+
             enterprise.apply {
                 name = admin!!.nameTextField.text
                 telephone =  admin!!.telephoneTextField.text
                 website =  admin!!.websiteTextField.text
                 direction =  admin!!.directionTextField.text
                 foundation =  GregorianCalendar.from( admin!!.foundationDatePicker.value.atStartOfDay(ZoneId.systemDefault()) )
+                category = CategoryEnum.valueOf( catString )
 
-                val categoryString = getCategoryEnumFromIndex( admin!!.categoryChoiceBox.selectionModel.selectedIndex )
-                if ( categoryString != null ){
-                    category = CategoryEnum.valueOf( categoryString )
-                }
                 employee?.apply {
                     firstName = admin!!.firstNameTextField.text
                     lastName = admin!!.lastNameTextField.text
@@ -177,29 +177,40 @@ class ConfigurationController:Initializable, BaseController() {
                 }
             }
 
-            EnterpriseDao.save(enterprise)
-                .subscribe({
-                    val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
+            if (EnterpriseDao.enterprises.isEmpty()){
+                EnterpriseDao.save(enterprise)
+                    .subscribe({
 
-                    val parent = fxmlLoader.load<Parent>()
-                    val loginController = fxmlLoader.getController<LoginController>()
-                    loginController.isFromEnterprise = true
+                        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"),resourceBundle)
+                        val parent = fxmlLoader.load<Parent>()
+                        val loginController = fxmlLoader.getController<LoginController>()
+                        loginController.isFromEnterprise = true
 
-
-
-                    val scene = Scene( parent, 720.0, 440.0)
-                    HelloApplication.primary.scene = scene
-                },{})
+                        val scene = Scene( parent, 720.0, 440.0)
+                        HelloApplication.primary.scene = scene
+                    },{})
+            }else{
+                val loading = ViewUtil.loadingView()
+                loading.show()
+                EnterpriseDao.update(enterprise)
+                    .subscribe({
+                               loading.close()//
+                    },{
+                        th-> println(th.message)
+                        loading.close()
+                    })
+            }
         }
 
     }
 
-    private fun getCategoryEnumFromIndex(selectedIndex: Int): String? {
+    private fun getCategoryEnumFromIndex(selectedIndex: Int): String {
+        println("index: $selectedIndex")
         return when(selectedIndex){
             0 -> "SUPERMARKET"
             1 -> "HARDWARE_STORE"
             2 -> "PHARMACY"
-            else -> null
+            else -> "GENERAL"
         }
     }
     private fun validateEmployee():Boolean{

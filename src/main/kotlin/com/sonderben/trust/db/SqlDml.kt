@@ -41,6 +41,8 @@ object SqlDml {
         append("(bankAccount,direction,email,firstName,genre,lastName,passport,password,telephone,userName,birthDay,id_role) ")
         append("values (?,?,?,?,?,?,?,?,?,?,?,?) ")
     }
+
+
     val INSERT_SCHEDULE = buildString {
         append("INSERT INTO ${SqlDdl.schedules }")
         append(" (workDay,start_hour,end_hour,id_employee) ")
@@ -57,16 +59,26 @@ object SqlDml {
         genre = ?,lastName = ?,passport = ? ,password = ?,
         telephone = ?,userName = ?,birthDay = ?,id_role = ? where id = ? """
 
+    val INSERT_ENTERPRISE = buildString {
+        append("Insert into ${SqlDdl.enterprise} ")
+        append("(name,direction,telephone,foundation,website,category,invoiceTemplate,invoiceTemplateHtml,id_employee) ")
+        append("values (?,?,?,?,?,?,?,?,?) ")
+    }
     val  SELECT_ALL_ENTERPRISE = """
-            SELECT enterprise.name as ne,enterprise.direction as ed,enterprise.telephone as et,enterprise.foundation as ef ,enterprise.website as ew,
+            SELECT enterprise.id as enid , enterprise.name as ne,enterprise.direction as ed,enterprise.telephone as et,enterprise.foundation as ef ,enterprise.website as ew,
             enterprise.category as ec ,enterprise.invoiceTemplate as ei,enterprise.invoiceTemplateHtml as ein,
-            Employee.birthDay as empb,Employee.bankAccount as empbank,Employee.direction as empd,Employee.email as empe,Employee.firstName as empf,Employee.lastName as empl,
+            Employee.birthDay as empb,Employee.id as empid,Employee.bankAccount as empbank,Employee.direction as empd,Employee.email as empe,Employee.firstName as empf,Employee.lastName as empl,
             Employee.genre as empg,Employee.passport as empp,Employee.password as emppwd,Employee.telephone as emptel,Employee.userName as empu,
             Roles.name as rm,Roles.id as ri
             from enterprise
             INNER JOIN Employee on enterprise.id_employee == Employee.id
             INNER join Roles on Roles.id = Employee.id_role """
-    val UPDATE_ENTERPRISE = ""
+    val UPDATE_ENTERPRISE = """
+        UPDATE ${SqlDdl.enterprise} 
+        set name = ?, direction = ?,telephone = ?,foundation = ?, 
+        website = ?,category = ?,invoiceTemplate = ?, invoiceTemplateHtml = ?,
+         id_employee = ? WHERE id = ?
+    """.trimIndent()
 
     val PRODUCT_SOLD_BY_CODE = """
         SELECT ps.code,

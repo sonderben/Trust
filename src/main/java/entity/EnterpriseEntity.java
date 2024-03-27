@@ -115,6 +115,21 @@ public class EnterpriseEntity extends BaseEntity{
         this.invoiceTemplate = invoiceTemplate;
         this.invoiceTemplateHtml = invoiceTemplateHtml;
     }
+
+    public EnterpriseEntity(Long id,String name, String direction, String telephone, Calendar foundation, String website, String category, EmployeeEntity employee, String invoiceTemplate, String invoiceTemplateHtml) {
+        this.id = id;
+        this.name = name;
+        this.direction = direction;
+        this.telephone = telephone;
+        this.foundation = foundation;
+        this.website = website;
+        this.category = CategoryEnum.valueOf(category);
+
+        this.employee = employee;
+        this.invoiceTemplate = invoiceTemplate;
+        this.invoiceTemplateHtml = invoiceTemplateHtml;
+    }
+
     public EnterpriseEntity() {
         this.name = "";
         this.direction = "";

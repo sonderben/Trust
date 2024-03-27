@@ -12,6 +12,7 @@ import javafx.scene.control.Label
 import javafx.scene.control.Menu
 import javafx.scene.control.MenuBar
 import javafx.scene.control.MenuItem
+import javafx.scene.control.Tooltip
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
@@ -21,6 +22,7 @@ import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
+import javafx.util.Duration
 import java.net.URL
 import java.util.*
 
@@ -32,9 +34,16 @@ class MainController : Initializable {
             onClickLateralButton( selected[0] )
     }
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+    override fun initialize(location: URL?, resources: ResourceBundle) {
 
         //HelloApplication.primary.isResizable = true
+        closeSession
+        val toolTypeCloseSession = Tooltip("Close ${Context.currentEmployee.get().userName} session")
+        val tooltipHideLeftPanel = Tooltip("Close or Open navigation panel")
+        Tooltip.install(hideLeftPanel,tooltipHideLeftPanel)
+        toolTypeCloseSession.hideDelay = Duration(5000.0)
+        Tooltip.install(closeSession,toolTypeCloseSession)
+        resourceBundle = resources
         hideLeftPanelOnMouseClicked()
 
         next = nextPage
@@ -51,7 +60,7 @@ class MainController : Initializable {
             onClickLateralButton( vboxLateral.children[0] )
         }
         if ( vboxLateral.children.size >0 ){
-            changeView("view/sale.fxml")
+            changeView("view/sale.fxml","sale")
             onClickLateralButton( vboxLateral.children[0] )
             onSelect()
         }
@@ -68,28 +77,28 @@ class MainController : Initializable {
                 "sale_" -> {
                     menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT1,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
-                        changeView("view/sale.fxml")
+                        changeView("view/sale.fxml","sale")
                         selecttAppropriateView( "sale" )
                     }
                 }
                 "product_" -> {
                     menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT2,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
-                        changeView("view/product.fxml")
+                        changeView("view/product.fxml","product")
                         selecttAppropriateView( "product" )
                     }
                 }
                 "employee_" -> {
                     menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT3,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
-                        changeView("view/employee.fxml")
+                        changeView("view/employee.fxml","employee")
                         selecttAppropriateView( "employee" )
                     }
                 }
-                "configuration_" -> {
+                "enterprise_" -> {
                     menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT4,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
-                        changeView("view/configuration.fxml")
+                        changeView("view/configuration.fxml","enterprise")
                         selecttAppropriateView( "configuration" )
                     }
                 }
@@ -97,21 +106,21 @@ class MainController : Initializable {
                 "role_" -> {
                     menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT5,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
-                        changeView("view/role.fxml")
+                        changeView("view/role.fxml","role")
                         selecttAppropriateView( "role" )
                     }
                 }
                 "queries_" -> {
                     menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT6,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
-                        changeView("view/queries/queries.fxml")
+                        changeView("view/queries/queries.fxml","queries")
                         selecttAppropriateView( "queries" )
                     }
                 }
                 "customer_service_"->{
                     menuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT7,KeyCombination.CONTROL_DOWN)
                     menuItem.setOnAction {
-                        changeView("view/customerService.fxml")
+                        changeView("view/customerService.fxml","customer_services")
                         selecttAppropriateView( "customer_service" )
                     }
                 }
@@ -126,6 +135,10 @@ class MainController : Initializable {
     }
 
 
+    lateinit var hideLeftPanel: ImageView
+    lateinit var closeSession: ImageView
+    lateinit var windowTitle: Label
+    private lateinit var resourceBundle: ResourceBundle
     lateinit var bottomBar: MenuItem
     //lateinit var bottombar: MenuItem
 
@@ -185,26 +198,27 @@ class MainController : Initializable {
                 if (event != null) {
                     onClickLateralButton(event.source as Node)
                     when (it.id.lowercase()) {
-                        "sale" -> changeView("view/sale.fxml")
-                        "product" -> changeView("view/product.fxml")
-                        "employee" -> changeView("view/employee.fxml")
-                        "enterprise" -> changeView("view/configuration.fxml")
-                        "inventory" -> changeView("view/inventory.fxml")
-                        "role" -> changeView("view/role.fxml")
-                        "queries" -> changeView("view/queries/queries.fxml")
-                        "customer_service"->changeView("view/customerService.fxml")
+                        "sale" -> changeView("view/sale.fxml","sale")
+                        "product" -> changeView("view/product.fxml","product")
+                        "employee" -> changeView("view/employee.fxml","employee")
+                        "enterprise" -> changeView("view/configuration.fxml","enterprise")
+                        "inventory" -> changeView("view/inventory.fxml","")
+                        "role" -> changeView("view/role.fxml","role")
+                        "queries" -> changeView("view/queries/queries.fxml","queries")
+                        "customer_service"->changeView("view/customerService.fxml","customer_services")
                     }
                 }
             }
         }
     }
 
-    private fun changeView(relativeUrl: String) {
+    private fun changeView(relativeUrl: String,titleI18n:String) {
         val a = SingletonView.get(relativeUrl)
         if (a != null && !stackPane.children.contains(a)) {
             stackPane.children.clear()
             stackPane.children.add(a)
         }
+        windowTitle.text = resourceBundle.getString(titleI18n)
         //a?.toFront()
     }
 
@@ -263,7 +277,7 @@ class MainController : Initializable {
     }
 
     @FXML fun disconnectOnMouseClicked() {
-        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
+        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"),resourceBundle)
         val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
         HelloApplication.primary.scene = scene
     }

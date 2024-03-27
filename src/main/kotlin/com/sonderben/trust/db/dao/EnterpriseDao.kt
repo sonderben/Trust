@@ -5,8 +5,14 @@ import Database
 import Database.DATABASE_NAME
 import com.sonderben.trust.Util
 import com.sonderben.trust.db.SqlDdl
+import com.sonderben.trust.db.SqlDml.INSERT_EMPLOYEE
+import com.sonderben.trust.db.SqlDml.INSERT_ENTERPRISE
 import com.sonderben.trust.db.SqlDml.INSERT_ROLE
+import com.sonderben.trust.db.SqlDml.INSERT_SCHEDULE
 import com.sonderben.trust.db.SqlDml.SELECT_ALL_ENTERPRISE
+import com.sonderben.trust.db.SqlDml.UPDATE_EMPLOYEE
+import com.sonderben.trust.db.SqlDml.UPDATE_ENTERPRISE
+import com.sonderben.trust.db.SqlDml.UPDATE_SCHEDULER
 import com.sonderben.trust.model.Role
 import entity.EmployeeEntity
 import entity.EnterpriseEntity
@@ -25,7 +31,6 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
     init {
        try {
            findAll()
-
        }catch (_:Exception){}
     }
     override fun save(entity: EnterpriseEntity): Completable {
@@ -36,25 +41,12 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
             if (employee.role == null ){
                 throw Exception("Role can not be null")
             }
-            val insertEmployee = buildString {
-                append("Insert into ${SqlDdl.employees} ")//passport
-                append("(bankAccount,direction,email,firstName,genre,lastName,passport,password,telephone,userName,birthDay,id_role) ")
-                append("values (?,?,?,?,?,?,?,?,?,?,?,?) ")
-            }
-            val insertIntoSchedule = buildString {
-                append("INSERT INTO ${SqlDdl.schedules }")
-                append(" (workDay,start_hour,end_hour,id_employee) ")
-                append(" values( ?,?,?,?);")
-            }
-            val insertEnterprise = buildString {
-                append("Insert into ${SqlDdl.enterprise} ")
-                append("(name,direction,telephone,foundation,website,category,invoiceTemplate,invoiceTemplateHtml,id_employee) ")
-                append("values (?,?,?,?,?,?,?,?,?) ")
-            }
+
+
             var lastIdEmployeeAdded = 0L
             Database.connect(DATABASE_NAME).use { connection ->
                 connection.autoCommit = false
-                connection.prepareStatement(insertEmployee).use {preparedStatement ->
+                connection.prepareStatement(INSERT_EMPLOYEE).use { preparedStatement ->
                     preparedStatement.setString(1,employee.bankAccount)
                     preparedStatement.setString(2,employee.direction)
                     preparedStatement.setString(3,employee.email)
@@ -76,7 +68,7 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
                         entity.id = lastIdEmployeeAdded
 
                         for (schedule in employee.schedules){
-                            connection.prepareStatement(insertIntoSchedule).use {ps ->
+                            connection.prepareStatement(INSERT_SCHEDULE).use { ps ->
                                 ps.setInt(1,schedule.workDay)
                                 ps.setFloat(2,schedule.startHour)
                                 ps.setFloat(3,schedule.endHour)
@@ -102,13 +94,13 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
 
 
 
-                    connection.prepareStatement(insertEnterprise).use { ps2->
+                    connection.prepareStatement(INSERT_ENTERPRISE).use { ps2->
                         ps2.setString(1,entity.name)
                         ps2.setString(2,entity.direction)
                         ps2.setString(3,entity.telephone)
                         ps2.setTimestamp(4,Timestamp(entity.foundation.time.time))
                         ps2.setString(5,entity.website)
-                        ps2.setString(6,"PHARMACY")
+                        ps2.setString(6,entity.categoryString)
                         ps2.setString(7,entity.invoiceTemplate)
                         ps2.setString(8,entity.invoiceTemplateHtml)
                         ps2.setLong(9,lastIdEmployeeAdded)
@@ -116,6 +108,7 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
                             connection.commit()
                             connection.autoCommit = true
                             emitter.onComplete()
+                            findAll()
                         }else{
                             connection.rollback()
                             connection.autoCommit = false
@@ -127,11 +120,6 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
                 }
             }
         }
-
-
-
-
-
     }
 
     override fun delete(idEntity: Long): Completable {
@@ -167,6 +155,8 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
 
     override fun findAll() {
         Single.create { emitter ->
+            if (enterprises.isNotEmpty())
+                enterprises.clear()
             Database.connect(DATABASE_NAME).use { connection->
                 connection.createStatement().use { statement ->
 
@@ -191,8 +181,10 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
                                 role,
                                 listOf()
                             )
+                            emp.id = resultSet.getLong("empid")
                             enterprises.add(
                                 EnterpriseEntity(
+                                    resultSet.getLong("enid"),
                                     resultSet.getString("ne"),
                                     resultSet.getString("ed"),
                                     resultSet.getString("et"),
@@ -218,8 +210,86 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
     }
 
     override fun update(entity: EnterpriseEntity): Completable {
-        return Completable.create {  }
-            .subscribeOn(Schedulers.io())
-            .observeOn(JavaFxScheduler.platform())
+        Database.connect(DATABASE_NAME).autoCommit = false
+
+        return Completable.create { emitter->
+
+            var lastIdEmployeeAdded = 0L
+            Database.connect(DATABASE_NAME).use { connection ->
+                connection.autoCommit = false
+                connection.prepareStatement(UPDATE_EMPLOYEE).use { preparedStatement ->
+                    preparedStatement.setString(1,entity.employee.bankAccount)
+                    preparedStatement.setString(2,entity.employee.direction)
+                    preparedStatement.setString(3,entity.employee.email)
+                    preparedStatement.setString(4,entity.employee.firstName)
+                    preparedStatement.setString(5,entity.employee.genre)
+                    preparedStatement.setString(6,entity.employee.lastName)
+                    preparedStatement.setString(7,entity.employee.passport)
+                    preparedStatement.setString(8,entity.employee.password)
+                    preparedStatement.setString(9,entity.employee.telephone)
+                    preparedStatement.setString(10,entity.employee.userName)
+                    preparedStatement.setTimestamp(11,Timestamp(entity.employee.birthDay.time.time))
+                    preparedStatement.setLong(12,entity.employee.role.id)
+                    preparedStatement.setLong(13,entity.employee.id)
+
+
+
+                    if (preparedStatement.executeUpdate()>0){
+                        lastIdEmployeeAdded = entity.employee.id
+
+
+                        for (schedule in entity.employee.schedules){
+                            connection.prepareStatement(UPDATE_SCHEDULER).use { ps ->
+                                preparedStatement.setInt(1, schedule.workDay)
+                                preparedStatement.setFloat(2, schedule.startHour)
+                                preparedStatement.setFloat(3, schedule.endHour)
+                                preparedStatement.setLong(4, schedule.idEmployee)
+                                preparedStatement.setLong(5, schedule.id)
+                                val rowCount2 = ps.executeUpdate()
+                                if (rowCount2<0){
+                                    connection.rollback()
+                                    connection.autoCommit = true
+                                    emitter.onError( Throwable("unable to update  table: (${SqlDdl.schedules})") )
+
+                                }
+                            }
+                        }
+                    }else{
+                        connection.rollback()
+                        connection.autoCommit = true
+                        emitter.onError( Throwable("cannot update employee") )
+
+                    }
+
+
+
+
+                    connection.prepareStatement(UPDATE_ENTERPRISE).use { ps2->
+                        ps2.setString(1,entity.name)
+                        ps2.setString(2,entity.direction)
+                        ps2.setString(3,entity.telephone)
+                        ps2.setTimestamp(4,Timestamp(entity.foundation.time.time))
+                        ps2.setString(5,entity.website)
+                        ps2.setString(6,entity.categoryString)
+                        ps2.setString(7,entity.invoiceTemplate)
+                        ps2.setString(8,entity.invoiceTemplateHtml)
+                        ps2.setLong(9,lastIdEmployeeAdded)
+                        ps2.setLong(10,entity.id)
+                        if (ps2.executeUpdate()>0){
+                            connection.commit()
+                            connection.autoCommit = true
+                            emitter.onComplete()
+                            findAll()
+                        }else{
+                            connection.rollback()
+                            connection.autoCommit = false
+                            emitter.onError( Throwable( "unable to update  table: (${SqlDdl.schedules})" ) )
+                        }
+                    }
+
+
+                }
+            }
+        }
     }
 }
