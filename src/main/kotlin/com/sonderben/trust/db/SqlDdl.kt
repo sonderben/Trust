@@ -110,7 +110,7 @@ object SqlDdl {
     
     """
 
-    private val createEnterPrice ="""
+    private val createEnterprise ="""
         CREATE TABLE IF NOT EXISTS $enterprise (
         id integer primary key autoincrement,
         name nvarchar not null,
@@ -199,9 +199,9 @@ object SqlDdl {
     """.trimIndent()
 
     val tables = listOf(createCategoryTable,
-        createCustomerTable, createScreenTable, createRolesTable, createEmployeeTable, /*createRoleEmployee,*/
-        createScheduleTable, createProductsTable, createInvoiceTable, createInvoiceProductTable,createProductSealed/*,
-        getFullName*/,createEnterPrice,createProductReturnedTable)
+        createCustomerTable, createScreenTable, createRolesTable, createEmployeeTable,
+        createScheduleTable, createProductsTable, createInvoiceTable, createInvoiceProductTable,createProductSealed,
+        createEnterprise,createProductReturnedTable)
 
 
     var deleteCategoryTable = """
@@ -210,13 +210,5 @@ object SqlDdl {
 
 
 
-     val trustEnterpriseInfo = "trustEnterpriseInfo"
-    val createTrustEnterpriseInfo = """
-        CREATE TABLE IF NOT EXISTS $trustEnterpriseInfo(
-        id integer primary key autoincrement,
-        path varchar not null,
-        name nvarchar not null
-        )
-    """.trimIndent()
-    val trustTables = listOf(createTrustEnterpriseInfo)
+
 }

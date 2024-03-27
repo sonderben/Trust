@@ -1,22 +1,17 @@
 package com.sonderben.trust.controller.config
 
-//import com.gluonhq.richtextarea.RichTextArea
-import com.sonderben.trust.Util
-import com.sonderben.trust.controller.BaseController
+import com.sonderben.trust.Context
 import entity.EnterpriseEntity
-import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.print.Paper
-import javafx.scene.Node
-import javafx.scene.control.ChoiceBox
-import javafx.scene.control.TextArea
+import javafx.scene.control.Button
+import javafx.scene.control.ToolBar
 import javafx.scene.input.KeyEvent
-import javafx.scene.input.MouseEvent
-import javafx.scene.layout.GridPane
 import javafx.scene.layout.HBox
+import javafx.scene.layout.VBox
+import javafx.scene.text.Font
 import javafx.scene.web.HTMLEditor
-import org.scenicview.ScenicView
+import javafx.scene.web.WebView
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
@@ -26,7 +21,14 @@ import java.nio.file.Paths
 import java.util.*
 
 class InvoiceController:Initializable {
-     var enterprise: EnterpriseEntity?=null
+    lateinit var vboxButtons: VBox
+    var enterprise: EnterpriseEntity?=null
+
+    val const = arrayOf(
+        "E_NAME", "E_DIRECTION", "E_PHONE", "E_FOUNDATION", "E_WEBSITE",
+        "PROD_DESCRIPTION", "PROD_QTY", "PROD_PRICE", "PROD_TAX", "PROD_TAX", "PROD_TAX",
+        "PROD_DISCOUNT", "PROD_TOTAL", "PROD_SUBTOTAL", "PROD_CASH", "PROD_CHANGE", "EMP_NAME",
+    )
 
 
     @FXML
@@ -41,14 +43,52 @@ class InvoiceController:Initializable {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
 
-        val first = htmlEditor.lookup(".tool-bar")
-        //val gridPane = htmlEditor.lookup(".grid") as GridPane
-        //gridPane.children.clear()
+
+
+
+
+        ///htmlEditor.maxWidth = charWidth
+        //htmlEditor.prefWidth = charWidth
+        htmlEditor.style = "-fx-max-width: 80mm;"
+
+
+
+        vboxButtons.children.forEach {
+            it.setOnMouseClicked {
+                val btn = it.source as Button
+                when(btn.id){
+                    ""->setHtmlEditor("")
+                    else->setHtmlEditor(btn.text)
+                }
+            }
+        }
+
+
+
+        val first = htmlEditor.lookup(".top-toolbar")
+        val bottom = htmlEditor.lookup(".bottom-toolbar") as ToolBar
         println(first !=null)
         if (first !=null){
-            first.isVisible = false
+            /*first.isVisible = false
             first.isManaged = false
+            bottom.isVisible = false
+            bottom.isManaged = false*/
         }
+
+
+        /*println(bottom.items.size)
+
+        bottom.items.addListener(ListChangeListener { change->
+            val container = bottom.lookup(".container") as HBox?
+            val dd = bottom.lookup(".tool-bar-overflow-button")
+            if (container!=null){
+                bottom.items.remove(container)
+                container.isVisible = false
+                container.isManaged = false
+            }else{
+                println("container is null")
+            }
+        })*/
 
 
 
@@ -61,16 +101,28 @@ class InvoiceController:Initializable {
             if (currentLine.length >= MAX_COLUMN){
                 event.consume()
             }*/
+
+
+
             saveContent(htmlEditor)
         }
 
 
 
+    }
+
+    private fun setHtmlEditor(text: String) {
+        val html = htmlEditor.htmlText
 
     }
 
 
-
+    private fun getPositionCaret(): Any {
+        val webview:WebView=htmlEditor.lookup(".web-view") as WebView
+        val webEngine = webview.engine
+        val index = webEngine.executeScript(" window.getSelection().getRangeAt(0).startOffset")
+        return index
+    }
 
 
     fun saveContent(htmlEditor:HTMLEditor) {
@@ -85,15 +137,17 @@ class InvoiceController:Initializable {
             ex.printStackTrace()
         }
     }
-    fun readContent(htmlEditor: HTMLEditor):String {
+    private fun readContent(htmlEditor: HTMLEditor) {
         try {
             val t= String( Files.readAllBytes( Paths.get( "data/invoice.html" ) ) )
             htmlEditor.htmlText = t
 
         }catch (ex: IOException){
             ex.printStackTrace()
+            htmlEditor.htmlText = Context.defaultInvoice()
+            saveContent(htmlEditor)
         }
-        return ""
+
     }
 
 

@@ -68,6 +68,12 @@ class LoginController : Initializable{
         fxmlLoader.getController<ConfigurationController>()
         HelloApplication.primary.scene = scene
     }
+    var isFromEnterprise: Boolean=false
+        set(value) {
+            field = value
+            login.isDisable = false
+            newSystemLabel.isDisable = true
+        }
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         val scriptEngineManager = ScriptEngineManager()
@@ -92,13 +98,13 @@ class LoginController : Initializable{
         //HelloApplication.primary.isResizable = false
 
         employees.addListener(ListChangeListener {
-            if (employees.size>0){
+            if (employees.size >0 ){
                 login.isDisable = false
                 newSystemLabel.isDisable = true
             }
         })
 
-        if (employees.size>0){
+        if (employees.size>0 || isFromEnterprise){
             login.isDisable = false
             newSystemLabel.isDisable = true
         }

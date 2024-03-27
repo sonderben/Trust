@@ -162,8 +162,6 @@ public class SingletonView {
                 controller = null;
             }
 
-
-
             ResourceBundle resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string");FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path),resourceBundle);
 
             Node node= fxmlLoader.load();

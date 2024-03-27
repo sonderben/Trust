@@ -71,7 +71,7 @@ public class Database {
 
 
     }
-    public static void createTrustTables()throws SQLException{
+    /*public static void createTrustTables()throws SQLException{
         String tableError = "";
         try(Connection conn = Database.connect(TRUST_DB)) {
             conn.setAutoCommit(false);
@@ -90,7 +90,7 @@ public class Database {
             System.err.println( e.getMessage() );
             throw new RuntimeException(e);
         }
-    }
+    }*/
     public static void prepopulate(){
         CategoryDao.INSTANCE.save(
                 new CategoryEntity("0000","General",0)

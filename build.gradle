@@ -66,8 +66,11 @@ dependencies {
     //https://github.com/anastaciocintra/escpos-coffee
     //implementation 'com.github.anastaciocintra:escpos-coffee:4.1.0'
 
-    // https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjavafx
-    //implementation 'io.reactivex.rxjava2:rxjavafx:2.11.0-RC16'
+    implementation'com.gluonhq:rich-text-area:1.1.1'
+    implementation 'org.kordamp.ikonli:ikonli-lineawesome-pack:12.3.1'
+    implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
+
+    //implementation 'org.fxmisc.richtext:richtext:1.0.0-SNAPSHOT'
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")

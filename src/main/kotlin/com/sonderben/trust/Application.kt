@@ -6,16 +6,17 @@ import javafx.application.Application
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
 import javafx.stage.Stage
-import org.scenicview.ScenicView
+import printer.thermal.PrinterOptions
+
 
 class HelloApplication : Application() {
 
     override fun start(stage: Stage) {
-       // Database.createTrustTables()
-        Context.start()
-        Database.createTable()
 
-        Context.readJson()
+        Database.createTable()
+        Context.start()
+
+        Context.setLanguage()
 
         val Init = byteArrayOf(27, 64)
         println( "test 1 2: ${String(Init)}" )
@@ -46,6 +47,11 @@ class HelloApplication : Application() {
         primary.minWidth = 720.0
         stage.isAlwaysOnTop = true
         stage.show()
+
+
+
+        val p = PrinterOptions()
+        p.print()
 
 
 

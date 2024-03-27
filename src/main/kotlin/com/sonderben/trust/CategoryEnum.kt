@@ -4,4 +4,6 @@ enum class CategoryEnum {
     SUPERMARKET,
     HARDWARE_STORE,
     PHARMACY
+
+
 }

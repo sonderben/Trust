@@ -2,6 +2,7 @@ import com.sonderben.trust.HelloApplication;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
+import javafx.scene.web.HTMLEditor;
 
 import java.util.function.UnaryOperator;
 
@@ -20,6 +21,9 @@ public class Factory {
             return null;
         };
 
+
         return new TextFormatter<String>(filter);
     }
+
+
 }

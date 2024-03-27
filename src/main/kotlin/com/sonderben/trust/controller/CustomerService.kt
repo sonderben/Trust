@@ -19,7 +19,7 @@ import java.net.URL
 import java.util.*
 import kotlin.collections.List
 
-class CustomerService:Initializable,BaseController() {
+class CustomerService : Initializable, BaseController() {
     lateinit var tabPane: TabPane
     lateinit var changePointTab: Tab
     lateinit var returnProductTab: Tab
@@ -30,26 +30,27 @@ class CustomerService:Initializable,BaseController() {
     lateinit var customerMainPane: VBox
 
 
-    private  var customers = CustomerDao.customers
-    private var selectedCustomer:CustomerEntity?=null
-    private var customerToChangePoint:CustomerEntity?=null
+    private var customers = CustomerDao.customers
+    private var selectedCustomer: CustomerEntity? = null
+    private var customerToChangePoint: CustomerEntity? = null
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
 
         editMenuItem()
 
         rTableview.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
-        rTableview.rowFactory = Callback<TableView<InvoiceDao.ProductToReturned>,TableRow<InvoiceDao.ProductToReturned>>{
-            object :TableRow<InvoiceDao.ProductToReturned>(){
-                override fun updateItem(p0: InvoiceDao.ProductToReturned?, p1: Boolean) {
-                    super.updateItem(p0, p1)
-                    if (p0!=null && p0.isReturned){
-                        isDisable = true
-                        style = "-fx-background-color:#FF000018;"
+        rTableview.rowFactory =
+            Callback<TableView<InvoiceDao.ProductToReturned>, TableRow<InvoiceDao.ProductToReturned>> {
+                object : TableRow<InvoiceDao.ProductToReturned>() {
+                    override fun updateItem(p0: InvoiceDao.ProductToReturned?, p1: Boolean) {
+                        super.updateItem(p0, p1)
+                        if (p0 != null && p0.isReturned) {
+                            isDisable = true
+                            style = "-fx-background-color:#FF000018;"
+                        }
                     }
                 }
             }
-        }
 
 
         cBirthdayCol.setCellValueFactory { data -> SimpleStringProperty(data.value.birthDay.format()) }
@@ -58,24 +59,28 @@ class CustomerService:Initializable,BaseController() {
         cEmailCol.setCellValueFactory { d -> SimpleStringProperty(d.value.email) }
         cDirCol.setCellValueFactory { d -> SimpleStringProperty(d.value.direction) }
         cGenreCol.setCellValueFactory { d -> SimpleStringProperty(d.value.genre) }
-        cPointCol.setCellValueFactory { d -> SimpleStringProperty( d.value.point.toString() ) }
+        cPointCol.setCellValueFactory { d -> SimpleStringProperty(d.value.point.toString()) }
 
-        cFullNameCol.setCellValueFactory { d -> SimpleStringProperty(d.value.firstName + " "+d.value.lastName) }
+        cFullNameCol.setCellValueFactory { d -> SimpleStringProperty(d.value.firstName + " " + d.value.lastName) }
         cPassportCol.setCellValueFactory { d -> SimpleStringProperty(d.value.passport) }
 
-        cTableview.selectionModel.selectedItemProperty().addListener(object :ChangeListener<CustomerEntity>{
-            override fun changed(p0: ObservableValue<out CustomerEntity>?, p1: CustomerEntity?, newValue: CustomerEntity?) {
-                if(newValue!=null){
+        cTableview.selectionModel.selectedItemProperty().addListener(object : ChangeListener<CustomerEntity> {
+            override fun changed(
+                p0: ObservableValue<out CustomerEntity>?,
+                p1: CustomerEntity?,
+                newValue: CustomerEntity?
+            ) {
+                if (newValue != null) {
                     selectedCustomer = newValue
                     cFirstnameTf.text = newValue.firstName
                     cLastNameTf.text = newValue.lastName
-                    cGenderCb.selectionModel.select( newValue.genre.replaceFirstChar { it.uppercase() } )
+                    cGenderCb.selectionModel.select(newValue.genre.replaceFirstChar { it.uppercase() })
                     cBirthdayDp.value = newValue.birthDay.toLocalDate()
                     cpCodeTf.text = newValue.code
                     cTelTf.text = newValue.telephone
                     cEmailTf.text = newValue.email
-                    cDirectionTtf.text  = newValue.direction
-                   // cPointTf.text = newValue.point.toString()
+                    cDirectionTtf.text = newValue.direction
+                    // cPointTf.text = newValue.point.toString()
                     cPassportTf.text = newValue.passport
 
                 }
@@ -110,24 +115,23 @@ class CustomerService:Initializable,BaseController() {
         }
 
 
-        MainController.editMenu?.items?.addAll(saveMenuItem, updateMenuItems, deleteMenuItems,clearMenuItems)
+        MainController.editMenu?.items?.addAll(saveMenuItem, updateMenuItems, deleteMenuItems, clearMenuItems)
 
-        cTableview.selectionModel.selectedIndices.addListener(ListChangeListener{change->
-            if ( change.list.isEmpty() ){
-                enableActionButton(customerMainPane,true)
-            }
-            else{
-                enableActionButton(customerMainPane,false)
+        cTableview.selectionModel.selectedIndices.addListener(ListChangeListener { change ->
+            if (change.list.isEmpty()) {
+                enableActionButton(customerMainPane, true)
+            } else {
+                enableActionButton(customerMainPane, false)
             }
         })
 
     }
 
     @FXML
-    private lateinit var cTableview:TableView<CustomerEntity>
+    private lateinit var cTableview: TableView<CustomerEntity>
 
     @FXML
-    private lateinit var rTableview:TableView<InvoiceDao.ProductToReturned>
+    private lateinit var rTableview: TableView<InvoiceDao.ProductToReturned>
 
     @FXML
     private lateinit var cBirthdayCol: TableColumn<CustomerEntity, String>
@@ -196,7 +200,6 @@ class CustomerService:Initializable,BaseController() {
     private lateinit var cpLastnameTf: TextField
 
 
-
     @FXML
     private lateinit var cpPassportTf: TextField
 
@@ -205,6 +208,7 @@ class CustomerService:Initializable,BaseController() {
 
     @FXML
     private lateinit var cpChangeTfConversion: TextField
+
     @FXML
     private lateinit var cpPointTfConversion: TextField
 
@@ -230,7 +234,7 @@ class CustomerService:Initializable,BaseController() {
     private lateinit var rReasonTf: TextField
 
     @FXML
-    private lateinit var toggleGroup:ToggleGroup
+    private lateinit var toggleGroup: ToggleGroup
 
     @FXML
     private lateinit var rTotal: TableColumn<InvoiceDao.ProductToReturned, String>
@@ -238,15 +242,15 @@ class CustomerService:Initializable,BaseController() {
 
     @FXML
     fun cpOnsearch() {
-        customerToChangePoint = CustomerDao.findByCode( cpCodeTf.textTrim() )
-        if (customerToChangePoint != null){
+        customerToChangePoint = CustomerDao.findByCode(cpCodeTf.textTrim())
+        if (customerToChangePoint != null) {
             cpFirstnameTf.text = customerToChangePoint!!.firstName
             cpLastnameTf.text = customerToChangePoint!!.lastName
             cpPassportTf.text = customerToChangePoint!!.passport
             cpPointTf.text = customerToChangePoint!!.point.toString()
             cpPointTfConversion.text = cpPointTf.text
-            cpChangeTfConversion.text = (customerToChangePoint!!.point/100).toString()
-        }else{
+            cpChangeTfConversion.text = (customerToChangePoint!!.point / 100).toString()
+        } else {
             println("no encontrado usuarion con codigo: ${cpCodeTf.textTrim()}")
         }
     }
@@ -261,15 +265,17 @@ class CustomerService:Initializable,BaseController() {
     fun onDeleteCustomer() {
 
         selectedCustomer?.let {
-            CustomerDao.delete( it.id )
-                .subscribe({ clear() },{th-> println(th.message) })
+            CustomerDao.delete(it.id)
+                .subscribe({ clear() }, { th -> println(th.message) })
         }
 
     }
 
     @FXML
     fun onSaveCustomer() {
-        if (validateCustomer() ){
+        val lastCountCustomer = Context.readJson()["last_count_customer"] as Long
+
+        if (validateCustomer()) {
             val cal = Calendar.getInstance()
             val customer = CustomerEntity()
             customer.apply {
@@ -281,31 +287,40 @@ class CustomerService:Initializable,BaseController() {
                 email = cEmailTf.textTrim()
                 direction = cDirectionTtf.textTrim()
                 passport = cPassportTf.textTrim()
-                code =  "${cal.get(Calendar.MONTH)+1}${cal.get(Calendar.YEAR)}${cTelTf.textTrim()}"
+                val month = cal.get( Calendar.MONTH ) + 1
+                val last2DigitYear  =cal.get( Calendar.YEAR).toString().substring(2,4)
+
+                code = "${ month }${ last2DigitYear }${ lastCountCustomer + 1 }".padStart(12,'0')
+
+
                 point = 0
 
             }
             CustomerDao.save(customer)
-                .subscribe({ clear( customerMainPane ) },{th-> println(th.message) })
+                .subscribe({
+                    clear(customerMainPane)
+                    Context.writeJson("last_count_customer", lastCountCustomer + 1)
+                }, { th -> println(th.message) })
         }
 
 
     }
 
     private fun validateCustomer(): Boolean {
-        if(cFirstnameTf.textTrim().isBlank() || cLastNameTf.textTrim().isBlank() ||
-        cTelTf.textTrim().isBlank() || cEmailTf.textTrim().isBlank() ||
-            cDirectionTtf.textTrim().isBlank() || cPassportTf.textTrim().isBlank()  ){
-            ViewUtil.customAlert("Error on fields","please make sure you fill out all the text fields.").show()
+        if (cFirstnameTf.textTrim().isBlank() || cLastNameTf.textTrim().isBlank() ||
+            cTelTf.textTrim().isBlank() || cEmailTf.textTrim().isBlank() ||
+            cDirectionTtf.textTrim().isBlank() || cPassportTf.textTrim().isBlank()
+        ) {
+            ViewUtil.customAlert("Error on fields", "please make sure you fill out all the text fields.").show()
             return false
         }
 
-        if( cGenderCb.selectionModel.selectedItem == null ){
-            ViewUtil.createAlert(Alert.AlertType.WARNING,"Error on Gender","Please select a gender").show()
+        if (cGenderCb.selectionModel.selectedItem == null) {
+            ViewUtil.createAlert(Alert.AlertType.WARNING, "Error on Gender", "Please select a gender").show()
             return false
         }
-        if(  cBirthdayDp.value==null){
-            ViewUtil.createAlert(Alert.AlertType.WARNING,"Error on birthday","Please select a birthday").show()
+        if (cBirthdayDp.value == null) {
+            ViewUtil.createAlert(Alert.AlertType.WARNING, "Error on birthday", "Please select a birthday").show()
             return false
         }
 
@@ -315,8 +330,8 @@ class CustomerService:Initializable,BaseController() {
 
     @FXML
     fun onUpdateCustomer() {
-        if (selectedCustomer!=null){
-            if ( validateCustomer() ){
+        if (selectedCustomer != null) {
+            if (validateCustomer()) {
                 selectedCustomer?.let {
 
                     val customer = CustomerEntity()
@@ -332,17 +347,17 @@ class CustomerService:Initializable,BaseController() {
                         email = cEmailTf.textTrim()
                         direction = cDirectionTtf.textTrim()
                         passport = cPassportTf.textTrim()
-                        point= selectedCustomer!!.point
+                        point = selectedCustomer!!.point
 
                     }
                     CustomerDao.update(customer)
-                        .subscribe({ clear() },{th-> println(th.message) })
+                        .subscribe({ clear() }, { th -> println(th.message) })
 
 
                 }
             }
-        }else{
-            ViewUtil.createAlert(Alert.AlertType.WARNING,"No data","Please select a customer first.").showAndWait()
+        } else {
+            ViewUtil.createAlert(Alert.AlertType.WARNING, "No data", "Please select a customer first.").showAndWait()
 
         }
     }
@@ -356,38 +371,45 @@ class CustomerService:Initializable,BaseController() {
     fun rOnSave() {
         val itemSelected = rTableview.selectionModel.selectedItems
 
-        if (itemSelected.isNotEmpty()){
-            val action = if( ( toggleGroup.selectedToggle as RadioButton).id.equals("changeRbtn") ) "CHANGE" else "MONEY"
-            val idProductsSold  = itemSelected.map { it.productSoldId }
-            val isSave = InvoiceDao.saveProductReturned(productsReturned[0].invoiceId,idProductsSold,Context.currentEmployee.value.id,rReasonTf.textTrim(),action)
-            if (isSave){
-                ViewUtil.createAlert(Alert.AlertType.INFORMATION,"Saved","Product return with success").showAndWait()
-            }else{
-                ViewUtil.createAlert(Alert.AlertType.WARNING,"Error","Product don't return.").showAndWait()
+        if (itemSelected.isNotEmpty()) {
+            val action = if ((toggleGroup.selectedToggle as RadioButton).id.equals("changeRbtn")) "CHANGE" else "MONEY"
+            val idProductsSold = itemSelected.map { it.productSoldId }
+            val isSave = InvoiceDao.saveProductReturned(
+                productsReturned[0].invoiceId,
+                idProductsSold,
+                Context.currentEmployee.value.id,
+                rReasonTf.textTrim(),
+                action
+            )
+            if (isSave) {
+                ViewUtil.createAlert(Alert.AlertType.INFORMATION, "Saved", "Product return with success").showAndWait()
+            } else {
+                ViewUtil.createAlert(Alert.AlertType.WARNING, "Error", "Product don't return.").showAndWait()
             }
-        }else{
-            ViewUtil.createAlert(Alert.AlertType.WARNING,"NO item selected","You must select some items first").showAndWait()
+        } else {
+            ViewUtil.createAlert(Alert.AlertType.WARNING, "NO item selected", "You must select some items first")
+                .showAndWait()
         }
     }
 
     @FXML
     fun rOnSearch() {
-         productsReturned =InvoiceDao.findByInvoiceCode(rInvoiceTf.textTrim())
+        productsReturned = InvoiceDao.findByInvoiceCode(rInvoiceTf.textTrim())
 
-        if (productsReturned.isNotEmpty()){
+        if (productsReturned.isNotEmpty()) {
 
-            rTotal.setCellValueFactory { d->SimpleStringProperty( d.value.totalPrice.toString() ) }
-            rCodeCol.setCellValueFactory { d->SimpleStringProperty( d.value.code ) }
-            rCategoryCol.setCellValueFactory { d->SimpleStringProperty( d.value.category ) }
-            rDescriptionCol.setCellValueFactory { d->SimpleStringProperty( d.value.description ) }
-            rDateExpiredCol.setCellValueFactory { d->SimpleStringProperty( d.value.dateCreated.format() ) }
-            rQuantityCol.setCellValueFactory { d->SimpleStringProperty( d.value.quantity.toString() ) }
+            rTotal.setCellValueFactory { d -> SimpleStringProperty(d.value.totalPrice.toString()) }
+            rCodeCol.setCellValueFactory { d -> SimpleStringProperty(d.value.code) }
+            rCategoryCol.setCellValueFactory { d -> SimpleStringProperty(d.value.category) }
+            rDescriptionCol.setCellValueFactory { d -> SimpleStringProperty(d.value.description) }
+            rDateExpiredCol.setCellValueFactory { d -> SimpleStringProperty(d.value.dateCreated.format()) }
+            rQuantityCol.setCellValueFactory { d -> SimpleStringProperty(d.value.quantity.toString()) }
             /*rTotal.setCellValueFactory { d->SimpleStringProperty() }
             rTotal.setCellValueFactory { d->SimpleStringProperty() }
             rTotal.setCellValueFactory { d->SimpleStringProperty() }*/
 
 
-            rTableview.items = FXCollections.observableArrayList( productsReturned )
+            rTableview.items = FXCollections.observableArrayList(productsReturned)
         }
     }
 
@@ -395,15 +417,16 @@ class CustomerService:Initializable,BaseController() {
 
     }
 
-    fun clear(){
-        when( tabPane.selectionModel.selectedItem ){
+    fun clear() {
+        when (tabPane.selectionModel.selectedItem) {
             customerTab -> {
-                clear( customerMainPane )
-                selectedCustomer?.id=null
+                clear(customerMainPane)
+                selectedCustomer?.id = null
                 selectedCustomer = null
             }
-            changePointTab -> clear( changePointMainPane )
-            returnProductTab -> clear( returnProductMainPane )
+
+            changePointTab -> clear(changePointMainPane)
+            returnProductTab -> clear(returnProductMainPane)
             else -> throw Exception("bad pane")
         }
     }

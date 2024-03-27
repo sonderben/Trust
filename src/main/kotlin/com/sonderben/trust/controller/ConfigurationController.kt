@@ -2,16 +2,20 @@ package com.sonderben.trust.controller
 
 import com.sonderben.trust.CategoryEnum
 import com.sonderben.trust.HelloApplication
+import com.sonderben.trust.LoginController
 import com.sonderben.trust.controller.config.Admin
 import com.sonderben.trust.controller.config.InvoiceController
 import com.sonderben.trust.db.dao.EnterpriseDao
+import com.sonderben.trust.viewUtil.ViewUtil
 import entity.EnterpriseEntity
 import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.Scene
+import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.control.MenuItem
 import javafx.scene.control.Pagination
@@ -23,14 +27,13 @@ import java.util.*
 
 class ConfigurationController:Initializable, BaseController() {
 
+    lateinit var saveButton: Button
     lateinit var mainPane: VBox
     private lateinit var enterprise:EnterpriseEntity
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         editMenuItem()
         HelloApplication.primary.isResizable = true
-
-
-
 
 
         if ( EnterpriseDao.enterprises.isNotEmpty() ){
@@ -43,6 +46,7 @@ class ConfigurationController:Initializable, BaseController() {
             back.isManaged = false
             enterprise = EnterpriseEntity()
             pagination.setPageFactory { index ->createPage(index) }
+            saveButton.text = resources?.getString("save") ?: "Save"
         }
 
 
@@ -89,7 +93,7 @@ class ConfigurationController:Initializable, BaseController() {
 
     }
 
-    lateinit var screenTitle: Label
+
 
 
 
@@ -113,9 +117,10 @@ class ConfigurationController:Initializable, BaseController() {
                    nodeAdmin = fxmlLoader.load<Node>()
                    admin = fxmlLoader.getController()
                    admin?.enterprise = enterprise
+                   if (admin == null)
+                   println( "enterprise nullllll depi la")
 
                }
-                screenTitle.text = "Administrator"
                 return nodeAdmin!!
             }
             else -> {
@@ -124,7 +129,6 @@ class ConfigurationController:Initializable, BaseController() {
                     invoice = fxmlLoader.load<Node>()
                     invoiceController?.enterprise = enterprise
                 }
-                screenTitle.text = "Setup your Invoice"
                 return invoice!!
             }
 
@@ -145,36 +149,122 @@ class ConfigurationController:Initializable, BaseController() {
     }
 
     fun onSave() {
-        enterprise.apply {
-            name = admin!!.nameTextField.text
-            telephone =  admin!!.telephoneTextField.text
-            website =  admin!!.websiteTextField.text
-            direction =  admin!!.directionTextField.text
-            foundation =  GregorianCalendar.from( admin!!.foundationDatePicker.value.atStartOfDay(ZoneId.systemDefault()))
-            category = CategoryEnum.valueOf(  admin!!.categoryChoiceBox.selectionModel.selectedItem.uppercase() )
 
-            println("onsave buisiness info")
-            employee?.apply {
-                firstName = admin!!.firstNameTextField.text
-                lastName = admin!!.lastNameTextField.text
-                birthDay = GregorianCalendar.from(admin!!.birthdayDatePicker.value.atStartOfDay(ZoneId.systemDefault()))
-                userName = admin!!.userNameTextField.text
-                password = admin!!.passwordField.text
-                passport = admin!!.passportTextField.text
-                telephone = admin!!.telephoneTextField.text
-                bankAccount = admin!!.accountNumberTextField.text
-                genre = admin!!.choiceBoxGender.value
-                email = admin!!.emailTextField.text
-                direction = admin!!.directionField.text
+        if (validateEmployee() ){
+            enterprise.apply {
+                name = admin!!.nameTextField.text
+                telephone =  admin!!.telephoneTextField.text
+                website =  admin!!.websiteTextField.text
+                direction =  admin!!.directionTextField.text
+                foundation =  GregorianCalendar.from( admin!!.foundationDatePicker.value.atStartOfDay(ZoneId.systemDefault()) )
+
+                val categoryString = getCategoryEnumFromIndex( admin!!.categoryChoiceBox.selectionModel.selectedIndex )
+                if ( categoryString != null ){
+                    category = CategoryEnum.valueOf( categoryString )
+                }
+                employee?.apply {
+                    firstName = admin!!.firstNameTextField.text
+                    lastName = admin!!.lastNameTextField.text
+                    birthDay = GregorianCalendar.from(admin!!.birthdayDatePicker.value.atStartOfDay(ZoneId.systemDefault()))
+                    userName = admin!!.userNameTextField.text
+                    password = admin!!.passwordField.text
+                    passport = admin!!.passportTextField.text
+                    telephone = admin!!.telephoneTextField.text
+                    bankAccount = admin!!.accountNumberTextField.text
+                    genre = admin!!.choiceBoxGender.value
+                    email = admin!!.emailTextField.text
+                    direction = admin!!.directionField.text
+                }
             }
 
+            EnterpriseDao.save(enterprise)
+                .subscribe({
+                    val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
+
+                    val parent = fxmlLoader.load<Parent>()
+                    val loginController = fxmlLoader.getController<LoginController>()
+                    loginController.isFromEnterprise = true
+
+
+
+                    val scene = Scene( parent, 720.0, 440.0)
+                    HelloApplication.primary.scene = scene
+                },{})
         }
 
-        EnterpriseDao.save(enterprise)
-            .subscribe({
-                val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
-                val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
-                HelloApplication.primary.scene = scene
-            },{})
+    }
+
+    private fun getCategoryEnumFromIndex(selectedIndex: Int): String? {
+        return when(selectedIndex){
+            0 -> "SUPERMARKET"
+            1 -> "HARDWARE_STORE"
+            2 -> "PHARMACY"
+            else -> null
+        }
+    }
+    private fun validateEmployee():Boolean{
+        if (admin!!.nameTextField.text.isBlank()){
+            ViewUtil.customAlert("Error on fields","please make sure you fill out all the text fields.").show()
+            return false
+        }
+        if (admin!!.telephoneTextField.text.isBlank()){
+            ViewUtil.customAlert("Error on fields","please make sure you enter a international phone number.").show()
+            return false
+        }
+        if ( admin!!.directionTextField.text.isBlank() ){
+            ViewUtil.customAlert("Error on fields","please make sure you enter the direction.").show()
+            return false
+        }
+        if (admin!!.foundationDatePicker.value == null){
+            ViewUtil.customAlert("Error on fields","please make sure you enter the foundation date.").show()
+
+            return false
+        }
+        if (admin!!.firstNameTextField.text.isBlank()){
+            ViewUtil.customAlert("Error on fields","please enter your first name.").show()
+
+            return false
+        }
+        if ( admin!!.lastNameTextField.text.isBlank() ){
+            ViewUtil.customAlert("Error on fields","please enter your last name.").show()
+            return false
+        }
+        if ( admin!!.birthdayDatePicker.value == null ){
+            ViewUtil.customAlert("Error on fields","please enter a birthday.").show()
+            return false
+        }
+        if ( admin!!.userNameTextField.text.isBlank() ){
+            ViewUtil.customAlert("Error on fields","please make sure you fill out all the text fields.").show()
+            return false
+        }
+        if ( admin!!.passwordField.text.isBlank() ){
+            ViewUtil.customAlert("Error on fields","please make sure you enter a valid password.").show()
+            return false
+        }
+        if ( admin!!.passportTextField.text.isBlank() ){
+            ViewUtil.customAlert("Error on fields","please enter a passport number.").show()
+            return false
+        }
+        if ( admin!!.telephoneTextField.text.isBlank() ){
+            ViewUtil.customAlert("Error on fields","please enter a valid international phone number.").show()
+            return false
+        }
+        if ( admin!!.accountNumberTextField.text.isBlank() ){
+            ViewUtil.customAlert("Error on fields","please enter a valid account number.").show()
+            return false
+        }
+        if ( admin!!.emailTextField.text.isBlank() ){
+            ViewUtil.customAlert("Error on fields","please make sure you enter a valid email.").show()
+            return false
+        }
+        if ( admin!!.directionField.text.isBlank() ){
+            ViewUtil.customAlert("Error on fields","please enter a valid direction.").show()
+            return false
+        }
+        if ( admin!!.choiceBoxGender.value == null ){
+            ViewUtil.customAlert("Error on fields","please make sure you select a gender.").show()
+            return false
+        }
+        return true
     }
 }

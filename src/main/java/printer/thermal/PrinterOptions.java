@@ -16,34 +16,20 @@ public class PrinterOptions {
     }
 
     public String chooseFont(int Options) {
-        String s = "";
+        String s;
         final byte[] ChooseFontA = {27, 77, 0};
         final byte[] ChooseFontB = {27, 77, 1};
         final byte[] ChooseFontC = {27, 77, 48};
         final byte[] ChooseFontD = {27, 77, 49};
 
-        switch(Options) {
-            case 1:
-                s = new String(ChooseFontA);
-                break;
-
-            case 2:
-                s = new String(ChooseFontB);
-                break;
-
-            case 3:
-                s = new String(ChooseFontC);
-                break;
-
-            case 4:
-                s = new String(ChooseFontD);
-                break;
-
-            default:
-                s = new String(ChooseFontB);
-        }
+        s = switch (Options) {
+            case 1 -> new String(ChooseFontA);
+            case 3 -> new String(ChooseFontC);
+            case 4 -> new String(ChooseFontD);
+            default -> new String(ChooseFontB);
+        };
         commandSet += s;
-        return new String(s);
+        return s;
     }
 
     public String feedBack(byte lines) {
@@ -149,40 +135,24 @@ public class PrinterOptions {
         final byte[] UnderLine1Dot = {27, 45, 49};
         final byte[] NoUnderLine = {27, 45, 48};
 
-        String s = "";
-        switch(Options) {
-            case 0:
-                s = new String(NoUnderLine);
-                break;
-
-            case 1:
-                s = new String(UnderLine1Dot);
-                break;
-
-            default:
-                s = new String(UnderLine2Dot);
-        }
+        String s = switch (Options) {
+            case 0 -> new String(NoUnderLine);
+            case 1 -> new String(UnderLine1Dot);
+            default -> new String(UnderLine2Dot);
+        };
         commandSet += s;
-        return new String(s);
+        return s;
     }
 
     public String color(int Options) {
         final byte[] ColorRed = {27, 114, 49};
         final byte[] ColorBlack = {27, 114, 48};
 
-        String s = "";
-        switch(Options) {
-            case 0:
-                s = new String(ColorBlack);
-                break;
-
-            case 1:
-                s = new String(ColorRed);
-                break;
-
-            default:
-                s = new String(ColorBlack);
-        }
+        String s;
+        if (Options==1)
+            s= new String(ColorRed);
+        else
+            s= new String(ColorBlack);
         commandSet += s;
         return s;
     }
@@ -199,7 +169,7 @@ public class PrinterOptions {
         return s;
     }
 
-    public String addLineSeperator() {
+    public String addLineSeparator() {
         String lineSpace = "----------------------------------------";
         commandSet += lineSpace;
         return lineSpace;
@@ -216,7 +186,8 @@ public class PrinterOptions {
     public String finalCommandSet() {
         return commandSet;
     }
-    /*private static <PrintJobWatcher> boolean feedPrinter(byte[] b) {
+
+      public boolean feedPrinter(byte[] b) {
         try {
             AttributeSet attrSet = new HashPrintServiceAttributeSet(new PrinterName("EPSON TM-U220 ReceiptE4", null)); //EPSON TM-U220 ReceiptE4
 
@@ -238,5 +209,64 @@ public class PrinterOptions {
             return false;
         }
         return true;
-    }*/
+    }
+
+    public void print(){
+
+        PrinterOptions p = new PrinterOptions();
+
+        p.resetAll();
+        p.initialize();
+        p.feedBack((byte) 2);
+        p.color(0);
+        p.alignCenter();
+        p.setText("The Dum Dum Name");
+        p.newLine();
+        p.setText("Restaurant Dining");
+        p.newLine();
+        p.addLineSeparator();
+        p.setText("Bling Bling");
+        p.newLine();
+        p.addLineSeparator();
+        p.newLine();
+
+        p.alignLeft();
+        p.setText("POD No \t: 2001 \tTable \t: E511");
+        p.newLine();
+
+        p.setText("Res Date \t: " + "01/01/1801 22:59");
+
+        p.newLine();
+        p.setText("Session \t: Evening Session");
+        p.newLine();
+        p.setText("Staff \t: Bum Dale");
+        p.newLine();
+        p.addLineSeparator();
+        p.newLine();
+        p.alignCenter();
+        p.setText(" - Some Items - ");
+        p.newLine();
+        p.alignLeft();
+        p.addLineSeparator();
+
+        p.newLine();
+
+        p.setText("No \tItem\t\tUnit\tQty");
+        p.newLine();
+        p.addLineSeparator();
+        p.setText("1" + "\t" + "Aliens Everywhere" + "\t" + "Rats" + "\t" + "500");
+        p.setText("1" + "\t" + "Aliens Everywhere" + "\t" + "Rats" + "\t" + "500");
+        p.setText("1" + "\t" + "Aliens Everywhere" + "\t" + "Rats" + "\t" + "500");
+        p.setText("1" + "\t" + "Aliens Everywhere" + "\t" + "Rats" + "\t" + "500");
+        p.setText("1" + "\t" + "Aliens Everywhere" + "\t" + "Rats" + "\t" + "500");
+        p.setText("1" + "\t" + "Aliens Everywhere" + "\t" + "Rats" + "\t" + "500");
+
+        p.addLineSeparator();
+        p.feed((byte) 3);
+        p.finit();
+        System.out.println("men commandSet: "+p.finalCommandSet());
+        //p.feedPrinter(p.finalCommandSet().toByteArray())
+
+    }
+
 }

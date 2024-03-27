@@ -12,15 +12,24 @@ import java.util.*
 
 class Admin :Initializable {
     lateinit var phoneTextField: TextField
+     var bundle:ResourceBundle?=null;
     var enterprise: EnterpriseEntity?=null
          set(value) {
              field=value
              setEnterprise()
+             setBusiness(bundle!!)
          }
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
 
-        setEnterprise()
-        setBusiness()
+        bundle = p1
+
+        categoryChoiceBox.items.addAll(
+            p1?.getString("supermarket") ?: "Supermarket",
+            p1?.getString("hardware_store") ?: "Hardware store",
+            p1?.getString("pharmacy") ?: "Pharmacy",
+        )
+
+
 
 
 
@@ -51,6 +60,9 @@ class Admin :Initializable {
            passwordField.text = emp.password
            phoneTextField.text = emp.telephone
            scheduleTextField.text = "Mon-Mon"
+       }
+        else{
+            println( "enterprise nullllll")
        }
 
     }
@@ -144,7 +156,7 @@ class Admin :Initializable {
     @FXML
     lateinit var websiteTextField: TextField
 
-    private fun setBusiness() {
+    private fun setBusiness( bundle:ResourceBundle ) {
 
         if (enterprise!=null){
             directionTextField.text = enterprise!!.direction
@@ -152,8 +164,8 @@ class Admin :Initializable {
             foundationDatePicker.value = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH))
 
             if (enterprise!!.category!=null){
-                val cat = enterprise!!.category.name.lowercase().replaceFirstChar { it.uppercaseChar() }
-                categoryChoiceBox.selectionModel.select( categoryChoiceBox.items.indexOf( cat ) )
+                val keyI18nCat = enterprise!!.category.name.lowercase().replace(" ","_")
+                categoryChoiceBox.selectionModel.select( categoryChoiceBox.items.indexOf( bundle.getString( keyI18nCat ) ) )
             }
 
             nameTextField.text = enterprise!!.name
