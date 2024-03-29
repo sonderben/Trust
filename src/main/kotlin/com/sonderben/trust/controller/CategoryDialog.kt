@@ -33,8 +33,6 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
             dialogPane.buttonTypes.addAll( ButtonType("Ok", ButtonBar.ButtonData.OK_DONE) )
 
 
-
-
             codeCol.setCellValueFactory { d ->SimpleStringProperty(d.value.code) }
             descriptionCol.setCellValueFactory { d ->SimpleStringProperty(d.value.description) }
             discountCol.setCellValueFactory { d ->SimpleStringProperty(d.value.discount.toString()) }
@@ -126,3 +124,28 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
         descriptionTf.text = ""
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -3,6 +3,7 @@ package com.sonderben.trust.controller
 import SingletonView
 import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
+import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
@@ -277,9 +278,18 @@ class MainController : Initializable {
     }
 
     @FXML fun disconnectOnMouseClicked() {
+        Context.currentEmployee.value = null
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"),resourceBundle)
         val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
         HelloApplication.primary.scene = scene
+    }
+
+    fun editCredentialMenutitemOnAction(actionEvent: ActionEvent) {
+
+        val dialog = EditCredentialDialog(HelloApplication.primary.width * 0.60 )
+        dialog.initOwner( HelloApplication.primary )
+        dialog.showAndWait()
+
     }
 
 }

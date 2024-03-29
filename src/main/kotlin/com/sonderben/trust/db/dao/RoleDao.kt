@@ -5,10 +5,8 @@ import Database.DATABASE_NAME
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.db.SqlDml.DELETE_ROLE
 import com.sonderben.trust.db.SqlDml.INSERT_ROLE
-import com.sonderben.trust.db.SqlDml.INSERT_SCREEN
 import com.sonderben.trust.db.SqlDml.SELECT_ALL_ROLE
 import com.sonderben.trust.db.SqlDml.UPDATE_ROLE
-import com.sonderben.trust.db.SqlDml.UPDATE_SCREEN
 import com.sonderben.trust.model.Role
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
@@ -128,7 +126,34 @@ object RoleDao:CrudDao<Role> {
 
     override fun update(entity: Role): Completable {
         return Completable.create { emitter->
+            Database.connect(DATABASE_NAME).use { connection ->
+                connection.autoCommit = false
 
+                connection.prepareStatement( UPDATE_ROLE ).use { preparedStatement ->
+                    preparedStatement.setString(1,entity.name)
+                    preparedStatement.setString(2, entity.screens.joinToString(",") { it.name })
+                    preparedStatement.setLong(3,entity.id)
+                    val intRow = preparedStatement.executeUpdate()
+
+                    if ( intRow>0 ) {
+
+
+                        connection.commit()
+                        connection.autoCommit = true
+                        roles[ roles.indexOf( entity ) ] = entity
+                        emitter.onComplete()
+
+                    }else{
+                        connection.rollback()
+                        connection.autoCommit = true
+                        emitter.onError( Throwable("Can not update role: $entity") )
+                    }
+
+
+                }
+
+
+            }
         }
             .subscribeOn(Schedulers.io())
             .observeOn(JavaFxScheduler.platform())

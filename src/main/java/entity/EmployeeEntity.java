@@ -31,6 +31,10 @@ public class EmployeeEntity extends PersonEntity {
         schedules = new ArrayList<>();
     }
 
+    public boolean isAdmin(){
+        return role.getName().equalsIgnoreCase( "admin" );
+    }
+
     public String getBankAccount() {
         return bankAccount;
     }

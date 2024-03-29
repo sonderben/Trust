@@ -2,8 +2,11 @@ package com.sonderben.trust.db.dao
 
 import Database
 import Database.DATABASE_NAME
+import com.sonderben.trust.Context
 import com.sonderben.trust.Util
+import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.db.SqlDdl
+import com.sonderben.trust.db.SqlDml
 import com.sonderben.trust.db.SqlDml.DELETE_EMPLOYEE
 import com.sonderben.trust.db.SqlDml.EMPLOYEE_LOGIN
 import com.sonderben.trust.db.SqlDml.FIND_EMPLOYEE_BY_ID
@@ -11,6 +14,7 @@ import com.sonderben.trust.db.SqlDml.INSERT_EMPLOYEE
 import com.sonderben.trust.db.SqlDml.INSERT_SCHEDULE
 import com.sonderben.trust.db.SqlDml.SELECT_ALL_EMPLOYEE
 import com.sonderben.trust.db.SqlDml.UPDATE_EMPLOYEE
+import com.sonderben.trust.model.Role
 import entity.EmployeeEntity
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
@@ -19,6 +23,7 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.collections.FXCollections
 import java.sql.Timestamp
+import java.util.*
 
 
 object EmployeeDao : CrudDao<EmployeeEntity> {
@@ -164,6 +169,7 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
 
     override fun findAll() {
 
+        employees.clear()
 
 
         Single.create< List<EmployeeEntity> > { emitter ->
@@ -171,10 +177,13 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
 
             Database.connect(DATABASE_NAME).use {connection ->
                 connection.createStatement().use {statement ->
-                    statement.executeQuery(SELECT_ALL_EMPLOYEE).use {resultSet ->
+                    val TEMP_SELECT_ALL_EMPLOYEE:String = if( Context.currentEmployee.get()==null || Context.currentEmployee.get().isAdmin) SELECT_ALL_EMPLOYEE else "$SELECT_ALL_EMPLOYEE  where lower(Roles.name) != lower('admin')"
+
+                    statement.executeQuery( TEMP_SELECT_ALL_EMPLOYEE ).use { resultSet ->
                         while (resultSet.next()){
 
                             val employee = EmployeeEntity()
+                            val tempRole = Role()
 
                             employee.apply {
                                 id = resultSet.getLong("id")
@@ -190,7 +199,20 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
                                 this.userName = resultSet.getString("userName")
                                 this.password = resultSet.getString("password")
 
-                                role = Database.findRolesByIdEmployee( resultSet.getLong("id_role") )
+                                role = tempRole.apply {
+
+                                    id = resultSet.getLong("roleId")
+
+                                    screens = resultSet.getString("screens").split(",".toRegex()).map { value ->ScreenEnum.valueOf(value) }
+                                        .toMutableList() /*Arrays.stream(
+
+                                        resultSet.getString("screens").split(",".toRegex())
+                                            .toTypedArray())
+                                        .map { value: String? -> ScreenEnum.valueOf(value!!.trim()) }
+                                        .toList()*/
+                                    name = resultSet.getString("name")
+                                }
+                                //Database.findRolesByIdEmployee( resultSet.getLong("id_role") )
                                 schedules =  Database.findScheduleByIdEmployee( id )
                             }
 
@@ -288,6 +310,27 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
 
 
 
+                }
+            }
+        }
+            .subscribeOn(Schedulers.io())
+            .observeOn(JavaFxScheduler.platform())
+    }
+
+    fun updateCredential(userName: String,password: String):Completable{
+        val updateCredential = "UPDATE ${SqlDdl.employees} SET userName = ?,password = ? WHERE id = ?"
+        return Completable.create { emitter->
+            Database.connect("").use { connection ->
+                connection.prepareStatement(updateCredential).use { preparedStatement ->
+                    preparedStatement.setString(1,userName)
+                    preparedStatement.setString(2,password)
+                    preparedStatement.setLong(3,Context.currentEmployee.get().id)
+
+                    if (preparedStatement.executeUpdate()>0){
+                        emitter.onComplete()
+                    }else{
+                        emitter.onError( Throwable("can't update credential") )
+                    }
                 }
             }
         }

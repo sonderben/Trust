@@ -19,7 +19,6 @@ import javafx.scene.control.*
 import javafx.scene.layout.VBox
 import javafx.util.StringConverter
 import java.lang.Exception
-import java.lang.NumberFormatException
 import java.net.URL
 import java.time.LocalDate
 import java.time.ZoneId
@@ -295,7 +294,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
     }
 
     fun hideBottomPanelOnMouseClicked(){
-         bottomPanelVBOx.hide()
+         bottomPanelVBOx.changeVisibility()
     }
     private  var produtcs:ObservableList<ProductEntity> = ProductDao.products
     private lateinit var categories:ObservableList<CategoryEntity>

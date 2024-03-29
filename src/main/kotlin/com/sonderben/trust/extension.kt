@@ -1,7 +1,7 @@
 package com.sonderben.trust
 
+import javafx.scene.Node
 import javafx.scene.control.TextField
-import javafx.scene.control.TextFormatter
 import javafx.scene.layout.VBox
 import java.sql.Timestamp
 import java.text.DateFormat
@@ -9,15 +9,14 @@ import java.text.NumberFormat
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.*
-import java.util.function.UnaryOperator
 
-fun VBox.hide(){
+fun Node.changeVisibility(){
     if (this.isVisible){
         this.isVisible = false
-        this.managedProperty().set(false)
+        this.isManaged = false
     }else{
         this.isVisible = true
-        this.managedProperty().set(true)
+        this.isManaged = true
     }
 }
 

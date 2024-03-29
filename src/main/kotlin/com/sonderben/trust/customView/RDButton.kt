@@ -16,7 +16,7 @@ class RDButton( var name:ScreenEnum,var isChecked:Boolean = false):Pane(),EventH
     private var innerCircle: Circle
     private val resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
 
-    //private val label = Label(name.name.toLowerCase().replace("_"," ").replaceFirstChar { it.uppercase() })
+
     private val label = Label( resourceBundle.getString(name.name.lowercase()) )
 
     init {
@@ -55,6 +55,7 @@ class RDButton( var name:ScreenEnum,var isChecked:Boolean = false):Pane(),EventH
 
     fun select(){
         innerCircle.isVisible = true
+        isChecked  = true
     }
 
     override fun handle(event: MouseEvent?) {

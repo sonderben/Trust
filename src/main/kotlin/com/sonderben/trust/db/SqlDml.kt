@@ -50,7 +50,13 @@ object SqlDml {
     }
     val DELETE_EMPLOYEE = "delete from ${SqlDdl.employees} where id = ?"
     val FIND_EMPLOYEE_BY_ID = "SELECT * FROM ${SqlDdl.employees} where id = ?"
-    val SELECT_ALL_EMPLOYEE = "SELECT * FROM ${SqlDdl.employees}"
+    //val SELECT_ALL_EMPLOYEE = "SELECT * FROM ${SqlDdl.employees}"
+    val SELECT_ALL_EMPLOYEE = """
+        SELECT Employee.id, birthDay,bankAccount,direction,email,firstName,genre,lastName,passport,password,telephone,userName,
+        Roles.id as roleId,name,screens
+        from ${SqlDdl.employees} INNER JOIN ${SqlDdl.roles}
+        on Employee.id_role = Roles.id
+    """.trimIndent()
     val EMPLOYEE_LOGIN = "select * from ${SqlDdl.employees} where userName= ? and password =? ;"
 
     val UPDATE_EMPLOYEE = """
@@ -190,21 +196,10 @@ object SqlDml {
         append(SqlDdl.roles)
         append(" (name,screens) values (?,?)")
     }
-      val INSERT_SCREEN = buildString {
-        append(" INSERT INTO ")
-        append(SqlDdl.screen)
-        append(" (screenEnum,actions,id_role) values (?,?,?)")
-    }
-    val UPDATE_ROLE = "UPDATE ${SqlDdl.roles} SET name = ? WHERE id = ?;"
-    val UPDATE_SCREEN = buildString {
-        append("UPDATE ${SqlDdl.screen} SET ")
-        append("screenEnum = ?, ")
-        append("actions = ?, ")
-        append("WHERE id = ?; ")
-    }
+    val UPDATE_ROLE = "UPDATE ${SqlDdl.roles} SET name = ?,screens = ? WHERE id = ?;"
 
 
-     const val SELECT_ALL_ROLE = "SELECT * FROM ${SqlDdl.roles}"
+    const val SELECT_ALL_ROLE = "SELECT * FROM ${SqlDdl.roles}"
 
     val DELETE_ROLE = "delete from ${SqlDdl.roles} where id = ?"
 

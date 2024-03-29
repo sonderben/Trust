@@ -12,7 +12,7 @@ import java.util.ResourceBundle.getBundle
 
 
 class HelloApplication : Application() {
-
+//https://github.com/ReactiveX/RxJava/wiki/Error-Handling
     override fun start(stage: Stage) {
 
         Database.createTable()
@@ -20,8 +20,6 @@ class HelloApplication : Application() {
 
         Context.setLanguage()
 
-        val Init = byteArrayOf(27, 64)
-        println( "test 1 2: ${String(Init)}" )
 
 
         primary = stage

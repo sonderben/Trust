@@ -77,7 +77,7 @@ class Sale :Initializable,MessageListener,BaseController(){
                 if (newValue != null){
 
                     if (! bottomPanelVBOx.isVisible ){
-                        bottomPanelVBOx.hide()
+                        bottomPanelVBOx.changeVisibility()
                     }
 
                     mProductSaledSelected = newValue
@@ -450,7 +450,7 @@ class Sale :Initializable,MessageListener,BaseController(){
     }
 
     fun hideBottomPanelOnMouseClicked(){
-        bottomPanelVBOx.hide()
+        bottomPanelVBOx.changeVisibility()
     }
 
     private fun isEnough(qtyWantBye:Float, productQty:Float, codeProduct:String,sellBy:String):Boolean{

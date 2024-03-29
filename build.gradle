@@ -49,7 +49,7 @@ dependencies {
     implementation ('org.xerial:sqlite-jdbc:3.44.1.0')
 
 
-    implementation files('libs/scenicview.jar')
+    //implementation files('libs/scenicview.jar')
 
 
     implementation 'com.google.firebase:firebase-admin:9.2.0'

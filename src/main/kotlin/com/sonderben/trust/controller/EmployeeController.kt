@@ -71,7 +71,7 @@ class EmployeeController:Initializable, BaseController() {
         userTableView.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
             if (newValue != null) {
                 if (!bottomPanelVBOx.isVisible) {
-                    bottomPanelVBOx.hide()
+                    bottomPanelVBOx.changeVisibility()
                 }
 
                 employeeToSave = newValue
@@ -324,7 +324,7 @@ class EmployeeController:Initializable, BaseController() {
 
 
     fun hideBottomPanelOnMouseClicked() {
-        bottomPanelVBOx.hide()
+        bottomPanelVBOx.changeVisibility()
     }
 
     class RoleStringConverter: StringConverter<Role>() {

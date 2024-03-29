@@ -3,7 +3,7 @@ package com.sonderben.trust.controller
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.customView.RDButton
 import com.sonderben.trust.db.dao.RoleDao
-import com.sonderben.trust.hide
+import com.sonderben.trust.changeVisibility
 import com.sonderben.trust.model.Role
 import com.sonderben.trust.viewUtil.ViewUtil
 import javafx.beans.property.SimpleStringProperty
@@ -84,7 +84,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
                     clearRDButtons()
 
                     if (!bottomPanelVBOx.isVisible) {
-                        bottomPanelVBOx.hide()
+                        bottomPanelVBOx.changeVisibility()
                     }
 
                     roleSelectedOrToSave = newValue
@@ -174,17 +174,19 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
     @FXML
     fun onUpdateRole() {
 
+        if(roleSelectedOrToSave != null){
+            val rdButtonsChecked: FilteredList<Node> = gridPaneScreen.children.filtered { (it as RDButton).isChecked }
 
+            println("size: ${rdButtonsChecked.size}")
 
-        roleSelectedOrToSave!!.apply {
-            name = nameTf.text
-        }
-
-
-        roleSelectedOrToSave?.let {
-            RoleDao.update(it)
+            roleSelectedOrToSave!!.apply {
+                name = nameTf.text
+                screens = rdButtonsChecked.map {  (it as RDButton).name  }.toMutableList()
+            }
+            RoleDao.update( roleSelectedOrToSave!! )
                 .subscribe({ clear(mainPane) },{th-> println(th.message) })
         }
+
     }
 
     @FXML
@@ -202,7 +204,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
 
     @FXML
     fun hideBottomPanelOnMouseClicked() {
-        bottomPanelVBOx.hide()
+        bottomPanelVBOx.changeVisibility()
     }
 
     override fun onDestroy() {

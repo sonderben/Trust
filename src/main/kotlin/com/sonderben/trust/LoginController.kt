@@ -45,6 +45,9 @@ class LoginController : Initializable{
         EmployeeDao.login(userNameTextField.text.trim(),password.text.trim())
             .subscribe({employeeEntity ->
                 Context.currentEmployee = SimpleObjectProperty(employeeEntity)
+
+                EmployeeDao.findAll()
+
                 val resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
                 val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/main_view.fxml"),resourceBundle)
                 val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
