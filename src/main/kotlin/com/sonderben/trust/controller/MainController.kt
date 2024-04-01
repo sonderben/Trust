@@ -3,6 +3,8 @@ package com.sonderben.trust.controller
 import SingletonView
 import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
+import com.sonderben.trust.db.dao.CategoryDao
+import com.sonderben.trust.db.dao.EmployeeDao
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -54,14 +56,26 @@ class MainController : Initializable {
         bottomBarMenuItem = bottomBar
 
 
-        //menuBar.useSystemMenuBarProperty().set(true)
+
+
+
         screensByRole()
         if (vboxLateral.children.size ==1 ){
+            hideLeftPanel.isVisible = false
             borderpane.left = null
             onClickLateralButton( vboxLateral.children[0] )
         }
         if ( vboxLateral.children.size >0 ){
-            changeView("view/sale.fxml","sale")
+            when(vboxLateral.children[0].id){
+                "sale"->changeView("view/sale.fxml","sale")
+                "product"->changeView("view/product.fxml","product")
+                "employee"->changeView("view/employee.fxml","employee")
+                "role"->changeView("view/role.fxml","role")
+                "enterprise"->changeView("view/configuration.fxml","enterprise")
+                "queries"-> changeView("view/queries/queries.fxml","queries")
+                "customer_service"->changeView("view/customerService.fxml","customer_services")
+            }
+
             onClickLateralButton( vboxLateral.children[0] )
             onSelect()
         }
@@ -141,7 +155,7 @@ class MainController : Initializable {
     lateinit var windowTitle: Label
     private lateinit var resourceBundle: ResourceBundle
     lateinit var bottomBar: MenuItem
-    //lateinit var bottombar: MenuItem
+
 
 
 
@@ -256,10 +270,12 @@ class MainController : Initializable {
 
 
     fun  hideLeftPanelOnMouseClicked() {
+
         if (borderpane.left.isVisible){
             borderpane.left.isVisible = false
             borderpane.left.managedProperty().set(false)
-        }else{
+        }
+        else{
             borderpane.left.isVisible = true
             borderpane.left.managedProperty().set(true)
         }
@@ -268,17 +284,27 @@ class MainController : Initializable {
 
     @FXML
     fun lateralBarOnAction() {
-        if (borderpane.left.isVisible){
-            borderpane.left.isVisible = false
-            borderpane.left.managedProperty().set(false)
-        }else{
-            borderpane.left.isVisible = true
-            borderpane.left.managedProperty().set(true)
+
+        if ( borderpane.left != null ){
+
+            if (borderpane.left.isVisible){
+                borderpane.left.isVisible = false
+                borderpane.left.managedProperty().set(false)
+            }
+            else{
+                borderpane.left.isVisible = true
+                borderpane.left.managedProperty().set(true)
+            }
+
+
         }
+
     }
 
     @FXML fun disconnectOnMouseClicked() {
         Context.currentEmployee.value = null
+        EmployeeDao.employees = null
+
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"),resourceBundle)
         val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
         HelloApplication.primary.scene = scene

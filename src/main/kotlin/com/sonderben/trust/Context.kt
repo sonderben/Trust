@@ -11,11 +11,11 @@ import java.io.FileWriter
 import java.io.IOException
 import java.lang.RuntimeException
 import java.text.DateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 object Context {
     val path: String = "src/main/kotlin/com/sonderben/trust/config/preference.json"
+    val resource = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
 
     var currentEmployee: SimpleObjectProperty<EmployeeEntity> = SimpleObjectProperty()
     private var enterpriseEntity:EnterpriseEntity? = null

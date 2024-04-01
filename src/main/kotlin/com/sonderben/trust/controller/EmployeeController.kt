@@ -85,7 +85,7 @@ class EmployeeController:Initializable, BaseController() {
                 accountNumberTextField.text = newValue.bankAccount
                 userNameTextField.text = newValue.userName
                 telephoneTextField.text = newValue.telephone
-                passwordField.text = "********"
+                passwordField.text = newValue.password //"********"
                 telephoneTextField.text = newValue.telephone
                 passportTextField.text = newValue.passport
 

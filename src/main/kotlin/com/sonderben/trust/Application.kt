@@ -46,7 +46,7 @@ class HelloApplication : Application() {
 
         primary.minHeight = 440.0
         primary.minWidth = 720.0
-        stage.isAlwaysOnTop = true
+        //stage.isAlwaysOnTop = true
         stage.show()
 
 

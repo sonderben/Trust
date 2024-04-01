@@ -51,11 +51,25 @@ object SqlDml {
     val DELETE_EMPLOYEE = "delete from ${SqlDdl.employees} where id = ?"
     val FIND_EMPLOYEE_BY_ID = "SELECT * FROM ${SqlDdl.employees} where id = ?"
     //val SELECT_ALL_EMPLOYEE = "SELECT * FROM ${SqlDdl.employees}"
-    val SELECT_ALL_EMPLOYEE = """
-        SELECT Employee.id, birthDay,bankAccount,direction,email,firstName,genre,lastName,passport,password,telephone,userName,
-        Roles.id as roleId,name,screens
-        from ${SqlDdl.employees} INNER JOIN ${SqlDdl.roles}
+    val SELECT_ALL_EMPLOYEE_INCLUDE_ADMIN = """
+        SELECT Employee.id, birthDay,bankAccount,Employee.direction,email,firstName,genre,lastName,passport,password,Employee.telephone,userName,
+        Roles.id as roleId,Roles.name,screens
+        from ${SqlDdl.employees} 
+		INNER JOIN Roles
         on Employee.id_role = Roles.id
+		INNER join enterprise
+		on enterprise.id_employee  !=  Employee.id
+    """.trimIndent()
+    val SELECT_ALL_EMPLOYEE_EXCLUDE_ADMIN = """
+        SELECT Employee.id, birthDay,bankAccount,Employee.direction,email,firstName,genre,lastName,passport,password,Employee.telephone,userName,
+        Roles.id as roleId,Roles.name,screens
+        from ${SqlDdl.employees} 
+		INNER JOIN Roles
+        on Employee.id_role = Roles.id
+        INNER join enterprise
+		on enterprise.id_employee  !=  Employee.id
+        WHERE lower(Roles.name)  !=  lower('admin')
+		
     """.trimIndent()
     val EMPLOYEE_LOGIN = "select * from ${SqlDdl.employees} where userName= ? and password =? ;"
 
@@ -70,7 +84,7 @@ object SqlDml {
         append("(name,direction,telephone,foundation,website,category,invoiceTemplate,invoiceTemplateHtml,id_employee) ")
         append("values (?,?,?,?,?,?,?,?,?) ")
     }
-    val  SELECT_ALL_ENTERPRISE = """
+    const val SELECT_ENTERPRISE = """
             SELECT enterprise.id as enid , enterprise.name as ne,enterprise.direction as ed,enterprise.telephone as et,enterprise.foundation as ef ,enterprise.website as ew,
             enterprise.category as ec ,enterprise.invoiceTemplate as ei,enterprise.invoiceTemplateHtml as ein,
             Employee.birthDay as empb,Employee.id as empid,Employee.bankAccount as empbank,Employee.direction as empd,Employee.email as empe,Employee.firstName as empf,Employee.lastName as empl,

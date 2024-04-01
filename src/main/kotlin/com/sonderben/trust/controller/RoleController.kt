@@ -1,9 +1,12 @@
 package com.sonderben.trust.controller
 
+import com.sonderben.trust.Context
+import com.sonderben.trust.Util
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.customView.RDButton
 import com.sonderben.trust.db.dao.RoleDao
 import com.sonderben.trust.changeVisibility
+import com.sonderben.trust.equalAtLeastOne
 import com.sonderben.trust.model.Role
 import com.sonderben.trust.viewUtil.ViewUtil
 import javafx.beans.property.SimpleStringProperty
@@ -33,14 +36,18 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
             hideBottomPanelOnMouseClicked()
         }
 
-        val listScreen = ScreenEnum.values().toList()
+        val listScreen = Context.currentEmployee.get().role.screens //ScreenEnum.values().toList()
         gridPaneScreen.children.clear()
 
 
         var index = 0
-        for (row in 0 until (listScreen.size / 4 + 1)) { // row
+        for (row in 0 until 4) { // row
             for (col in 0 until 4) {// col
-                if (index + 1 <= listScreen.size) {
+                if (index >= listScreen.size   ){
+                    break
+                }
+
+
                     val radioButton = RDButton(listScreen[index])
                     radioButton.onMouseClicked = this
                     gridPaneScreen.children.add(radioButton)
@@ -48,10 +55,8 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
 
                     GridPane.setColumnIndex(radioButton, col)
                     GridPane.setRowIndex(radioButton, row)
-                    index += 1
-                } else {
-                    break
-                }
+                index += 1
+
             }
         }
         //}
@@ -67,14 +72,13 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
         tableView.items = RoleDao.roles
 
 
-        tableView.selectionModel.selectedIndices.addListener( ListChangeListener { change->
-            if ( change.list.isEmpty() ){
-                enableActionButton(mainPane,true)
+        tableView.selectionModel.selectedIndices.addListener(ListChangeListener { change ->
+            if (change.list.isEmpty()) {
+                enableActionButton(mainPane, true)
+            } else {
+                enableActionButton(mainPane, false)
             }
-            else{
-                enableActionButton(mainPane,false)
-            }
-        } )
+        })
 
 
         tableView.selectionModel.selectionMode = SelectionMode.SINGLE
@@ -92,7 +96,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
 
                     for (screen in newValue.screens) {
                         gridPaneScreen.children.filtered {
-                            (it as RDButton).name == ScreenEnum.valueOf( screen.name )
+                            (it as RDButton).name == ScreenEnum.valueOf(screen.name)
                         }.forEach {
                             (it as RDButton).select()
                         }
@@ -162,42 +166,67 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
     fun onSaveRole() {
 
 
-        val rdButtonsChecked: FilteredList<Node> = gridPaneScreen.children.filtered { (it as RDButton).isChecked }
+        if (validateRole()) {
+            val rdButtonsChecked: FilteredList<Node> = gridPaneScreen.children.filtered { (it as RDButton).isChecked }
 
-        RoleDao.save( Role(nameTf.text, rdButtonsChecked.map {  (it as RDButton).name  }.toMutableList()) ).subscribe({
-            clearRDButtons()
-        }, {th-> println("error: $th") })
+            RoleDao.save(Role(nameTf.text, rdButtonsChecked.map { (it as RDButton).name }.toMutableList())).subscribe({
+                clearRDButtons()
+            }, { th -> println("error: $th") })
+        }
 
 
     }
 
     @FXML
     fun onUpdateRole() {
-
-        if(roleSelectedOrToSave != null){
+        println("validate: "+ validateRole(true))
+        if ( validateRole(true) ) {
             val rdButtonsChecked: FilteredList<Node> = gridPaneScreen.children.filtered { (it as RDButton).isChecked }
 
-            println("size: ${rdButtonsChecked.size}")
 
             roleSelectedOrToSave!!.apply {
                 name = nameTf.text
-                screens = rdButtonsChecked.map {  (it as RDButton).name  }.toMutableList()
+                screens = rdButtonsChecked.map { (it as RDButton).name }.toMutableList()
             }
-            RoleDao.update( roleSelectedOrToSave!! )
-                .subscribe({ clear(mainPane) },{th-> println(th.message) })
+            RoleDao.update(roleSelectedOrToSave!!)
+                .subscribe({ clear(mainPane) }, { th -> println(th.message) })
         }
 
     }
 
+    private fun validateRole(validateId: Boolean = false): Boolean {
+
+        if (validateId) {
+            if (roleSelectedOrToSave?.id == null) {
+
+                ViewUtil.customAlert("Error", "please first select a role.").show()
+                return false
+            } else if (roleSelectedOrToSave!!.name.trim().equalAtLeastOne("admin", "seller", ignoreCase = true)) {
+
+                ViewUtil.customAlert("Error", "Role \"Admin\" and \"Seller\" can't be update or delete.").show()
+                return false
+            }
+
+        }
+        if (Util.areBlank(nameTf) || gridPaneScreen.children.filtered { (it as RDButton).isChecked }.isEmpty()) {
+            ViewUtil.customAlert(
+                "Error",
+                "please select at least one screen authorization and fill out the name field."
+            ).show()
+
+            return false
+        }
+
+        return true
+    }
+
     @FXML
     fun onDeleteRole() {
-        roleSelectedOrToSave?.let {
-            if (!it.name.equals("Admin")) {
-                RoleDao.delete(it.id)
-                    .subscribe({ clearAll() }, {})
+        if (validateRole()) {
 
-            } else
-                ViewUtil.createAlert(Alert.AlertType.WARNING, "Delete role", "Can not delete main role.").showAndWait()
+            RoleDao.delete(roleSelectedOrToSave!!.id)
+                .subscribe({ clearAll() }, { th -> println(th.message) })
+
         }
 
     }
@@ -234,7 +263,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
         }
 
 
-        MainController.editMenu?.items?.addAll(saveMenuItem, updateMenuItems, deleteMenuItems,clearMenuItems)
+        MainController.editMenu?.items?.addAll(saveMenuItem, updateMenuItems, deleteMenuItems, clearMenuItems)
 
     }
 }

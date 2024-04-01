@@ -51,6 +51,7 @@ class RDButton( var name:ScreenEnum,var isChecked:Boolean = false):Pane(),EventH
 
     fun clear(){
         innerCircle.isVisible = false
+        isChecked = false
     }
 
     fun select(){

@@ -4,16 +4,18 @@ package com.sonderben.trust.db.dao
 import Database
 import Database.DATABASE_NAME
 import com.sonderben.trust.Util
+import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.db.SqlDdl
 import com.sonderben.trust.db.SqlDml.INSERT_EMPLOYEE
 import com.sonderben.trust.db.SqlDml.INSERT_ENTERPRISE
 import com.sonderben.trust.db.SqlDml.INSERT_ROLE
 import com.sonderben.trust.db.SqlDml.INSERT_SCHEDULE
-import com.sonderben.trust.db.SqlDml.SELECT_ALL_ENTERPRISE
+import com.sonderben.trust.db.SqlDml.SELECT_ENTERPRISE
 import com.sonderben.trust.db.SqlDml.UPDATE_EMPLOYEE
 import com.sonderben.trust.db.SqlDml.UPDATE_ENTERPRISE
 import com.sonderben.trust.db.SqlDml.UPDATE_SCHEDULER
 import com.sonderben.trust.model.Role
+import entity.CategoryEntity
 import entity.EmployeeEntity
 import entity.EnterpriseEntity
 import io.reactivex.rxjava3.core.Completable
@@ -118,7 +120,13 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
 
 
                 }
+
             }
+
+            CategoryDao.save( CategoryEntity("0000","General",0.0) )
+                .subscribe()
+            RoleDao.save( Role( "Seller", mutableListOf(ScreenEnum.SALE) ) )
+                .subscribe()
         }
     }
 
@@ -160,7 +168,7 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
             Database.connect(DATABASE_NAME).use { connection->
                 connection.createStatement().use { statement ->
 
-                    statement.executeQuery( SELECT_ALL_ENTERPRISE ).use { resultSet ->
+                    statement.executeQuery( SELECT_ENTERPRISE ).use { resultSet ->
                         while (resultSet.next()){
                             val role = Role()
                             role.id = resultSet.getLong("ri")
@@ -196,7 +204,6 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
                                     resultSet.getString("ein"),
                                 )
                             )
-                            println( "hey: ${enterprises[0].name}." )
                             emitter.onSuccess(enterprises)
                         }
                     }

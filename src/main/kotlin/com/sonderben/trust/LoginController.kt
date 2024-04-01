@@ -2,6 +2,7 @@ package com.sonderben.trust
 
 import com.sonderben.trust.controller.ConfigurationController
 import com.sonderben.trust.db.dao.EmployeeDao
+import com.sonderben.trust.db.dao.EnterpriseDao
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.EmployeeEntity
 import entity.enterprise.EnterpriseInfo
@@ -91,14 +92,14 @@ class LoginController : Initializable{
             println("mimeTypes: ${en.mimeTypes}")
         }*/
 
-        employees.addListener(ListChangeListener {
+        /*employees.addListener(ListChangeListener {
             if (employees.size >0 ){
                 login.isDisable = false
                 newSystemLabel.isDisable = true
             }
-        })
+        })*/
 
-        if (employees.size>0 || isFromEnterprise){
+        if (EnterpriseDao.enterprises.size>0 || isFromEnterprise){
             login.isDisable = false
             newSystemLabel.isDisable = true
         }

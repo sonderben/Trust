@@ -54,19 +54,20 @@ class ViewUtil {
 
             val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/customAlert.fxml"))
             val vbox:VBox = fxmlLoader.load()
-            val node: GridPane = (vbox.children[0] as GridPane)
-            val header = node.children.filter { it.id=="header" }[0] as Label
-            val body = node.children.filter { it.id=="body" }[0] as Text
+
+            //val node: GridPane = (vbox.children[0] as GridPane)
+            val header = vbox.children.filter { it.id=="header" }[0] as Label
+            val body = vbox.children.filter { it.id=="body" }[0] as Text
 
             header.text = title
             body.text = message
 
-            val btn:Button = (node.children.filter { it is HBox }[0] as HBox).children.filter { it.id == "okBtn" }[0] as Button
+            val btn:Button = vbox.children.filterIsInstance<HBox>()[0].children.filter { it.id == "okBtn" }[0] as Button
             btn.setOnMouseClicked {
                 onClick?.invoke()
                 loading.close()
             }
-            //vbox.style = "-fx-background-color:transparent;"
+            vbox.style = "-fx-background-color:#032d3b;"
             val scene = Scene(vbox, 400.0, 200.0)
 
             scene.fill = Color.TRANSPARENT

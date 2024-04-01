@@ -2,6 +2,7 @@ package com.sonderben.trust.db.dao
 
 import Database
 import Database.DATABASE_NAME
+import com.sonderben.trust.Context
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.db.SqlDml.DELETE_ROLE
 import com.sonderben.trust.db.SqlDml.INSERT_ROLE
@@ -27,10 +28,9 @@ object RoleDao:CrudDao<Role> {
 
 
     override fun save(entity:Role):Completable{
-        println(entity)
+
         return Completable.create { emitter->
             Database.connect(DATABASE_NAME).use { connection ->
-                connection.autoCommit = false
 
                 connection.prepareStatement( INSERT_ROLE ).use { preparedStatement ->
                     preparedStatement.setString(1,entity.name)
@@ -38,16 +38,10 @@ object RoleDao:CrudDao<Role> {
                     val intRow = preparedStatement.executeUpdate()
 
                     if ( intRow>0 ) {
-
                         entity.id = Database.getLastId()
-                        connection.commit()
-                        connection.autoCommit = true
                         roles.add(entity)
                         emitter.onComplete()
-
                     }else{
-                        connection.rollback()
-                        connection.autoCommit = true
                         emitter.onError( Throwable("Can not be saved role: $entity") )
                     }
 
@@ -97,6 +91,7 @@ object RoleDao:CrudDao<Role> {
                 connection.autoCommit = true
                 connection.createStatement().use { statement ->
 
+                    val  selectAuthorizeRole = createQuerySelectRoleWith( Context.currentEmployee.get().role.screens )
 
                     statement.executeQuery(SELECT_ALL_ROLE).use { resultSet ->
 
@@ -108,7 +103,7 @@ object RoleDao:CrudDao<Role> {
                                 ScreenEnum.valueOf( it )
                             }.toMutableList()
 
-                            roles.add( role )
+                            roles.add( authorizeRole(role.screens,Context.currentEmployee.get().role.screens) )
                         }
                         emitter.onSuccess( roles )
 
@@ -122,6 +117,42 @@ object RoleDao:CrudDao<Role> {
             .observeOn( JavaFxScheduler.platform() )
             .subscribe ()
 
+    }
+
+    private fun authorizeRole(allScreensDb: MutableList<ScreenEnum>, screensAuthorized: MutableList<ScreenEnum>): Role {
+
+    }
+
+    /*private fun createQuerySelectRoleWith(screens: MutableList<ScreenEnum>): String{
+        
+        val builder = StringBuilder()
+        builder.append("SELECT * FROM roles WHERE (screens LIKE '%${screens[0].name}%' ")
+
+        if (screens.size>1){
+            for (i in 1 until screens.size){
+                builder.append(" OR screens LIKE '%${screens[i].name}%' ")
+            }
+        }
+        builder.append(")")
+        builder.append("and length(screens) <= ${screens.joinToString(",") { it.name }.length}")
+        println(builder.toString())
+        return builder.toString()
+    }*/
+
+
+    private fun createQuerySelectRoleWith(screens: MutableList<ScreenEnum>): String{
+
+        val builder = StringBuilder()
+        builder.append("SELECT * FROM roles WHERE ")
+        builder.append("INSTR( screens,'${screens[0]}' ) > 0 ")
+
+        for (i in 1 until screens.size){
+            builder.append("AND INSTR( screens,'${screens[i]}' ) >0 ")
+        }
+
+        println(builder.toString())
+
+        return builder.toString()
     }
 
     override fun update(entity: Role): Completable {

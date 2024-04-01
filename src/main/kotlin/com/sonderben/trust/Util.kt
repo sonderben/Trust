@@ -1,5 +1,6 @@
 package com.sonderben.trust
 
+import javafx.scene.control.TextField
 import javafx.scene.web.HTMLEditor
 import java.io.File
 import java.io.FileWriter
@@ -14,6 +15,22 @@ import java.util.*
 
 object Util {
 
+    fun areBlank(vararg text: String):Boolean{
+
+        for (tex in text){
+            if (tex.isBlank())
+                return true
+        }
+        return false
+    }
+    fun areBlank(vararg text: TextField):Boolean{
+
+        for (tex in text){
+            if (tex.text.isBlank())
+                return true
+        }
+        return false
+    }
 
     fun timeStampToCalendar(timestamp:Timestamp?):Calendar{
         if (timestamp!=null){

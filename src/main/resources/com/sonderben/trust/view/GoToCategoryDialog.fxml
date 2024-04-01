@@ -13,7 +13,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-
 <DialogPane xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <content>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css">
@@ -50,9 +49,10 @@
             </GridPane>
             <HBox alignment="TOP_RIGHT" prefWidth="200.0" spacing="20.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#deleteBtn" text="Delete" />
-                  <Button mnemonicParsing="false" onAction="#updateBtn" text="Update" />
-                  <Button mnemonicParsing="false" onAction="#saveBtn" text="Save" />
+                  <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#saveBtn" text="%save" />
+                  <Button fx:id="updateBtn" disable="true" mnemonicParsing="false" onAction="#updateBtn" text="%update" />
+                  <Button fx:id="deleteBtn" disable="true" mnemonicParsing="false" onAction="#deleteBtn" text="%delete" />
+                  <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#clearBtn" text="%clear" />
                </children>
                <VBox.margin>
                   <Insets bottom="10.0" />

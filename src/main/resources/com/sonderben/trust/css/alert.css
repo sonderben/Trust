@@ -1,5 +1,5 @@
 .main-bg{
-    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #032d3b,#3498db);
+    -fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #032d3b,#032d3b);
 }
 .button{
     -fx-background-color: transparent;

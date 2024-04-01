@@ -60,3 +60,11 @@ fun TextField.onlyInt(){
 
     return format.format(this)
 }
+
+fun String.equalAtLeastOne(vararg strings: String,ignoreCase:Boolean=true):Boolean{
+    for (str in strings){
+        if (this.equals(str,ignoreCase))
+            return true
+    }
+    return false
+}

@@ -1,7 +1,11 @@
 package com.sonderben.trust.controller
 
+import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
+import com.sonderben.trust.Util
 import com.sonderben.trust.db.dao.CategoryDao
+import com.sonderben.trust.textTrim
+import com.sonderben.trust.viewUtil.ViewUtil
 import entity.CategoryEntity
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.ObservableList
@@ -22,10 +26,7 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
     private var categorySelected:CategoryEntity?=null
     init {
 
-
-
-
-        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/GoToCategoryDialog.fxml"))
+        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/GoToCategoryDialog.fxml"),Context.resource)
         fxmlLoader.setController(this)
         try {
             dialogPane = fxmlLoader.load()
@@ -41,9 +42,6 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
-
-
 
     }
 
@@ -70,37 +68,81 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
 
     @FXML
     fun deleteBtn() {
-        if (categorySelected != null && categorySelected!!.id != null){
+        if (categorySelected?.id  != null ){
             CategoryDao.delete( categorySelected!!.id )
                 .subscribe({
-                    clearTextField()
+                    clearBtn()
                 },{th-> println(th.message) })
 
+        }else{
+            ViewUtil.customAlert("Error", "please first select a category.").show()
         }
     }
 
     @FXML
     fun saveBtn() {
 
-        CategoryDao.save(
-            CategoryEntity(codeTf.text,descriptionTf.text,discountTf.text.toDouble())
-        ).subscribe({
-                    clearTextField()
-        },{th-> println(th.message) })
+        if ( validateCategory() ){
+            CategoryDao.save(
+                CategoryEntity(codeTf.text,descriptionTf.text,discountTf.text.toDouble())
+            ).subscribe({
+                clearBtn()
+            },{th-> println(th.message) })
+        }
 
-        clearTextField()
+
+    }
+
+    @FXML
+    fun clearBtn(){
+        deleteBtn.isDisable = true
+        updateBtn.isDisable = true
+        saveBtn.isDisable = false
+        codeTf.text = ""
+        descriptionTf.text = ""
+        discountTf.text = ""
+        tableView.selectionModel.clearSelection()
+        categorySelected = null
     }
 
     @FXML
     fun updateBtn() {
-        val index = categories.indexOf( categorySelected )
-        if (index>=0){
-            /*val cat = mCategoryDto.update( CategoryEntity(codeTf.text,descriptionTf.text,discountTf.text.toDouble()) )
-            categories[index] = cat
-            clearTextField()*/
+
+        if ( validateCategory(true) ){
+
+            categorySelected?.let {
+                it.code = codeTf.textTrim()
+                it.description = descriptionTf.textTrim()
+                it.description = descriptionTf.textTrim()
+                CategoryDao.update(it)
+                    .subscribe({ clearBtn() },{th-> println( th.message ) })
+            }
         }
     }
+    private fun validateCategory(validateId:Boolean = false): Boolean {
+        if (validateId)
+            if ( categorySelected?.id == null){
+                ViewUtil.customAlert("Error", "please first select a category.").show()
+            }
 
+        //////////
+
+        if ( Util.areBlank( codeTf, descriptionTf, discountTf ) ){
+            ViewUtil.customAlert(
+                "Error on fields",
+                "please make sure you fill out all the text fields."
+            ).show()
+            return false
+        }
+        return true
+    }
+
+
+
+
+    @FXML lateinit var saveBtn:Button
+    @FXML lateinit var updateBtn:Button
+    @FXML lateinit var deleteBtn:Button
 
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
@@ -109,20 +151,21 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
 
         tableView.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
             if (newValue != null) {
+
                 categorySelected = newValue
                 codeTf.text = newValue.code
                 descriptionTf.text = newValue.description
                 discountTf.text = newValue.discount.toString()
 
+                saveBtn.isDisable = true
+                updateBtn.isDisable = false
+                deleteBtn.isDisable = false
+
             }
         }
     }
 
-    fun clearTextField(){
-        codeTf.text = ""
-        discountTf.text = ""
-        descriptionTf.text = ""
-    }
+
 }
 
 

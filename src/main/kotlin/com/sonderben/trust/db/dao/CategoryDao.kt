@@ -42,6 +42,8 @@ object CategoryDao : CrudDao<CategoryEntity>{
 
             }
         }
+            .subscribeOn(Schedulers.io())
+            .observeOn( JavaFxScheduler.platform() )
     }
 
     override fun findAll() {
@@ -76,22 +78,30 @@ object CategoryDao : CrudDao<CategoryEntity>{
     }
 
     override fun update(entity: CategoryEntity): Completable {
+
         return Completable.create { emitter->
             Database.connect("").use { connection ->
                 connection.prepareStatement(SqlDml.updateCategory).use { preparedStatement ->
+
                     preparedStatement.setString(1,entity.code)
                     preparedStatement.setString(2,entity.description)
                     preparedStatement.setDouble(3,entity.discount)
                     preparedStatement.setLong(4,entity.id)
-                    if (preparedStatement.executeUpdate()>0){
+
+                    if ( preparedStatement.executeUpdate() > 0 ){
+                        categories[ categories.indexOf( entity ) ] = entity
+                        println("prueba : ${entity.id}")
                         emitter.onComplete()
                     }
                     else{
                         emitter.onError( Throwable("can not update category: $entity") )
+                        println("prueba false : ${entity.id}")
                     }
                 }
             }
         }
+            .subscribeOn(Schedulers.io())
+            .observeOn( JavaFxScheduler.platform() )
     }
 
     override fun delete(idEntity:Long): Completable {
@@ -112,7 +122,8 @@ object CategoryDao : CrudDao<CategoryEntity>{
             }
 
         }.subscribeOn(Schedulers.io())
-            .observeOn(JavaFxScheduler.platform())
+            .subscribeOn(Schedulers.io())
+            .observeOn( JavaFxScheduler.platform() )
 
     }
 

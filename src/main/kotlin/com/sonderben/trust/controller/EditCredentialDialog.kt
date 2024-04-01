@@ -9,12 +9,14 @@ import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.control.*
 import javafx.scene.paint.Color
+import javafx.util.Callback
 import java.io.IOException
 import java.net.URL
 import java.util.*
 
 class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
 
+    var isSave = false
     init {
 
 
@@ -25,13 +27,15 @@ class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
         try {
             dialogPane = fxmlLoader.load()
             
-            val save = ButtonType("Ok", ButtonBar.ButtonData.APPLY)
-            dialogPane.buttonTypes.addAll( ButtonType("Ok", ButtonBar.ButtonData.OK_DONE) )
+            val cancel = ButtonType("Cancel", ButtonBar.ButtonData.APPLY)
+            dialogPane.buttonTypes.addAll( cancel )
 
-            /*setResultConverter { button->
-                return true
-            }*/
-
+            resultConverter = Callback { param ->
+                if (param.equals(cancel)){
+                    return@Callback false
+                }
+                return@Callback isSave
+            }
 
 
         } catch (e: IOException) {
@@ -43,6 +47,7 @@ class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
 
     }
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
+        labelInfo.text = ""
         username.text = Context.currentEmployee.get().userName
     }
     @FXML lateinit var currentPwd:PasswordField
@@ -52,7 +57,7 @@ class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
     @FXML lateinit var labelInfo:Label
 
     @FXML lateinit var save:Button
-    @FXML lateinit var cancel:Button
+
 
     @FXML
     fun saveBtn(){
@@ -61,6 +66,7 @@ class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
             EmployeeDao.updateCredential( username.text, confirmPwd.text )
                 .subscribe(
                     {
+                        isSave = true
                         vali()
                         val employee = Context.currentEmployee.get()
                         employee.userName = username.text
@@ -71,10 +77,7 @@ class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
 
         }
     }
-    @FXML
-    fun cancelBtn(){
-        this.close()
-    }
+
 
     private fun validateCredential(): Boolean {
         labelInfo.textFill = Color.ORANGE
@@ -102,6 +105,6 @@ class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
         confirmPwd.changeVisibility()
         username.changeVisibility()
         save.changeVisibility()
-        cancel.changeVisibility()
+
     }
 }

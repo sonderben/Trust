@@ -6,13 +6,13 @@ import com.sonderben.trust.Context
 import com.sonderben.trust.Util
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.db.SqlDdl
-import com.sonderben.trust.db.SqlDml
 import com.sonderben.trust.db.SqlDml.DELETE_EMPLOYEE
 import com.sonderben.trust.db.SqlDml.EMPLOYEE_LOGIN
 import com.sonderben.trust.db.SqlDml.FIND_EMPLOYEE_BY_ID
 import com.sonderben.trust.db.SqlDml.INSERT_EMPLOYEE
 import com.sonderben.trust.db.SqlDml.INSERT_SCHEDULE
-import com.sonderben.trust.db.SqlDml.SELECT_ALL_EMPLOYEE
+import com.sonderben.trust.db.SqlDml.SELECT_ALL_EMPLOYEE_INCLUDE_ADMIN
+import com.sonderben.trust.db.SqlDml.SELECT_ALL_EMPLOYEE_EXCLUDE_ADMIN
 import com.sonderben.trust.db.SqlDml.UPDATE_EMPLOYEE
 import com.sonderben.trust.model.Role
 import entity.EmployeeEntity
@@ -23,7 +23,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.collections.FXCollections
 import java.sql.Timestamp
-import java.util.*
 
 
 object EmployeeDao : CrudDao<EmployeeEntity> {
@@ -32,7 +31,7 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
    var employees = FXCollections.observableArrayList<EmployeeEntity>()
     init {
 
-        findAll()
+        //findAll()
 
     }
     override fun save(entity: EmployeeEntity): Completable {
@@ -177,8 +176,17 @@ object EmployeeDao : CrudDao<EmployeeEntity> {
 
             Database.connect(DATABASE_NAME).use {connection ->
                 connection.createStatement().use {statement ->
-                    val TEMP_SELECT_ALL_EMPLOYEE:String = if( Context.currentEmployee.get()==null || Context.currentEmployee.get().isAdmin) SELECT_ALL_EMPLOYEE else "$SELECT_ALL_EMPLOYEE  where lower(Roles.name) != lower('admin')"
 
+                    val TEMP_SELECT_ALL_EMPLOYEE:String
+                    //= if( Context.currentEmployee.get()==null || Context.currentEmployee.get().isAdmin) SELECT_ALL_EMPLOYEE else SELECT_MAIN_ADM_EMPLOYEE
+
+                    /*if (Context.currentEmployee.get()==null)
+                        throw Exception()*/
+                    if (Context.currentEmployee.get().isAdmin){
+                        TEMP_SELECT_ALL_EMPLOYEE = SELECT_ALL_EMPLOYEE_INCLUDE_ADMIN
+                    }else{
+                        TEMP_SELECT_ALL_EMPLOYEE = SELECT_ALL_EMPLOYEE_EXCLUDE_ADMIN
+                    }
                     statement.executeQuery( TEMP_SELECT_ALL_EMPLOYEE ).use { resultSet ->
                         while (resultSet.next()){
 
