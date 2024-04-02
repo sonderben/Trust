@@ -64,7 +64,7 @@ class EmployeeController:Initializable, BaseController() {
 
         userTableView.items = EmployeeDao.employees
 
-        choiceBoxRole.items = RoleDao.roles
+        choiceBoxRole.items = RoleDao.getIntence().roles
         choiceBoxRole.converter = RoleStringConverter()
 
         userTableView.selectionModel.selectionMode = SelectionMode.SINGLE

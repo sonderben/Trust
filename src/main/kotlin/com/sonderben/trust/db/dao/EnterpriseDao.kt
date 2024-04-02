@@ -125,7 +125,7 @@ object EnterpriseDao:CrudDao<EnterpriseEntity> {
 
             CategoryDao.save( CategoryEntity("0000","General",0.0) )
                 .subscribe()
-            RoleDao.save( Role( "Seller", mutableListOf(ScreenEnum.SALE) ) )
+            RoleDao.getIntence().save( Role( "Seller", mutableListOf(ScreenEnum.SALE) ) )
                 .subscribe()
         }
     }

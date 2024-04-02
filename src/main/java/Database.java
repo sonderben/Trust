@@ -98,7 +98,8 @@ public class Database {
 
 
 
-        RoleDao.INSTANCE.save(
+
+        RoleDao.Companion.getIntence().save(
                 new Role(
                         "Admin",Arrays.asList(ScreenEnum.values())
                 )
@@ -107,7 +108,7 @@ public class Database {
         role.setId(1L);
 
 
-        RoleDao.INSTANCE.save(
+        RoleDao.Companion.getIntence().save(
                 new Role("Saler",List.of(ScreenEnum.SALE))
         );
         Role role2 = new Role();

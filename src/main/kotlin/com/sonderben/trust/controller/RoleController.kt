@@ -69,7 +69,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
             })
         }
 
-        tableView.items = RoleDao.roles
+        tableView.items = RoleDao.getIntence().roles
 
 
         tableView.selectionModel.selectedIndices.addListener(ListChangeListener { change ->
@@ -169,7 +169,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
         if (validateRole()) {
             val rdButtonsChecked: FilteredList<Node> = gridPaneScreen.children.filtered { (it as RDButton).isChecked }
 
-            RoleDao.save(Role(nameTf.text, rdButtonsChecked.map { (it as RDButton).name }.toMutableList())).subscribe({
+            RoleDao.getIntence().save(Role(nameTf.text, rdButtonsChecked.map { (it as RDButton).name }.toMutableList())).subscribe({
                 clearRDButtons()
             }, { th -> println("error: $th") })
         }
@@ -188,7 +188,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
                 name = nameTf.text
                 screens = rdButtonsChecked.map { (it as RDButton).name }.toMutableList()
             }
-            RoleDao.update(roleSelectedOrToSave!!)
+            RoleDao.getIntence().update(roleSelectedOrToSave!!)
                 .subscribe({ clear(mainPane) }, { th -> println(th.message) })
         }
 
@@ -224,7 +224,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
     fun onDeleteRole() {
         if (validateRole()) {
 
-            RoleDao.delete(roleSelectedOrToSave!!.id)
+            RoleDao.getIntence().delete(roleSelectedOrToSave!!.id)
                 .subscribe({ clearAll() }, { th -> println(th.message) })
 
         }

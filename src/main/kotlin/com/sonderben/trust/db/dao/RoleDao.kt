@@ -17,7 +17,26 @@ import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 
-object RoleDao:CrudDao<Role> {
+class RoleDao private constructor():CrudDao<Role> {
+    companion object{
+        @Volatile private var instence:RoleDao? = null
+        fun getIntence():RoleDao{
+
+            if (instence==null){
+                synchronized(this){
+                    if (instence==null){
+                        instence = RoleDao()
+                    }
+                }
+            }
+            return instence!!
+        }
+        fun clearInstence(){
+            instence = null
+        }
+    }
+
+
     val roles: ObservableList<Role> = FXCollections.observableArrayList()
 
     init {
@@ -68,7 +87,7 @@ object RoleDao:CrudDao<Role> {
                         roles.removeIf { it.id.equals(idEntity) }
                         emitter.onComplete()
                     }else
-                    emitter.onError(Throwable("cant delete role, id: $idEntity"))
+                        emitter.onError(Throwable("cant delete role, id: $idEntity"))
                 }
 
             }
@@ -103,7 +122,9 @@ object RoleDao:CrudDao<Role> {
                                 ScreenEnum.valueOf( it )
                             }.toMutableList()
 
-                            roles.add( authorizeRole(role.screens,Context.currentEmployee.get().role.screens) )
+                            val r = authorizeRole(role,Context.currentEmployee.get().role.screens)
+                            if(r != null)
+                                roles.add( r )
                         }
                         emitter.onSuccess( roles )
 
@@ -119,12 +140,16 @@ object RoleDao:CrudDao<Role> {
 
     }
 
-    private fun authorizeRole(allScreensDb: MutableList<ScreenEnum>, screensAuthorized: MutableList<ScreenEnum>): Role {
-
+    private fun authorizeRole(roleDb: Role, screensAuthorized: MutableList<ScreenEnum>): Role? {
+        for ( i in 0 until roleDb.screens.size){
+            if ( !screensAuthorized.contains(  roleDb.screens[i] ) )
+                return null
+        }
+        return roleDb
     }
 
     /*private fun createQuerySelectRoleWith(screens: MutableList<ScreenEnum>): String{
-        
+
         val builder = StringBuilder()
         builder.append("SELECT * FROM roles WHERE (screens LIKE '%${screens[0].name}%' ")
 
@@ -189,9 +214,6 @@ object RoleDao:CrudDao<Role> {
             .subscribeOn(Schedulers.io())
             .observeOn(JavaFxScheduler.platform())
     }
-
-
-
 
 
 

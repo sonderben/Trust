@@ -5,6 +5,7 @@ import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.db.dao.CategoryDao
 import com.sonderben.trust.db.dao.EmployeeDao
+import com.sonderben.trust.db.dao.RoleDao
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -303,7 +304,9 @@ class MainController : Initializable {
 
     @FXML fun disconnectOnMouseClicked() {
         Context.currentEmployee.value = null
-        EmployeeDao.employees = null
+        RoleDao.clearInstence()
+
+
 
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"),resourceBundle)
         val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
