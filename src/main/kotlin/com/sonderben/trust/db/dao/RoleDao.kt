@@ -110,8 +110,6 @@ class RoleDao private constructor():CrudDao<Role> {
                 connection.autoCommit = true
                 connection.createStatement().use { statement ->
 
-                    val  selectAuthorizeRole = createQuerySelectRoleWith( Context.currentEmployee.get().role.screens )
-
                     statement.executeQuery(SELECT_ALL_ROLE).use { resultSet ->
 
                         while ( resultSet.next() ){
@@ -148,21 +146,8 @@ class RoleDao private constructor():CrudDao<Role> {
         return roleDb
     }
 
-    /*private fun createQuerySelectRoleWith(screens: MutableList<ScreenEnum>): String{
 
-        val builder = StringBuilder()
-        builder.append("SELECT * FROM roles WHERE (screens LIKE '%${screens[0].name}%' ")
 
-        if (screens.size>1){
-            for (i in 1 until screens.size){
-                builder.append(" OR screens LIKE '%${screens[i].name}%' ")
-            }
-        }
-        builder.append(")")
-        builder.append("and length(screens) <= ${screens.joinToString(",") { it.name }.length}")
-        println(builder.toString())
-        return builder.toString()
-    }*/
 
 
     private fun createQuerySelectRoleWith(screens: MutableList<ScreenEnum>): String{

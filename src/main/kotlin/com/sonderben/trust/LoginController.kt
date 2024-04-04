@@ -32,7 +32,7 @@ class LoginController : Initializable{
     private lateinit var infoLabel: Label
     @FXML
     private lateinit var newSystemLabel: Label
-    private val employees: ObservableList<EmployeeEntity> = EmployeeDao.employees
+    private val employees: ObservableList<EmployeeEntity> = EmployeeDao.getInstance().employees
 
 
     private lateinit var resourceBundle:ResourceBundle
@@ -43,11 +43,11 @@ class LoginController : Initializable{
 
         val loading = ViewUtil.loadingView()
         loading.show()
-        EmployeeDao.login(userNameTextField.text.trim(),password.text.trim())
+        EmployeeDao.getInstance().login(userNameTextField.text.trim(),password.text.trim())
             .subscribe({employeeEntity ->
                 Context.currentEmployee = SimpleObjectProperty(employeeEntity)
 
-                EmployeeDao.findAll()
+                EmployeeDao.getInstance().findAll()
 
                 val resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
                 val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/main_view.fxml"),resourceBundle)

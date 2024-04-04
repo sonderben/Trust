@@ -113,7 +113,7 @@ public class Database {
         );
         Role role2 = new Role();
         role2.setId(2L);
-        EmployeeDao.INSTANCE.save(
+        EmployeeDao.Companion.getInstance().save(
                 new EmployeeEntity("Sale","1234551","Pierre","Female","PV","pierresophie@gmail.com","8293045678", Calendar.getInstance(),"123-2342-3423","sofi","1234",role2,List.of())
         );
 

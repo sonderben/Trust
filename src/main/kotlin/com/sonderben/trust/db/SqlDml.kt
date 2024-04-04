@@ -51,7 +51,7 @@ object SqlDml {
     val DELETE_EMPLOYEE = "delete from ${SqlDdl.employees} where id = ?"
     val FIND_EMPLOYEE_BY_ID = "SELECT * FROM ${SqlDdl.employees} where id = ?"
     //val SELECT_ALL_EMPLOYEE = "SELECT * FROM ${SqlDdl.employees}"
-    val SELECT_ALL_EMPLOYEE_INCLUDE_ADMIN = """
+    val SELECT_ALL_EMPLOYEE_INCLUDE_ADMIN_EXCLUDE_MAIN_ADMIN = """
         SELECT Employee.id, birthDay,bankAccount,Employee.direction,email,firstName,genre,lastName,passport,password,Employee.telephone,userName,
         Roles.id as roleId,Roles.name,screens
         from ${SqlDdl.employees} 
@@ -60,7 +60,7 @@ object SqlDml {
 		INNER join enterprise
 		on enterprise.id_employee  !=  Employee.id
     """.trimIndent()
-    val SELECT_ALL_EMPLOYEE_EXCLUDE_ADMIN = """
+    val SELECT_ALL_EMPLOYEE_EXCLUDE_ALL_ADMINS = """
         SELECT Employee.id, birthDay,bankAccount,Employee.direction,email,firstName,genre,lastName,passport,password,Employee.telephone,userName,
         Roles.id as roleId,Roles.name,screens
         from ${SqlDdl.employees} 

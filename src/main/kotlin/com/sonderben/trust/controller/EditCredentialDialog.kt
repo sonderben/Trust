@@ -63,7 +63,7 @@ class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
     fun saveBtn(){
         if ( validateCredential() ){
 
-            EmployeeDao.updateCredential( username.text, confirmPwd.text )
+            EmployeeDao.getInstance().updateCredential( username.text, confirmPwd.text )
                 .subscribe(
                     {
                         isSave = true

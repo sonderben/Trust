@@ -13,13 +13,18 @@ import java.util.*
 class RDButton( var name:ScreenEnum,var isChecked:Boolean = false):Pane(),EventHandler<MouseEvent> {
     private var radius = 8.0
     private var outerCircle: Circle = Circle(radius)
-    private var innerCircle: Circle
+    private var innerCircle: Circle  = Circle(4.0)
     private val resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
 
 
     private val label = Label( resourceBundle.getString(name.name.lowercase()) )
 
     init {
+        if (name == ScreenEnum.ENTERPRISE){
+            this.isDisable = true
+            innerCircle.opacity = 0.5
+            outerCircle.opacity = 0.5
+        }
         label.style = "-fx-text-fill: white;"
 
         //this.style = "-fx-background-color:black"
@@ -30,7 +35,7 @@ class RDButton( var name:ScreenEnum,var isChecked:Boolean = false):Pane(),EventH
         outerCircle.fill = Color.WHITE//Color.TRANSPARENT
         outerCircle.strokeType = StrokeType.OUTSIDE
 
-        innerCircle = Circle(4.0)
+
         innerCircle.fill = Color.web("#3498db")//Color.RED
 
         innerCircle.isVisible = isChecked

@@ -305,6 +305,7 @@ class MainController : Initializable {
     @FXML fun disconnectOnMouseClicked() {
         Context.currentEmployee.value = null
         RoleDao.clearInstence()
+        EmployeeDao.clearInstance()
 
 
 

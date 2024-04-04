@@ -8,14 +8,18 @@ import com.sonderben.trust.model.Role
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.EmployeeEntity
 import entity.ScheduleEntity
+import javafx.beans.property.SimpleBooleanProperty
+import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
+import javafx.event.EventHandler
 
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.control.*
+import javafx.scene.input.MouseEvent
 
 import javafx.scene.layout.VBox
 import javafx.util.Callback
@@ -62,14 +66,40 @@ class EmployeeController:Initializable, BaseController() {
         scheduleCol.setCellValueFactory { employee -> SimpleStringProperty(employee.value.schedules.joinToString { schedule ->days[schedule.workDay].substring(0,2)  }) }
 
 
-        userTableView.items = EmployeeDao.employees
+        userTableView.items = EmployeeDao.getInstance().employees
 
         choiceBoxRole.items = RoleDao.getIntence().roles
         choiceBoxRole.converter = RoleStringConverter()
 
+
+
+
+        userTableView.setRowFactory {
+            val row = TableRow<EmployeeEntity>()
+            val roles = RoleDao.getIntence().roles
+
+            row.itemProperty().addListener { _, _, newValue ->
+               if ( newValue != null && !roles.contains( newValue.role ) ){
+                   row.isDisable = true
+                   row.opacity = 0.5
+               }
+            }
+
+
+            row
+
+        }
+
+
+
+
         userTableView.selectionModel.selectionMode = SelectionMode.SINGLE
         userTableView.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
-            if (newValue != null) {
+
+
+            //is authorized to change this employee
+            if (newValue != null && RoleDao.getIntence().roles.contains( newValue.role )) {
+
                 if (!bottomPanelVBOx.isVisible) {
                     bottomPanelVBOx.changeVisibility()
                 }
@@ -101,6 +131,7 @@ class EmployeeController:Initializable, BaseController() {
                     )
                 }
             }
+
         }
 
 
@@ -197,7 +228,7 @@ class EmployeeController:Initializable, BaseController() {
     @FXML
     fun onDeleteButton() {
         if ( employeeToSave!=null && employeeToSave!!.id != null){
-            EmployeeDao.delete( employeeToSave!!.id ).subscribe(
+            EmployeeDao.getInstance().delete( employeeToSave!!.id ).subscribe(
                 {
                 clear( mainPane )
                 userTableView.selectionModel.select(null)
@@ -227,7 +258,7 @@ class EmployeeController:Initializable, BaseController() {
                  role = choiceBoxRole.value
                  /*mutableListOf()*/
              }
-             EmployeeDao.save(employeeToSave!!).subscribe({
+             EmployeeDao.getInstance().save(employeeToSave!!).subscribe({
                  clear(mainPane)
                  userTableView.selectionModel.select(null)
              },{th-> println(th.message) })
@@ -296,7 +327,7 @@ class EmployeeController:Initializable, BaseController() {
                   role = choiceBoxRole.value
               }
 
-              EmployeeDao.update( employeeToSave!! )
+              EmployeeDao.getInstance().update( employeeToSave!! )
                   .subscribe({
                       clear(mainPane)
                       userTableView.selectionModel.select(null)
