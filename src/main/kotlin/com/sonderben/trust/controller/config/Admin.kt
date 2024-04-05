@@ -34,6 +34,9 @@ class Admin :Initializable {
 
 
 
+    /**
+    *set TextField,ChoiceBox,DatePicker (Enterprise part) when enterprise different to null
+     */
     private fun setEnterprise() {
        if (enterprise!=null){
            val emp = enterprise!!.employee
@@ -58,13 +61,9 @@ class Admin :Initializable {
            phoneTextField.text = emp.telephone
            scheduleTextField.text = "Mon-Mon"
        }
-        else{
-            println( "enterprise nullllll")
-       }
-
     }
 
-    fun onUpdateButton() {
+    /*fun onUpdateButton() {
 
     }
 
@@ -78,7 +77,7 @@ class Admin :Initializable {
 
     fun scheduleOnMOuseClick() {
 
-    }
+    }*/
 
 
 
@@ -152,6 +151,9 @@ class Admin :Initializable {
     @FXML
     lateinit var websiteTextField: TextField
 
+    /**
+     *set TextField,ChoiceBox,DatePicker (business part) when enterprise different to null
+     */
     private fun setBusiness( bundle:ResourceBundle ) {
 
         if (enterprise!=null){

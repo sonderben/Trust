@@ -24,19 +24,13 @@ class InvoiceController:Initializable {
     lateinit var vboxButtons: VBox
     var enterprise: EnterpriseEntity?=null
 
-    val const = arrayOf(
-        "E_NAME", "E_DIRECTION", "E_PHONE", "E_FOUNDATION", "E_WEBSITE",
-        "PROD_DESCRIPTION", "PROD_QTY", "PROD_PRICE", "PROD_TAX", "PROD_TAX", "PROD_TAX",
-        "PROD_DISCOUNT", "PROD_TOTAL", "PROD_SUBTOTAL", "PROD_CASH", "PROD_CHANGE", "EMP_NAME",
-    )
-
 
     @FXML
     private lateinit var mainhbox:HBox
     @FXML
     private lateinit var htmlEditor:HTMLEditor
 
-    val MAX_COLUMN = 32
+
 
 
 
