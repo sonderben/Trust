@@ -1,4 +1,4 @@
-package com.sonderben.trust.controller.config
+package com.sonderben.trust.controller.enterprise
 
 import com.sonderben.trust.Context
 import entity.EnterpriseEntity
@@ -9,7 +9,6 @@ import javafx.scene.control.ToolBar
 import javafx.scene.input.KeyEvent
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
-import javafx.scene.text.Font
 import javafx.scene.web.HTMLEditor
 import javafx.scene.web.WebView
 import java.io.File

@@ -1,6 +1,7 @@
 package com.sonderben.trust.controller.queries
 
 import com.sonderben.trust.db.dao.CustomerDao
+import com.sonderben.trust.db.service.CustomerService
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
@@ -11,7 +12,7 @@ import java.net.URL
 import java.util.*
 
 class FrequentCustomers:Initializable {
-    private val spendingOrFrequentCustomer = CustomerDao.spendingOrFrequentCustomer("frequency")
+    //private val spendingOrFrequentCustomer = CustomerDao.spendingOrFrequentCustomer("frequency")
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
 
         customerCol.setCellValueFactory { d-> SimpleStringProperty(d.value.cusomerCode) }
@@ -19,7 +20,11 @@ class FrequentCustomers:Initializable {
         frequencyCol.setCellValueFactory { d-> SimpleStringProperty( d.value.frequency.toString() ) }
         totalProductCol.setCellValueFactory { d-> SimpleStringProperty( d.value.totalProductBought.toString() ) }
 
-        tableView.items = FXCollections.observableArrayList( spendingOrFrequentCustomer )
+        CustomerService.getInstance().spendingOrFrequentCustomer("frequency")
+            .subscribe({
+                tableView.items = FXCollections.observableArrayList( it )
+            },{})
+
     }
 
     @FXML

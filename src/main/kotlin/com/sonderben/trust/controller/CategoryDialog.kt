@@ -3,7 +3,8 @@ package com.sonderben.trust.controller
 import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.Util
-import com.sonderben.trust.db.dao.CategoryDao
+import com.sonderben.trust.constant.Constant
+import com.sonderben.trust.db.service.CategoryService
 import com.sonderben.trust.textTrim
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.CategoryEntity
@@ -19,14 +20,14 @@ import java.net.URL
 import java.util.*
 
 class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
-    private var categories:ObservableList<CategoryEntity> = CategoryDao.categories
+    private var categories:ObservableList<CategoryEntity> = CategoryService.getInstance().entities
 
     private var categoriesChanged:List<CategoryEntity> = mutableListOf()
 
     private var categorySelected:CategoryEntity?=null
     init {
 
-        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/GoToCategoryDialog.fxml"),Context.resource)
+        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/GoToCategoryDialog.fxml"),Constant.resource)
         fxmlLoader.setController(this)
         try {
             dialogPane = fxmlLoader.load()
@@ -69,7 +70,7 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
     @FXML
     fun deleteBtn() {
         if (categorySelected?.id  != null ){
-            CategoryDao.delete( categorySelected!!.id )
+            CategoryService.getInstance().delete( categorySelected!!.id )
                 .subscribe({
                     clearBtn()
                 },{th-> println(th.message) })
@@ -83,7 +84,7 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
     fun saveBtn() {
 
         if ( validateCategory() ){
-            CategoryDao.save(
+            CategoryService.getInstance().save(
                 CategoryEntity(codeTf.text,descriptionTf.text,discountTf.text.toDouble())
             ).subscribe({
                 clearBtn()
@@ -114,7 +115,7 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
                 it.code = codeTf.textTrim()
                 it.description = descriptionTf.textTrim()
                 it.description = descriptionTf.textTrim()
-                CategoryDao.update(it)
+                CategoryService.getInstance().update(it)
                     .subscribe({ clearBtn() },{th-> println( th.message ) })
             }
         }

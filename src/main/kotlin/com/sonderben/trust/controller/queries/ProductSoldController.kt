@@ -2,13 +2,11 @@ package com.sonderben.trust.controller.queries
 
 import com.sonderben.trust.controller.BaseController
 import com.sonderben.trust.db.dao.InvoiceDao
+import com.sonderben.trust.db.service.InvoiceService
 import javafx.beans.property.SimpleStringProperty
-import javafx.beans.value.ChangeListener
-import javafx.beans.value.ObservableValue
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.scene.Node
 import javafx.scene.chart.BarChart
 import javafx.scene.chart.PieChart
 import javafx.scene.chart.XYChart
@@ -20,7 +18,7 @@ import java.util.*
 
 class ProductSoldController:Initializable, BaseController() {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        println(InvoiceDao.productSealed())
+
 
         codeCol.setCellValueFactory { data -> SimpleStringProperty(data.value.code) }
         descriptionCol.setCellValueFactory { data -> SimpleStringProperty(data.value.description) }
@@ -30,45 +28,49 @@ class ProductSoldController:Initializable, BaseController() {
         categoryCol.setCellValueFactory { data -> SimpleStringProperty( data.value.category) }
         totalPrice.setCellValueFactory { data -> SimpleStringProperty(data.value.totalPrice) }
 
-        val pds = InvoiceDao.productSealed()
+        val pds = InvoiceService.getInstance().productSealed()
+            .subscribe({
+                tableView.items.addAll( it )
 
-        tableView.items.addAll( pds )
+                val pieChartDta = FXCollections.observableArrayList<PieChart.Data>()
+                val productSealedByCat = FXCollections.observableArrayList<InvoiceDao.ProductSealed>()
+                for (a in it) {
+                    val series = XYChart.Series<String,Double>()
 
-        val pieChartDta = FXCollections.observableArrayList<PieChart.Data>()
-        val productSealedByCat = FXCollections.observableArrayList<InvoiceDao.ProductSealed>()
-        for (a in pds) {
-            val series = XYChart.Series<String,Double>()
+                    series.name = a.description
+                    series.data.add(XYChart.Data(a.description, a.totalPrice.toDouble()))
 
-            series.name = a.description
-            series.data.add(XYChart.Data(a.description, a.totalPrice.toDouble()))
-
-            barChart.data.add( series)
+                    barChart.data.add( series)
 
 
-            if (productSealedByCat.any { it.category.equals(a.category) }){
-                val tempProductSealed =
-                productSealedByCat.filter { it.category .equals( a.category) }[0]//.totalPrice+=a.totalPrice
-                val sum = tempProductSealed.totalPrice.toDouble() + a.totalPrice.toDouble()
-                tempProductSealed.totalPrice = sum.toString()
-            }else{
-                productSealedByCat.add(a.copy())
-            }
+                    if (productSealedByCat.any { it.category.equals(a.category) }){
+                        val tempProductSealed =
+                            productSealedByCat.filter { it.category .equals( a.category) }[0]//.totalPrice+=a.totalPrice
+                        val sum = tempProductSealed.totalPrice.toDouble() + a.totalPrice.toDouble()
+                        tempProductSealed.totalPrice = sum.toString()
+                    }else{
+                        productSealedByCat.add(a.copy())
+                    }
 
-        }
-        barChart.data.forEach {
+                }
+                barChart.data.forEach {
 
-        }
+                }
+                for (i in productSealedByCat){
+                    pieChartDta.add(PieChart.Data(i.category,i.totalPrice.toDouble()))
+                }
+
+
+                pieChart.data = pieChartDta
+            },{})
+
+
 
         barChart.lookup("")
 
 
 
-        for (i in productSealedByCat){
-            pieChartDta.add(PieChart.Data(i.category,i.totalPrice.toDouble()))
-        }
 
-
-        pieChart.data = pieChartDta
 
 
 

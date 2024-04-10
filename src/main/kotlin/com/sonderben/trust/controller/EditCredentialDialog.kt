@@ -3,7 +3,7 @@ package com.sonderben.trust.controller
 import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.changeVisibility
-import com.sonderben.trust.db.dao.EmployeeDao
+import com.sonderben.trust.db.service.EmployeeService
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
@@ -63,7 +63,7 @@ class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
     fun saveBtn(){
         if ( validateCredential() ){
 
-            EmployeeDao.getInstance().updateCredential( username.text, confirmPwd.text )
+            EmployeeService.getInstance().updateCredential( username.text, confirmPwd.text )
                 .subscribe(
                     {
                         isSave = true

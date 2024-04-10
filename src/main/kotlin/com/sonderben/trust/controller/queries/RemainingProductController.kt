@@ -1,7 +1,6 @@
 package com.sonderben.trust.controller.queries
 
-import com.sonderben.trust.Util
-import com.sonderben.trust.db.dao.ProductDao
+import com.sonderben.trust.db.service.ProductService
 import com.sonderben.trust.format
 import entity.ProductEntity
 import javafx.beans.property.SimpleStringProperty
@@ -22,7 +21,8 @@ class RemainingProductController:Initializable {
         qtyRemainingCol.setCellValueFactory { data->SimpleStringProperty(data.value.quantityRemaining.toString()) }
         expirationCol.setCellValueFactory { data -> SimpleStringProperty( data.value.expirationDate.format()  ) }
 
-        tableView.items.addAll( ProductDao.products )
+
+        tableView.items.addAll( ProductService.getInstance().entities )
 
 
     }

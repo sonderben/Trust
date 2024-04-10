@@ -4,8 +4,9 @@ import com.sonderben.trust.Context
 import com.sonderben.trust.Util
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.customView.RDButton
-import com.sonderben.trust.db.dao.RoleDao
 import com.sonderben.trust.changeVisibility
+import com.sonderben.trust.db.dao.RoleDao
+import com.sonderben.trust.db.service.RoleService
 import com.sonderben.trust.equalAtLeastOne
 import com.sonderben.trust.model.Role
 import com.sonderben.trust.viewUtil.ViewUtil
@@ -69,7 +70,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
             })
         }
 
-        tableView.items = RoleDao.getIntence().roles
+        tableView.items = RoleService.getInstance().entities
 
 
         tableView.selectionModel.selectedIndices.addListener(ListChangeListener { change ->
@@ -169,7 +170,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
         if (validateRole()) {
             val rdButtonsChecked: FilteredList<Node> = gridPaneScreen.children.filtered { (it as RDButton).isChecked }
 
-            RoleDao.getIntence().save(Role(nameTf.text, rdButtonsChecked.map { (it as RDButton).name }.toMutableList())).subscribe({
+            RoleService.getInstance().save(Role(nameTf.text, rdButtonsChecked.map { (it as RDButton).name }.toMutableList())).subscribe({
                 clearRDButtons()
             }, { th -> println("error: $th") })
         }
@@ -188,7 +189,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
                 name = nameTf.text
                 screens = rdButtonsChecked.map { (it as RDButton).name }.toMutableList()
             }
-            RoleDao.getIntence().update(roleSelectedOrToSave!!)
+            RoleService.getInstance().update(roleSelectedOrToSave!!)
                 .subscribe({ clear(mainPane) }, { th -> println(th.message) })
         }
 
@@ -224,7 +225,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
     fun onDeleteRole() {
         if (validateRole()) {
 
-            RoleDao.getIntence().delete(roleSelectedOrToSave!!.id)
+            RoleService.getInstance().delete(roleSelectedOrToSave!!.id)
                 .subscribe({ clearAll() }, { th -> println(th.message) })
 
         }

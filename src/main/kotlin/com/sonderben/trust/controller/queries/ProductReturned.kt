@@ -2,6 +2,7 @@ package com.sonderben.trust.controller.queries
 
 import com.sonderben.trust.controller.BaseController
 import com.sonderben.trust.db.dao.InvoiceDao
+import com.sonderben.trust.db.service.InvoiceService
 import com.sonderben.trust.format
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
@@ -14,9 +15,9 @@ import java.net.URL
 import java.util.*
 
 class ProductReturned:Initializable, BaseController() {
-    private lateinit var productsReturned: ObservableList<InvoiceDao.ProductReturned>
+   // private lateinit var productsReturned: ObservableList<InvoiceDao.ProductReturned>
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
-        productsReturned =FXCollections.observableArrayList( InvoiceDao.getProductReturned() )
+        //productsReturned =
 
         invoiceCol.setCellValueFactory { d->SimpleStringProperty( d.value.invoiceCodeBar ) }
         codCol.setCellValueFactory { d->SimpleStringProperty( d.value.productCode ) }
@@ -31,7 +32,11 @@ class ProductReturned:Initializable, BaseController() {
         actionCol.setCellValueFactory { d->SimpleStringProperty(d.value.action) }
         dateBoughtCol.setCellValueFactory {d->SimpleStringProperty(d.value.dateBought.format())}
 
-        tableView.items = productsReturned
+       InvoiceService.getInstance().getProductReturned()
+           .subscribe({
+               tableView.items = FXCollections.observableArrayList( it )
+           },{})
+
 
     }
 

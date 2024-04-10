@@ -1,7 +1,7 @@
 package com.sonderben.trust.printer
 
-import com.sun.javafx.print.PrintHelper
-import com.sun.javafx.print.Units
+/*import com.sun.javafx.print.PrintHelper
+import com.sun.javafx.print.Units*/
 import javafx.print.PageOrientation
 import javafx.print.Printer
 import javafx.print.PrinterJob
@@ -16,11 +16,11 @@ object TPrinter {
 
         val printerJob = PrinterJob.createPrinterJob(printer)
 
-        val paper = PrintHelper.createPaper("Roll80", 80.0, 590.0, Units.MM)
-        node.prefWidth( paper.width )
-        node.maxWidth( paper.width )
+        //val paper = PrintHelper.createPaper("Roll80", 80.0, 590.0, Units.MM)
+        node.prefWidth(234.9 )
+        node.maxWidth( /*paper.width*/ 344.9)
 
-        val pageLayout = printerJob!!.printer.createPageLayout(paper, PageOrientation.PORTRAIT, 0.0, 0.0, 0.0, 0.0)
+        //val pageLayout = printerJob!!.printer.createPageLayout(paper, PageOrientation.PORTRAIT, 0.0, 0.0, 0.0, 0.0)
 
         val height = node.layoutBounds.height
 
@@ -30,12 +30,12 @@ object TPrinter {
 
         //node.transforms.add(Scale(scale, scale))
 
-        val success = printerJob.printPage(pageLayout, node)
-        if (success) {
+        //val success = printerJob.printPage(pageLayout, node)
+        /*if (success) {
             printerJob.endJob()
 
             // System.exit(0);
-        }
+        }*/
         println("end")
     }
 }

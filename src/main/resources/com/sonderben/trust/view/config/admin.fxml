@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.config.Admin">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.enterprise.Admin">
    <children>
       <ScrollPane fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
@@ -91,13 +91,12 @@
                         <TextField fx:id="firstNameTextField" GridPane.rowIndex="1" />
                         <TextField fx:id="lastNameTextField" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                         <TextField fx:id="emailTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <TextField fx:id="accountNumberTextField" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                        <TextField fx:id="telephoneTextField" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <TextField fx:id="telephoneTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <TextField fx:id="userNameTextField" editable="false" text="root" GridPane.rowIndex="3" />
-                        <TextField fx:id="scheduleTextField" disable="true" editable="false" onMouseClicked="#scheduleOnMOuseClick" promptText="%schedules" GridPane.rowIndex="5" />
+                        <TextField fx:id="scheduleTextField" disable="true" editable="false" promptText="%schedules" GridPane.rowIndex="5" />
                         <DatePicker fx:id="birthdayDatePicker" maxWidth="1.7976931348623157E308" promptText="%birthday" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                        <PasswordField fx:id="passwordField" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                        <ChoiceBox fx:id="choiceBoxGender" maxWidth="1.7976931348623157E308" prefWidth="150.0" value="%select_gender" GridPane.columnIndex="3" GridPane.rowIndex="5">
+                        <PasswordField fx:id="passwordField" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <ChoiceBox fx:id="choiceBoxGender" maxWidth="1.7976931348623157E308" prefWidth="150.0" value="%select_gender" GridPane.columnIndex="3" GridPane.rowIndex="3">
                            <items>
                               <FXCollections fx:factory="observableArrayList">
                                  <String fx:value="Male" />
@@ -106,22 +105,17 @@
                               </FXCollections>
                            </items>
                         </ChoiceBox>
-                        <TextField fx:id="directionField" GridPane.rowIndex="7" />
-                        <TextField fx:id="passportTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <ChoiceBox fx:id="choiceBoxRole" maxWidth="1.7976931348623157E308" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                         <Label text="%first_name" textFill="WHITE" />
                         <Label text="%last_name" textFill="WHITE" GridPane.columnIndex="2" />
                         <Label text="%birthday" textFill="WHITE" GridPane.columnIndex="3" />
                         <Label text="%email" textFill="WHITE" GridPane.columnIndex="1" />
-                        <Label text="%account_number" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <Label text="%phone" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <Label text="%phone" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Label text="%username" textFill="WHITE" GridPane.rowIndex="2" />
-                        <Label text="%password" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                        <Label text="%gender" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                        <Label text="%password" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label text="%gender" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                         <Label text="%schedules" textFill="WHITE" GridPane.rowIndex="4" />
                         <Label text="%role" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Label text="%direction" textFill="WHITE" GridPane.rowIndex="6" />
-                        <Label text="%passport" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                      </children>
                      <padding>
                         <Insets bottom="5.0" left="5.0" right="5.0" />

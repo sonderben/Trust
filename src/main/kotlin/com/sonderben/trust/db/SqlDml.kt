@@ -42,14 +42,28 @@ object SqlDml {
         append("values (?,?,?,?,?,?,?,?,?,?,?,?) ")
     }
 
+    val INSERT_ADMIN = buildString {
+        append("Insert into ${SqlDdl.administrator} ")
+        append("(firstName,genre,lastName,password,telephone,userName,birthDay,email) ")
+        append("values (?,?,?,?,?,?,?,?) ")
+    }
+    val DELETE_ADMIN = "delete from ${SqlDdl.administrator} where id = ?"
+
+    val UPDATE_ADMIN = """
+        update ${SqlDdl.employees} set 
+        firstName = ?,genre = ?,lastName = ? ,password = ? ,telephone = ?,
+        userName = ?,birthDay = ?,email = ? where id = ? 
+        """
+
 
     val INSERT_SCHEDULE = buildString {
-        append("INSERT INTO ${SqlDdl.schedules }")
+        append("INSERT INTO ${SqlDdl.schedules}")
         append(" (workDay,start_hour,end_hour,id_employee) ")
         append(" values( ?,?,?,?);")
     }
     val DELETE_EMPLOYEE = "delete from ${SqlDdl.employees} where id = ?"
     val FIND_EMPLOYEE_BY_ID = "SELECT * FROM ${SqlDdl.employees} where id = ?"
+
     //val SELECT_ALL_EMPLOYEE = "SELECT * FROM ${SqlDdl.employees}"
     val SELECT_ALL_EMPLOYEE_INCLUDE_ADMIN_EXCLUDE_MAIN_ADMIN = """
         SELECT Employee.id, birthDay,bankAccount,Employee.direction,email,firstName,genre,lastName,passport,password,Employee.telephone,userName,
@@ -57,20 +71,17 @@ object SqlDml {
         from ${SqlDdl.employees} 
 		INNER JOIN Roles
         on Employee.id_role = Roles.id
-		INNER join enterprise
-		on enterprise.id_employee  !=  Employee.id
+		
     """.trimIndent()
-    val SELECT_ALL_EMPLOYEE_EXCLUDE_ALL_ADMINS = """
+   /* val SELECT_ALL_EMPLOYEE_EXCLUDE_ALL_ADMINS = """
         SELECT Employee.id, birthDay,bankAccount,Employee.direction,email,firstName,genre,lastName,passport,password,Employee.telephone,userName,
         Roles.id as roleId,Roles.name,screens
         from ${SqlDdl.employees} 
 		INNER JOIN Roles
         on Employee.id_role = Roles.id
-        INNER join enterprise
-		on enterprise.id_employee  !=  Employee.id
         WHERE lower(Roles.name)  !=  lower('admin')
 		
-    """.trimIndent()
+    """.trimIndent()*/
     val EMPLOYEE_LOGIN = "select * from ${SqlDdl.employees} where userName= ? and password =? ;"
 
     val UPDATE_EMPLOYEE = """
@@ -81,23 +92,21 @@ object SqlDml {
 
     val INSERT_ENTERPRISE = buildString {
         append("Insert into ${SqlDdl.enterprise} ")
-        append("(name,direction,telephone,foundation,website,category,invoiceTemplate,invoiceTemplateHtml,id_employee) ")
-        append("values (?,?,?,?,?,?,?,?,?) ")
+        append("(name,direction,telephone,foundation,website,category,invoiceTemplateHtml,id_administrator) ")
+        append("values (?,?,?,?,?,?,?,?) ")
     }
     const val SELECT_ENTERPRISE = """
-            SELECT enterprise.id as enid , enterprise.name as ne,enterprise.direction as ed,enterprise.telephone as et,enterprise.foundation as ef ,enterprise.website as ew,
-            enterprise.category as ec ,enterprise.invoiceTemplate as ei,enterprise.invoiceTemplateHtml as ein,
-            Employee.birthDay as empb,Employee.id as empid,Employee.bankAccount as empbank,Employee.direction as empd,Employee.email as empe,Employee.firstName as empf,Employee.lastName as empl,
-            Employee.genre as empg,Employee.passport as empp,Employee.password as emppwd,Employee.telephone as emptel,Employee.userName as empu,
-            Roles.name as rm,Roles.id as ri
-            from enterprise
-            INNER JOIN Employee on enterprise.id_employee == Employee.id
-            INNER join Roles on Roles.id = Employee.id_role """
+        SELECT enterprise.id as enid , enterprise.name as enn,enterprise.direction as end,enterprise.telephone as ent,enterprise.foundation as enf ,enterprise.website as enw,
+        enterprise.category as enc ,enterprise.invoiceTemplateHtml as eni,
+        administrator.birthDay as adb,administrator.id as adi,administrator.email as ade,administrator.firstName as adf,administrator.lastName as adl,
+        administrator.genre as adg,administrator.password as adp,administrator.telephone as adt,administrator.userName as adu
+        from enterprise
+        INNER JOIN administrator  on enterprise.id_administrator == administrator.id
+        """
     val UPDATE_ENTERPRISE = """
         UPDATE ${SqlDdl.enterprise} 
         set name = ?, direction = ?,telephone = ?,foundation = ?, 
-        website = ?,category = ?,invoiceTemplate = ?, invoiceTemplateHtml = ?,
-         id_employee = ? WHERE id = ?
+        website = ?,category = ?, invoiceTemplateHtml = ? WHERE id = ?
     """.trimIndent()
 
     val PRODUCT_SOLD_BY_CODE = """
@@ -133,7 +142,8 @@ object SqlDml {
 			
 			WHERE  iv.codeBar = ? """
 
-    val INSERT_PRODUCT_RETURN = "insert into ${SqlDdl.productReturned} (id_invoice,id_employee,reason,action) values(?,?,?,?)"
+    val INSERT_PRODUCT_RETURN =
+        "insert into ${SqlDdl.productReturned} (id_invoice,id_employee,reason,action) values(?,?,?,?)"
     val SELECT_PRODUCT_RETURNED = """
         SELECT iv.codeBar as invoice_codebar, iv.dateCreated as dateBought,pr.dateCreate as dateReturned,pr.reason,pr.action,emp.firstName || ' ' || emp.lastName as employee,
             customers.code as customerCode,ps.code as productCode,ps.description,ps.quantity,ps.total/*,ps.expirationDate*/
@@ -205,7 +215,7 @@ object SqlDml {
 	            GROUP by ps.code) ORDER by points DESC LIMIT 100
         """.trimIndent()
 
-      val INSERT_ROLE = buildString {
+    val INSERT_ROLE = buildString {
         append("INSERT INTO ")
         append(SqlDdl.roles)
         append(" (name,screens) values (?,?)")
@@ -217,15 +227,13 @@ object SqlDml {
 
     val DELETE_ROLE = "delete from ${SqlDdl.roles} where id = ?"
 
-    val UPDATE_SCHEDULER =  """update ${SqlDdl.schedules} 
+    val UPDATE_SCHEDULER = """update ${SqlDdl.schedules} 
                 set workDay = ?,
                 start_hour = ?,
                 end_hour = ?,
                 id_employee = ?
                 where id = ?
             """.trimMargin()
-
-
 
 
 }

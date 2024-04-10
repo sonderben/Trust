@@ -1,7 +1,6 @@
 package com.sonderben.trust.db.dao
 
 import Database
-import Database.DATABASE_NAME
 import com.sonderben.trust.Context
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.db.SqlDml.DELETE_ROLE
@@ -16,147 +15,101 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
+import java.sql.Connection
 
-class RoleDao private constructor():CrudDao<Role> {
-    companion object{
-        @Volatile private var instence:RoleDao? = null
-        fun getIntence():RoleDao{
+class RoleDao() : CrudDao<Role> {
 
-            if (instence==null){
-                synchronized(this){
-                    if (instence==null){
-                        instence = RoleDao()
-                    }
-                }
+
+
+    override fun save(entity: Role, connection: Connection): Role? {
+
+
+        connection.prepareStatement(INSERT_ROLE).use { preparedStatement ->
+            preparedStatement.setString(1, entity.name)
+            preparedStatement.setString(2, entity.screens.joinToString(",") { it.name })
+            val intRow = preparedStatement.executeUpdate()
+
+            if (intRow > 0) {
+                entity.id = Database.getLastId( connection )
+                return entity
             }
-            return instence!!
+
+
         }
-        fun clearInstence(){
-            instence = null
-        }
+
+return null
     }
 
 
-    val roles: ObservableList<Role> = FXCollections.observableArrayList()
-
-    init {
-        findAll()
-    }
+    override fun delete(idEntity: Long, connection: Connection): Long? {
 
 
-
-
-    override fun save(entity:Role):Completable{
-
-        return Completable.create { emitter->
-            Database.connect(DATABASE_NAME).use { connection ->
-
-                connection.prepareStatement( INSERT_ROLE ).use { preparedStatement ->
-                    preparedStatement.setString(1,entity.name)
-                    preparedStatement.setString(2, entity.screens.joinToString(",") { it.name })
-                    val intRow = preparedStatement.executeUpdate()
-
-                    if ( intRow>0 ) {
-                        entity.id = Database.getLastId()
-                        roles.add(entity)
-                        emitter.onComplete()
-                    }else{
-                        emitter.onError( Throwable("Can not be saved role: $entity") )
-                    }
-
-
-                }
-
-
+        connection.prepareStatement(DELETE_ROLE).use { preparedStatement ->
+            preparedStatement.setLong(1, idEntity)
+            val rowCount = preparedStatement.executeUpdate()
+            if (rowCount > 0) {
+                return idEntity
             }
         }
-            .subscribeOn(Schedulers.io())
-            .observeOn(JavaFxScheduler.platform())
-    }
-
-
-
-    override fun delete(idEntity: Long): Completable {
-
-        return Completable.create {emitter->
-            Database.connect(DATABASE_NAME).use { connection ->
-                connection.prepareStatement( DELETE_ROLE ).use { preparedStatement ->
-                    preparedStatement.setLong(1,idEntity)
-                    val rowCount = preparedStatement.executeUpdate()
-                    if (rowCount>0){
-                        roles.removeIf { it.id.equals(idEntity) }
-                        emitter.onComplete()
-                    }else
-                        emitter.onError(Throwable("cant delete role, id: $idEntity"))
-                }
-
-            }
-        }
-            .subscribeOn(Schedulers.io())
-            .observeOn(JavaFxScheduler.platform())
-
+return null
 
     }
 
-    override fun findById(iEntity: Long): Maybe<Role> {
-        return Maybe.create {}
+    override fun findById(iEntity: Long, connection: Connection): Role? {
+        return null
     }
 
-    override fun findAll() {
+    override fun findAll(): List<Role> {
 
-        Single.create {emitter->
+        val tempRole = mutableListOf<Role>()
 
-            Database.connect(DATABASE_NAME).use { connection ->
-                connection.autoCommit = true
-                connection.createStatement().use { statement ->
+        Database.connect().use { connection ->
 
-                    statement.executeQuery(SELECT_ALL_ROLE).use { resultSet ->
+            connection.createStatement().use { statement ->
 
-                        while ( resultSet.next() ){
-                            val role = Role()
-                            role.id = resultSet.getLong("id")
-                            role.name = resultSet.getString("name")
-                            role.screens = resultSet.getString("screens").split(",").map {
-                                ScreenEnum.valueOf( it )
-                            }.toMutableList()
+                statement.executeQuery(SELECT_ALL_ROLE).use { resultSet ->
 
-                            val r = authorizeRole(role,Context.currentEmployee.get().role.screens)
-                            if(r != null)
-                                roles.add( r )
+                    while (resultSet.next()) {
+                        val role = Role()
+                        role.id = resultSet.getLong("id")
+                        role.name = resultSet.getString("name")
+                        role.screens = resultSet.getString("screens").split(",").map {
+                            ScreenEnum.valueOf(it)
+                        }.toMutableList()
+
+                        if (Context.currentEmployee.get() != null) {
+                            val r = authorizeRole(role, Context.currentEmployee.get().role.screens)
+                            if (r != null)
+                                tempRole.add(r)
                         }
-                        emitter.onSuccess( roles )
-
                     }
+
 
                 }
 
             }
+
         }
-            .subscribeOn(Schedulers.io())
-            .observeOn( JavaFxScheduler.platform() )
-            .subscribe ()
+        return tempRole
 
     }
 
     private fun authorizeRole(roleDb: Role, screensAuthorized: MutableList<ScreenEnum>): Role? {
-        for ( i in 0 until roleDb.screens.size){
-            if ( !screensAuthorized.contains(  roleDb.screens[i] ) )
+        for (i in 0 until roleDb.screens.size) {
+            if (!screensAuthorized.contains(roleDb.screens[i]))
                 return null
         }
         return roleDb
     }
 
 
-
-
-
-    private fun createQuerySelectRoleWith(screens: MutableList<ScreenEnum>): String{
+    private fun createQuerySelectRoleWith(screens: MutableList<ScreenEnum>): String {
 
         val builder = StringBuilder()
         builder.append("SELECT * FROM roles WHERE ")
         builder.append("INSTR( screens,'${screens[0]}' ) > 0 ")
 
-        for (i in 1 until screens.size){
+        for (i in 1 until screens.size) {
             builder.append("AND INSTR( screens,'${screens[i]}' ) >0 ")
         }
 
@@ -165,41 +118,31 @@ class RoleDao private constructor():CrudDao<Role> {
         return builder.toString()
     }
 
-    override fun update(entity: Role): Completable {
-        return Completable.create { emitter->
-            Database.connect(DATABASE_NAME).use { connection ->
-                connection.autoCommit = false
+    override fun update(entity: Role, connection: Connection): Role? {
 
-                connection.prepareStatement( UPDATE_ROLE ).use { preparedStatement ->
-                    preparedStatement.setString(1,entity.name)
-                    preparedStatement.setString(2, entity.screens.joinToString(",") { it.name })
-                    preparedStatement.setLong(3,entity.id)
-                    val intRow = preparedStatement.executeUpdate()
+        //connection.autoCommit = false
 
-                    if ( intRow>0 ) {
+        connection.prepareStatement(UPDATE_ROLE).use { preparedStatement ->
+            preparedStatement.setString(1, entity.name)
+            preparedStatement.setString(2, entity.screens.joinToString(",") { it.name })
+            preparedStatement.setLong(3, entity.id)
+            val intRow = preparedStatement.executeUpdate()
 
-
-                        connection.commit()
-                        connection.autoCommit = true
-                        roles[ roles.indexOf( entity ) ] = entity
-                        emitter.onComplete()
-
-                    }else{
-                        connection.rollback()
-                        connection.autoCommit = true
-                        emitter.onError( Throwable("Can not update role: $entity") )
-                    }
+            if (intRow > 0) {
 
 
-                }
+                connection.commit()
+                connection.autoCommit = true
+                return entity
 
 
             }
-        }
-            .subscribeOn(Schedulers.io())
-            .observeOn(JavaFxScheduler.platform())
-    }
 
+
+        }
+        return null
+
+    }
 
 
 }

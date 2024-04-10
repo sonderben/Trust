@@ -3,20 +3,15 @@ package com.sonderben.trust.controller
 import SingletonView
 import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
-import com.sonderben.trust.db.dao.CategoryDao
-import com.sonderben.trust.db.dao.EmployeeDao
-import com.sonderben.trust.db.dao.RoleDao
+import com.sonderben.trust.db.service.EmployeeService
+import com.sonderben.trust.db.service.RoleService
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.Node
 import javafx.scene.Scene
-import javafx.scene.control.Label
-import javafx.scene.control.Menu
-import javafx.scene.control.MenuBar
-import javafx.scene.control.MenuItem
-import javafx.scene.control.Tooltip
+import javafx.scene.control.*
 import javafx.scene.image.ImageView
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyCodeCombination
@@ -304,13 +299,13 @@ class MainController : Initializable {
 
     @FXML fun disconnectOnMouseClicked() {
         Context.currentEmployee.value = null
-        RoleDao.clearInstence()
-        EmployeeDao.clearInstance()
+        RoleService.clearInstance()
+        EmployeeService.clearInstance()
 
 
 
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"),resourceBundle)
-        val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
+        val scene = Scene(fxmlLoader.load(), HelloApplication.primary.scene.width, HelloApplication.primary.scene.height)
         HelloApplication.primary.scene = scene
     }
 

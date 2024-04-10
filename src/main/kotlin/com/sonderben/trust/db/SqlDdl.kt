@@ -15,6 +15,7 @@ object SqlDdl {
     const val invoiceProductSealed = "invoiceProductSealed"
     const val productSealed = "productSealed"
     const val productReturned = "productReturned"
+    const val administrator = "administrator"
 
 
 
@@ -109,6 +110,20 @@ object SqlDdl {
     );
     
     """
+    private var createAdminTable =  """
+    create table if not exists $administrator (
+        birthDay timestamp,
+        id integer primary key autoincrement,
+        email varchar(255) unique,
+        firstName varchar(255),
+        genre varchar(30),
+        lastName varchar(255),
+        password varchar(255),
+        telephone varchar(255),
+        userName varchar(255) unique not null
+    );
+    
+    """
 
     private val createEnterprise ="""
         CREATE TABLE IF NOT EXISTS $enterprise (
@@ -119,11 +134,10 @@ object SqlDdl {
         foundation timestamp,
         website varchar,
         category varchar,
-        invoiceTemplate nvarchar not null,
         invoiceTemplateHtml nvarchar not null,
-        id_employee integer,
-        foreign key (id_employee)
-        references $employees(id)
+        id_administrator integer,
+        foreign key (id_administrator)
+        references $administrator(id)
         )
     """.trimIndent()
 
@@ -199,14 +213,12 @@ object SqlDdl {
     """.trimIndent()
 
     val tables = listOf(createCategoryTable,
-        createCustomerTable, createScreenTable, createRolesTable, createEmployeeTable,
+        createCustomerTable, createScreenTable, createRolesTable, createEmployeeTable, createAdminTable,
         createScheduleTable, createProductsTable, createInvoiceTable, createInvoiceProductTable,createProductSealed,
         createEnterprise,createProductReturnedTable)
 
 
-    var deleteCategoryTable = """
-        drop table if exists ${categories};
-    """.trimIndent()
+
 
 
 

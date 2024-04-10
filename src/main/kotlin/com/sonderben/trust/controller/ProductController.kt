@@ -1,8 +1,8 @@
 package com.sonderben.trust.controller
 
 import com.sonderben.trust.*
-import com.sonderben.trust.db.dao.CategoryDao
-import com.sonderben.trust.db.dao.ProductDao
+import com.sonderben.trust.db.service.CategoryService
+import com.sonderben.trust.db.service.ProductService
 import com.sonderben.trust.qr_code.MessageListener
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.CategoryEntity
@@ -38,7 +38,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
 
         employeeTf.text = Context.currentEmployee.value.userName
 
-        categories =  CategoryDao.categories
+        categories =  CategoryService.getInstance().entities
 
 
 
@@ -171,7 +171,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
 
         if(currentProductSelected!=null) {
             loading.show()
-            ProductDao.delete(currentProductSelected!!.id).subscribe({
+            ProductService.getInstance().delete(currentProductSelected!!.id).subscribe({
                 clear(mainPane)
                 loading.close()
             },{
@@ -210,7 +210,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
                tempEmployee
            )
 
-           ProductDao.save( pro ).subscribe({ clear(mainPane) },{ th-> println(th.message) } )
+           ProductService.getInstance().save( pro ).subscribe({ clear(mainPane) },{ th-> println(th.message) } )
 
        }else{
            println("not validate")
@@ -283,7 +283,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
                     qtyTf.text.toInt()
 
                 }
-                ProductDao.update(currentProductSelected!!) .subscribe({
+                ProductService.getInstance().update(currentProductSelected!!) .subscribe({
                     clear(mainPane)
                 },{th-> println(th.message) })
             }
@@ -296,7 +296,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
     fun hideBottomPanelOnMouseClicked(){
          bottomPanelVBOx.changeVisibility()
     }
-    private  var produtcs:ObservableList<ProductEntity> = ProductDao.products
+    private  var produtcs:ObservableList<ProductEntity> = ProductService.getInstance().entities
     private lateinit var categories:ObservableList<CategoryEntity>
 
 

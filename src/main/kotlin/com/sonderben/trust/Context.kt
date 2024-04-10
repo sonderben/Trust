@@ -1,6 +1,6 @@
 package com.sonderben.trust
 
-import com.sonderben.trust.db.dao.EnterpriseDao
+import com.sonderben.trust.db.service.EnterpriseService
 import entity.EmployeeEntity
 import entity.EnterpriseEntity
 import javafx.beans.property.SimpleObjectProperty
@@ -15,14 +15,14 @@ import java.util.*
 
 object Context {
     val path: String = "src/main/kotlin/com/sonderben/trust/config/preference.json"
-    val resource = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
+
 
     var currentEmployee: SimpleObjectProperty<EmployeeEntity> = SimpleObjectProperty()
     private var enterpriseEntity:EnterpriseEntity? = null
     var language: String = ""
     init {
-        if (EnterpriseDao.enterprises.isNotEmpty()){
-            enterpriseEntity = EnterpriseDao.enterprises[0]
+        if (EnterpriseService.getInstance().entities.isNotEmpty()){
+            enterpriseEntity = EnterpriseService.getInstance().entities[0]
         }
     }
     fun start() {

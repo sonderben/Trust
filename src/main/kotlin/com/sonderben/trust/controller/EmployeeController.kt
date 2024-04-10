@@ -1,25 +1,22 @@
 package com.sonderben.trust.controller
 
 import com.sonderben.trust.*
-import com.sonderben.trust.db.dao.EmployeeDao
-import com.sonderben.trust.db.dao.RoleDao
-import com.sonderben.trust.db.dao.ScheduleDao
+import com.sonderben.trust.db.service.EmployeeService
+
+import com.sonderben.trust.db.service.RoleService
+import com.sonderben.trust.db.service.ScheduleService
 import com.sonderben.trust.model.Role
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.EmployeeEntity
 import entity.ScheduleEntity
-import javafx.beans.property.SimpleBooleanProperty
-import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.collections.ListChangeListener
-import javafx.event.EventHandler
 
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.control.*
-import javafx.scene.input.MouseEvent
 
 import javafx.scene.layout.VBox
 import javafx.util.Callback
@@ -66,9 +63,9 @@ class EmployeeController:Initializable, BaseController() {
         scheduleCol.setCellValueFactory { employee -> SimpleStringProperty(employee.value.schedules.joinToString { schedule ->days[schedule.workDay].substring(0,2)  }) }
 
 
-        userTableView.items = EmployeeDao.getInstance().employees
+        userTableView.items = EmployeeService.getInstance().entities
 
-        choiceBoxRole.items = RoleDao.getIntence().roles
+        choiceBoxRole.items = RoleService.getInstance().entities
         choiceBoxRole.converter = RoleStringConverter()
 
 
@@ -76,7 +73,7 @@ class EmployeeController:Initializable, BaseController() {
 
         userTableView.setRowFactory {
             val row = TableRow<EmployeeEntity>()
-            val roles = RoleDao.getIntence().roles
+            val roles = RoleService.getInstance().entities
 
             row.itemProperty().addListener { _, _, newValue ->
                if ( newValue != null && !roles.contains( newValue.role ) ){
@@ -98,7 +95,7 @@ class EmployeeController:Initializable, BaseController() {
 
 
             //is authorized to change this employee
-            if (newValue != null && RoleDao.getIntence().roles.contains( newValue.role )) {
+            if (newValue != null && RoleService.getInstance().entities.contains( newValue.role )) {
 
                 if (!bottomPanelVBOx.isVisible) {
                     bottomPanelVBOx.changeVisibility()
@@ -228,7 +225,7 @@ class EmployeeController:Initializable, BaseController() {
     @FXML
     fun onDeleteButton() {
         if ( employeeToSave!=null && employeeToSave!!.id != null){
-            EmployeeDao.getInstance().delete( employeeToSave!!.id ).subscribe(
+            EmployeeService.getInstance().delete( employeeToSave!!.id ).subscribe(
                 {
                 clear( mainPane )
                 userTableView.selectionModel.select(null)
@@ -258,7 +255,7 @@ class EmployeeController:Initializable, BaseController() {
                  role = choiceBoxRole.value
                  /*mutableListOf()*/
              }
-             EmployeeDao.getInstance().save(employeeToSave!!).subscribe({
+             EmployeeService.getInstance().save(employeeToSave!!).subscribe({
                  clear(mainPane)
                  userTableView.selectionModel.select(null)
              },{th-> println(th.message) })
@@ -327,7 +324,7 @@ class EmployeeController:Initializable, BaseController() {
                   role = choiceBoxRole.value
               }
 
-              EmployeeDao.getInstance().update( employeeToSave!! )
+              EmployeeService.getInstance().update( employeeToSave!! )
                   .subscribe({
                       clear(mainPane)
                       userTableView.selectionModel.select(null)
@@ -418,7 +415,7 @@ class EmployeeController:Initializable, BaseController() {
         fun onDelete() {
             val selectedScheduler = tableView.selectionModel.selectedItem
             if (selectedScheduler.id != null){
-                ScheduleDao.delete( selectedScheduler.id )
+                ScheduleService.getInstance().delete( selectedScheduler.id )
                     .subscribe({
                         tableView.items.remove( selectedScheduler )
                         clear(  )
@@ -438,7 +435,7 @@ class EmployeeController:Initializable, BaseController() {
                 startHourTf.text.toFloat(),endHourTf.text.toFloat()
             )
             if ( tableView.items.isNotEmpty() && tableView.items.filter { it.idEmployee!=null }.isNotEmpty() ){
-                ScheduleDao.save(
+                ScheduleService.getInstance().save(
                     ScheduleEntity(
                         Context.currentEmployee.get().id,
                         null,
@@ -465,7 +462,7 @@ class EmployeeController:Initializable, BaseController() {
             val selectedScheduler = tableView.selectionModel.selectedItem
             if (selectedScheduler != null){
                 if (selectedScheduler.id != null){
-                    ScheduleDao.update(selectedScheduler)
+                    ScheduleService.getInstance().update(selectedScheduler)
                         .subscribe({
                             clear()
                             tableView.items[ tableView.items.indexOf( selectedScheduler ) ] =

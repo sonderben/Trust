@@ -1,8 +1,9 @@
 package com.sonderben.trust.controller
 
 import com.sonderben.trust.*
-import com.sonderben.trust.db.dao.CustomerDao
-import com.sonderben.trust.db.dao.InvoiceDao
+import com.sonderben.trust.db.service.CustomerService
+import com.sonderben.trust.db.service.InvoiceService
+import com.sonderben.trust.db.service.ProductDetailService
 import com.sonderben.trust.qr_code.MessageListener
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.CustomerEntity
@@ -270,13 +271,13 @@ class Sale :Initializable,MessageListener,BaseController(){
 
 
                 val codeBar = Random.nextLong(LongRange(10_000_000,99_999_999))
-                InvoiceDao.save(
+                InvoiceService.getInstance().save(
                     InvoiceEntity(mProducts, Context.currentEmployee.value, mCurrentCustomer, codeBar.toString(), Calendar.getInstance())
                 ).subscribe({
 
                         mCurrentCustomer?.let {
                             val point = (grandTotal.text.toDouble()/100.0).toLong()
-                            CustomerDao.updatePoint(it.id, point)
+                            CustomerService.getInstance().updatePoint(it.id, point)
 
                         }
 
@@ -321,10 +322,11 @@ class Sale :Initializable,MessageListener,BaseController(){
             var code = (event.source as TextField).text
             code = code.padStart(12,'0')
 
-            mCurrentCustomer = CustomerDao.findByCode(code)
-            mCurrentCustomer.let {
-                (event.source as TextField).text = mCurrentCustomer!!.fullName
-            }
+             CustomerService.getInstance().findByCode(code)
+                .subscribe{
+                    (event.source as TextField).text = it.fullName
+                }
+
 
             codeProductTextField.requestFocus()
 
@@ -421,7 +423,7 @@ class Sale :Initializable,MessageListener,BaseController(){
             }
         }
         else{
-             ProductDetails.findProductByCode( codeProductTextField.text )
+             ProductDetailService.getInstance().findProductByCode( codeProductTextField.text )
                  .subscribe(
                      {
                          if ( isEnough(qtyWantBye = qtyTextField.text.toFloat(), productQty = it.quantityRemaining, codeProduct = tempCode, sellBy = it.sellBy) ){

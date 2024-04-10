@@ -2,7 +2,7 @@ package com.sonderben.trust.controller.queries
 
 import com.sonderben.trust.controller.BaseController
 import com.sonderben.trust.controller.ProductDetails
-import com.sonderben.trust.db.dao.ProductDao
+import com.sonderben.trust.db.service.ProductDetailService
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
@@ -26,19 +26,23 @@ class BestSellingProduct:Initializable, BaseController() {
 
 
 
-        val pds = ProductDetails.bestSellers(qty =  2f, frequency = 3, benefit = 1f)
-        tableView.items = FXCollections.observableArrayList( pds )
+        //val pds =*/ ProductDetailService..bestSellers()
+        ProductDetailService.getInstance().bestSellers( qty =  2f, frequency = 3, benefit = 1f)
+            .subscribe({pds->
+                tableView.items = FXCollections.observableArrayList( pds )
 
-        for (a in pds) {
-            val series = XYChart.Series<String,Double>()
+                for (a in pds) {
+                    val series = XYChart.Series<String,Double>()
 
-            series.name = a.description
-            series.data.add(XYChart.Data(a.description, a.points ))
+                    series.name = a.description
+                    series.data.add(XYChart.Data(a.description, a.points ))
 
-            barchart.data.add( series)
+                    barchart.data.add( series)
 
 
-        }
+                }
+            },{})
+
 
 
 

@@ -3,12 +3,12 @@ package com.sonderben.trust.controller
 import com.sonderben.trust.CategoryEnum
 import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.LoginController
-import com.sonderben.trust.controller.config.Admin
-import com.sonderben.trust.controller.config.InvoiceController
-import com.sonderben.trust.db.dao.EnterpriseDao
+import com.sonderben.trust.constant.Constant
+import com.sonderben.trust.controller.enterprise.Admin
+import com.sonderben.trust.controller.enterprise.InvoiceController
+import com.sonderben.trust.db.service.EnterpriseService
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.EnterpriseEntity
-import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
@@ -16,7 +16,6 @@ import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Button
-import javafx.scene.control.Label
 import javafx.scene.control.MenuItem
 import javafx.scene.control.Pagination
 import javafx.scene.image.ImageView
@@ -25,7 +24,7 @@ import java.net.URL
 import java.time.ZoneId
 import java.util.*
 
-class ConfigurationController:Initializable, BaseController() {
+class EnterpriseController:Initializable, BaseController() {
 
     lateinit var saveButton: Button
     lateinit var mainPane: VBox
@@ -38,33 +37,18 @@ class ConfigurationController:Initializable, BaseController() {
         HelloApplication.primary.isResizable = true
 
 
-        if ( EnterpriseDao.enterprises.isNotEmpty() ){
-            back.isVisible = true
-            back.isManaged = true
-            enterprise = EnterpriseDao.enterprises[0]
-            pagination.setPageFactory { index ->createPage(index) }
-        }else{
+        if ( EnterpriseService.getInstance().entities.isNotEmpty() ){
             back.isVisible = false
             back.isManaged = false
+            enterprise = EnterpriseService.getInstance().entities[0]
+            pagination.setPageFactory { index ->createPage(index) }
+        }else{
+            back.isVisible = true
+            back.isManaged = true
             enterprise = EnterpriseEntity()
             pagination.setPageFactory { index ->createPage(index) }
-            saveButton.text = resources?.getString("save") ?: "Save"
+            saveButton.text = resources.getString("save") ?: "Save"
         }
-
-
-         /*EnterpriseDao.enterprises.addListener (  ListChangeListener  {change->
-             if (change.next()){
-                 enterpriseInfo=null
-                 nodeAdmin=null
-                 invoice=null
-
-                 back.isVisible = true
-                 back.isManaged = true
-                 enterprise = EnterpriseDao.enterprises[0]
-                 pagination.setPageFactory { index ->createPage(index) }
-             }
-
-         } )*/
 
 
         pagination.pageCount = 2
@@ -145,8 +129,8 @@ class ConfigurationController:Initializable, BaseController() {
     }
 
     fun backOnMouseClick() {
-        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
-        HelloApplication.primary.scene = Scene(fxmlLoader.load(), 720.0, 440.0)
+        val fxmlLoader = FXMLLoader( HelloApplication::class.java.getResource("login.fxml") ,Constant.resource)
+        HelloApplication.primary.scene = Scene( fxmlLoader.load(), HelloApplication.primary.scene.width, HelloApplication.primary.scene.height )
     }
 
     fun onSave() {
@@ -162,23 +146,20 @@ class ConfigurationController:Initializable, BaseController() {
                 foundation =  GregorianCalendar.from( admin!!.foundationDatePicker.value.atStartOfDay(ZoneId.systemDefault()) )
                 category = CategoryEnum.valueOf( catString )
 
-                employee?.apply {
+                adminEntity?.apply {
                     firstName = admin!!.firstNameTextField.text
                     lastName = admin!!.lastNameTextField.text
                     birthDay = GregorianCalendar.from(admin!!.birthdayDatePicker.value.atStartOfDay(ZoneId.systemDefault()))
                     userName = admin!!.userNameTextField.text
                     password = admin!!.passwordField.text
-                    passport = admin!!.passportTextField.text
                     telephone = admin!!.telephoneTextField.text
-                    bankAccount = admin!!.accountNumberTextField.text
                     genre = admin!!.choiceBoxGender.value
                     email = admin!!.emailTextField.text
-                    direction = admin!!.directionField.text
                 }
             }
 
-            if (EnterpriseDao.enterprises.isEmpty()){
-                EnterpriseDao.save(enterprise)
+            if (EnterpriseService.getInstance().entities.isEmpty()){
+                EnterpriseService.getInstance().save(enterprise)
                     .subscribe({
 
                         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"),resourceBundle)
@@ -186,13 +167,14 @@ class ConfigurationController:Initializable, BaseController() {
                         val loginController = fxmlLoader.getController<LoginController>()
                         loginController.isFromEnterprise = true
 
-                        val scene = Scene( parent, 720.0, 440.0)
+                        val scene = Scene( parent,  HelloApplication.primary.scene.width, HelloApplication.primary.scene.height)
                         HelloApplication.primary.scene = scene
                     },{})
-            }else{
+            }
+            else{
                 val loading = ViewUtil.loadingView()
                 loading.show()
-                EnterpriseDao.update(enterprise)
+                EnterpriseService.getInstance().update(enterprise)
                     .subscribe({
                                loading.close()//
                     },{
@@ -252,26 +234,17 @@ class ConfigurationController:Initializable, BaseController() {
             ViewUtil.customAlert("Error on fields","please make sure you enter a valid password.").show()
             return false
         }
-        if ( admin!!.passportTextField.text.isBlank() ){
-            ViewUtil.customAlert("Error on fields","please enter a passport number.").show()
-            return false
-        }
+
         if ( admin!!.telephoneTextField.text.isBlank() ){
             ViewUtil.customAlert("Error on fields","please enter a valid international phone number.").show()
             return false
         }
-        if ( admin!!.accountNumberTextField.text.isBlank() ){
-            ViewUtil.customAlert("Error on fields","please enter a valid account number.").show()
-            return false
-        }
+
         if ( admin!!.emailTextField.text.isBlank() ){
             ViewUtil.customAlert("Error on fields","please make sure you enter a valid email.").show()
             return false
         }
-        if ( admin!!.directionField.text.isBlank() ){
-            ViewUtil.customAlert("Error on fields","please enter a valid direction.").show()
-            return false
-        }
+
         if ( admin!!.choiceBoxGender.value == null ){
             ViewUtil.customAlert("Error on fields","please make sure you select a gender.").show()
             return false

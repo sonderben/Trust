@@ -1,7 +1,6 @@
-package com.sonderben.trust.controller.config
+package com.sonderben.trust.controller.enterprise
 
 import entity.EnterpriseEntity
-import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.*
@@ -39,8 +38,8 @@ class Admin :Initializable {
      */
     private fun setEnterprise() {
        if (enterprise!=null){
-           val emp = enterprise!!.employee
-           accountNumberTextField.text = emp.bankAccount
+           val emp = enterprise!!.adminEntity
+
            val cal = emp.birthDay
            birthdayDatePicker.value = LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH))
 
@@ -52,11 +51,10 @@ class Admin :Initializable {
            choiceBoxRole.selectionModel.select(0)
            choiceBoxRole.isDisable = true
            userNameTextField.text = emp.userName
-           directionField.text = emp.direction
+
            emailTextField.text = emp.email
            firstNameTextField.text = emp.firstName
            lastNameTextField.text = emp.lastName
-           passportTextField.text = emp.passport
            passwordField.text = emp.password
            phoneTextField.text = emp.telephone
            scheduleTextField.text = "Mon-Mon"
@@ -82,8 +80,7 @@ class Admin :Initializable {
 
 
 
-    @FXML
-     lateinit var accountNumberTextField: TextField
+
 
     @FXML
      lateinit var birthdayDatePicker: DatePicker
@@ -100,8 +97,7 @@ class Admin :Initializable {
     @FXML
      lateinit var deleteButton: Button
 
-    @FXML
-     lateinit var directionField: TextField
+
 
     @FXML
      lateinit var emailTextField: TextField
@@ -112,8 +108,7 @@ class Admin :Initializable {
     @FXML
      lateinit var lastNameTextField: TextField
 
-    @FXML
-     lateinit var passportTextField: TextField
+
 
     @FXML
      lateinit var passwordField: PasswordField

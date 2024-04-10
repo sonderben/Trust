@@ -1,21 +1,15 @@
 package com.sonderben.trust
 
-import com.sonderben.trust.controller.ConfigurationController
-import com.sonderben.trust.db.dao.EmployeeDao
-import com.sonderben.trust.db.dao.EnterpriseDao
+import com.sonderben.trust.controller.EnterpriseController
+import com.sonderben.trust.db.service.AuthentificationService
+import com.sonderben.trust.db.service.EnterpriseService
 import com.sonderben.trust.viewUtil.ViewUtil
-import entity.EmployeeEntity
-import entity.enterprise.EnterpriseInfo
 import javafx.beans.property.SimpleObjectProperty
-import javafx.collections.ListChangeListener
-import javafx.collections.ObservableList
-import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.Scene
 import javafx.scene.control.*
-import javafx.util.StringConverter
 import java.net.URL
 import java.util.*
 import javax.script.ScriptEngineManager
@@ -32,10 +26,12 @@ class LoginController : Initializable{
     private lateinit var infoLabel: Label
     @FXML
     private lateinit var newSystemLabel: Label
-    private val employees: ObservableList<EmployeeEntity> = EmployeeDao.getInstance().employees
+
 
 
     private lateinit var resourceBundle:ResourceBundle
+
+
 
     @FXML
     fun onLoginButtonClick() {
@@ -43,17 +39,17 @@ class LoginController : Initializable{
 
         val loading = ViewUtil.loadingView()
         loading.show()
-        EmployeeDao.getInstance().login(userNameTextField.text.trim(),password.text.trim())
+        AuthentificationService.getInstance().login(userNameTextField.text.trim(),password.text.trim())
             .subscribe({employeeEntity ->
+
                 Context.currentEmployee = SimpleObjectProperty(employeeEntity)
 
-                EmployeeDao.getInstance().findAll()
-
-                val resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
                 val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/main_view.fxml"),resourceBundle)
-                val scene = Scene(fxmlLoader.load(), 720.0, 440.0)
+
+                val scene = Scene(fxmlLoader.load(), HelloApplication.primary.scene.width, HelloApplication.primary.scene.height )
                 loading.close()
                 HelloApplication.primary.scene = scene
+
             },{loading.close()},{
                 loading.close()
                 infoLabel.isVisible = true
@@ -66,8 +62,8 @@ class LoginController : Initializable{
     @FXML
     fun onCreateNewSystemMouseClicked() {
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/configuration.fxml"),resourceBundle)
-        val scene = Scene(fxmlLoader.load(), 920.0, 640.0)
-        fxmlLoader.getController<ConfigurationController>()
+        val scene = Scene(fxmlLoader.load(),  HelloApplication.primary.scene.width, HelloApplication.primary.scene.height )
+        fxmlLoader.getController<EnterpriseController>()
         HelloApplication.primary.scene = scene
     }
     var isFromEnterprise: Boolean=false
@@ -92,14 +88,9 @@ class LoginController : Initializable{
             println("mimeTypes: ${en.mimeTypes}")
         }*/
 
-        /*employees.addListener(ListChangeListener {
-            if (employees.size >0 ){
-                login.isDisable = false
-                newSystemLabel.isDisable = true
-            }
-        })*/
 
-        if (EnterpriseDao.enterprises.size>0 || isFromEnterprise){
+
+        if (EnterpriseService.getInstance().entities.size > 0 /*|| isFromEnterprise*/){
             login.isDisable = false
             newSystemLabel.isDisable = true
         }

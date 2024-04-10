@@ -1,8 +1,9 @@
 package com.sonderben.trust.controller
 
 import com.sonderben.trust.*
-import com.sonderben.trust.db.dao.CustomerDao
+import com.sonderben.trust.db.service.CustomerService
 import com.sonderben.trust.db.dao.InvoiceDao
+import com.sonderben.trust.db.service.InvoiceService
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.CustomerEntity
 import javafx.beans.property.SimpleStringProperty
@@ -30,7 +31,7 @@ class CustomerService : Initializable, BaseController() {
     lateinit var customerMainPane: VBox
 
 
-    private var customers = CustomerDao.customers
+    private var customers = CustomerService.getInstance().entities
     private var selectedCustomer: CustomerEntity? = null
     private var customerToChangePoint: CustomerEntity? = null
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
@@ -38,6 +39,7 @@ class CustomerService : Initializable, BaseController() {
         editMenuItem()
 
         rTableview.selectionModel.selectionMode = SelectionMode.MULTIPLE
+
 
         rTableview.rowFactory =
             Callback<TableView<InvoiceDao.ProductToReturned>, TableRow<InvoiceDao.ProductToReturned>> {
@@ -51,6 +53,8 @@ class CustomerService : Initializable, BaseController() {
                     }
                 }
             }
+
+
 
 
         cBirthdayCol.setCellValueFactory { data -> SimpleStringProperty(data.value.birthDay.format()) }
@@ -242,17 +246,16 @@ class CustomerService : Initializable, BaseController() {
 
     @FXML
     fun cpOnsearch() {
-        customerToChangePoint = CustomerDao.findByCode(cpCodeTf.textTrim())
-        if (customerToChangePoint != null) {
-            cpFirstnameTf.text = customerToChangePoint!!.firstName
-            cpLastnameTf.text = customerToChangePoint!!.lastName
-            cpPassportTf.text = customerToChangePoint!!.passport
-            cpPointTf.text = customerToChangePoint!!.point.toString()
-            cpPointTfConversion.text = cpPointTf.text
-            cpChangeTfConversion.text = (customerToChangePoint!!.point / 100).toString()
-        } else {
-            println("no encontrado usuarion con codigo: ${cpCodeTf.textTrim()}")
-        }
+        /*customerToChangePoint =*/ CustomerService.getInstance().findByCode(cpCodeTf.textTrim())
+            .subscribe({customersFound->
+                cpFirstnameTf.text = customersFound!!.firstName
+                cpLastnameTf.text = customersFound!!.lastName
+                cpPassportTf.text = customersFound!!.passport
+                cpPointTf.text = customersFound!!.point.toString()
+                cpPointTfConversion.text = cpPointTf.text
+                cpChangeTfConversion.text = (customersFound!!.point / 100).toString()
+            },{println("no encontrado usuarion con codigo: ${cpCodeTf.textTrim()}")})
+
     }
 
     @FXML
@@ -265,7 +268,7 @@ class CustomerService : Initializable, BaseController() {
     fun onDeleteCustomer() {
 
         selectedCustomer?.let {
-            CustomerDao.delete(it.id)
+            CustomerService.getInstance().delete(it.id)
                 .subscribe({ clear() }, { th -> println(th.message) })
         }
 
@@ -296,7 +299,7 @@ class CustomerService : Initializable, BaseController() {
                 point = 0
 
             }
-            CustomerDao.save(customer)
+            CustomerService.getInstance().save(customer)
                 .subscribe({
                     clear(customerMainPane)
                     Context.writeJson("last_count_customer", lastCountCustomer + 1)
@@ -350,7 +353,7 @@ class CustomerService : Initializable, BaseController() {
                         point = selectedCustomer!!.point
 
                     }
-                    CustomerDao.update(customer)
+                    CustomerService.getInstance().update(customer)
                         .subscribe({ clear() }, { th -> println(th.message) })
 
 
@@ -374,18 +377,20 @@ class CustomerService : Initializable, BaseController() {
         if (itemSelected.isNotEmpty()) {
             val action = if ((toggleGroup.selectedToggle as RadioButton).id.equals("changeRbtn")) "CHANGE" else "MONEY"
             val idProductsSold = itemSelected.map { it.productSoldId }
-            val isSave = InvoiceDao.saveProductReturned(
+            /*val isSave =*/ InvoiceService.getInstance().saveProductReturned(
                 productsReturned[0].invoiceId,
                 idProductsSold,
                 Context.currentEmployee.value.id,
                 rReasonTf.textTrim(),
                 action
-            )
-            if (isSave) {
+            ).subscribe({
                 ViewUtil.createAlert(Alert.AlertType.INFORMATION, "Saved", "Product return with success").showAndWait()
-            } else {
+
+            },{
                 ViewUtil.createAlert(Alert.AlertType.WARNING, "Error", "Product don't return.").showAndWait()
-            }
+
+            })
+
         } else {
             ViewUtil.createAlert(Alert.AlertType.WARNING, "NO item selected", "You must select some items first")
                 .showAndWait()
@@ -394,23 +399,23 @@ class CustomerService : Initializable, BaseController() {
 
     @FXML
     fun rOnSearch() {
-        productsReturned = InvoiceDao.findByInvoiceCode(rInvoiceTf.textTrim())
-
-        if (productsReturned.isNotEmpty()) {
-
-            rTotal.setCellValueFactory { d -> SimpleStringProperty(d.value.totalPrice.toString()) }
-            rCodeCol.setCellValueFactory { d -> SimpleStringProperty(d.value.code) }
-            rCategoryCol.setCellValueFactory { d -> SimpleStringProperty(d.value.category) }
-            rDescriptionCol.setCellValueFactory { d -> SimpleStringProperty(d.value.description) }
-            rDateExpiredCol.setCellValueFactory { d -> SimpleStringProperty(d.value.dateCreated.format()) }
-            rQuantityCol.setCellValueFactory { d -> SimpleStringProperty(d.value.quantity.toString()) }
-            /*rTotal.setCellValueFactory { d->SimpleStringProperty() }
-            rTotal.setCellValueFactory { d->SimpleStringProperty() }
-            rTotal.setCellValueFactory { d->SimpleStringProperty() }*/
+        /*productsReturned =*/ InvoiceService.getInstance().findByInvoiceCode(rInvoiceTf.textTrim())
+            .subscribe({
+                rTotal.setCellValueFactory { d -> SimpleStringProperty(d.value.totalPrice.toString()) }
+                rCodeCol.setCellValueFactory { d -> SimpleStringProperty(d.value.code) }
+                rCategoryCol.setCellValueFactory { d -> SimpleStringProperty(d.value.category) }
+                rDescriptionCol.setCellValueFactory { d -> SimpleStringProperty(d.value.description) }
+                rDateExpiredCol.setCellValueFactory { d -> SimpleStringProperty(d.value.dateCreated.format()) }
+                rQuantityCol.setCellValueFactory { d -> SimpleStringProperty(d.value.quantity.toString()) }
+                /*rTotal.setCellValueFactory { d->SimpleStringProperty() }
+                rTotal.setCellValueFactory { d->SimpleStringProperty() }
+                rTotal.setCellValueFactory { d->SimpleStringProperty() }*/
 
 
-            rTableview.items = FXCollections.observableArrayList(productsReturned)
-        }
+                rTableview.items = FXCollections.observableArrayList(productsReturned)
+            },{})
+
+
     }
 
     override fun onDestroy() {

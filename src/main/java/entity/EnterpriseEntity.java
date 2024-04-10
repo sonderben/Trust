@@ -17,8 +17,7 @@ public class EnterpriseEntity extends BaseEntity{
         private Calendar foundation;
         private String website;
         private CategoryEnum category;
-        EmployeeEntity employee;
-        private String invoiceTemplate;
+        AdminEntity adminEntity;
         private String invoiceTemplateHtml;
 
         public String getCategoryString(){
@@ -31,7 +30,7 @@ public class EnterpriseEntity extends BaseEntity{
 
     @Override
     public String toString() {
-        return "EnterpriseEntity{name='%s', direction='%s', telephone='%s', foundation=%s, website='%s', category=%s, employee=%s, invoiceTemplate='%s', invoiceTemplateHtml='%s', id=%d}".formatted(name, direction, telephone, foundation, website, category, employee, invoiceTemplate, invoiceTemplateHtml, id);
+        return "EnterpriseEntity{name='%s', direction='%s', telephone='%s', foundation=%s, website='%s', category=%s, admin=%s, invoiceTemplateHtml='%s', id=%d}".formatted(name, direction, telephone, foundation, website, category, adminEntity, invoiceTemplateHtml, id);
     }
 
     public void setName(String name) {
@@ -78,21 +77,17 @@ public class EnterpriseEntity extends BaseEntity{
         this.category = category;
     }
 
-    public EmployeeEntity getEmployee() {
-        return employee;
+    public AdminEntity getAdminEntity() {
+        return adminEntity;
     }
 
-    public void setEmployee(EmployeeEntity employee) {
-        this.employee = employee;
+    public void setAdminEntity(AdminEntity adminEntity) {
+        this.adminEntity = adminEntity;
     }
 
-    public String getInvoiceTemplate() {
-        return invoiceTemplate;
-    }
 
-    public void setInvoiceTemplate(String invoiceTemplate) {
-        this.invoiceTemplate = invoiceTemplate;
-    }
+
+
 
     public String getInvoiceTemplateHtml() {
 
@@ -103,7 +98,7 @@ public class EnterpriseEntity extends BaseEntity{
         this.invoiceTemplateHtml = invoiceTemplateHtml;
     }
 
-    public EnterpriseEntity(String name, String direction, String telephone, Calendar foundation, String website, String category, EmployeeEntity employee, String invoiceTemplate, String invoiceTemplateHtml) {
+    public EnterpriseEntity(String name, String direction, String telephone, Calendar foundation, String website, String category, AdminEntity adminEntity, String invoiceTemplateHtml) {
         this.name = name;
         this.direction = direction;
         this.telephone = telephone;
@@ -111,12 +106,11 @@ public class EnterpriseEntity extends BaseEntity{
         this.website = website;
         this.category = CategoryEnum.valueOf(category);
 
-        this.employee = employee;
-        this.invoiceTemplate = invoiceTemplate;
+        this.adminEntity = adminEntity;
         this.invoiceTemplateHtml = invoiceTemplateHtml;
     }
 
-    public EnterpriseEntity(Long id,String name, String direction, String telephone, Calendar foundation, String website, String category, EmployeeEntity employee, String invoiceTemplate, String invoiceTemplateHtml) {
+    public EnterpriseEntity(Long id,String name, String direction, String telephone, Calendar foundation, String website, String category, AdminEntity adminEntity , String invoiceTemplateHtml) {
         this.id = id;
         this.name = name;
         this.direction = direction;
@@ -124,9 +118,7 @@ public class EnterpriseEntity extends BaseEntity{
         this.foundation = foundation;
         this.website = website;
         this.category = CategoryEnum.valueOf(category);
-
-        this.employee = employee;
-        this.invoiceTemplate = invoiceTemplate;
+        this.adminEntity = adminEntity;
         this.invoiceTemplateHtml = invoiceTemplateHtml;
     }
 
@@ -140,22 +132,16 @@ public class EnterpriseEntity extends BaseEntity{
         this.website = "";
         this.category = null;
 
-        this.employee = createEmployee();
-        this.invoiceTemplate = "";
+        this.adminEntity = createEmployee();
         this.invoiceTemplateHtml = "";
     }
 
-    private EmployeeEntity createEmployee(){
-        Role role =new Role(
-                "Admin", Arrays.asList(ScreenEnum.values())
-
-        );
+    private AdminEntity createEmployee(){
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR,2006);
 
-            return   new EmployeeEntity("","","",null,"","","", calendar,"","root","",
-                role, List.of( new ScheduleEntity(1L,null,1,11.30f,1f) ));
+            return   new AdminEntity("","","",null,"",calendar,"");
     }
 
 
