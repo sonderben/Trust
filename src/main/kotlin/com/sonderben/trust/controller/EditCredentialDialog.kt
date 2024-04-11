@@ -30,10 +30,8 @@ class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
             val cancel = ButtonType("Cancel", ButtonBar.ButtonData.APPLY)
             dialogPane.buttonTypes.addAll( cancel )
 
-            resultConverter = Callback { param ->
-                if (param.equals(cancel)){
-                    return@Callback false
-                }
+            resultConverter = Callback { param  ->
+
                 return@Callback isSave
             }
 
@@ -49,6 +47,9 @@ class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
         labelInfo.text = ""
         username.text = Context.currentEmployee.get().userName
+        if(Context.currentEmployee.get().userName.equals("root")){
+            username.isEditable = false
+        }
     }
     @FXML lateinit var currentPwd:PasswordField
     @FXML lateinit var newPwd:PasswordField

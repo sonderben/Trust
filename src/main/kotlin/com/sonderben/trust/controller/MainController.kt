@@ -317,4 +317,8 @@ class MainController : Initializable {
 
     }
 
+    fun technologyOnAction(actionEvent: ActionEvent) {
+        changeView("view/technologies.fxml","technologies")
+    }
+
 }

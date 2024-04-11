@@ -1,11 +1,11 @@
-package com.sonderben.trust.controller
+package com.sonderben.trust.controller.enterprise
 
 import com.sonderben.trust.CategoryEnum
 import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.LoginController
 import com.sonderben.trust.constant.Constant
-import com.sonderben.trust.controller.enterprise.Admin
-import com.sonderben.trust.controller.enterprise.InvoiceController
+import com.sonderben.trust.controller.BaseController
+import com.sonderben.trust.controller.MainController
 import com.sonderben.trust.db.service.EnterpriseService
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.EnterpriseEntity

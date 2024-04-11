@@ -5,7 +5,6 @@ import com.sonderben.trust.Util
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.customView.RDButton
 import com.sonderben.trust.changeVisibility
-import com.sonderben.trust.db.dao.RoleDao
 import com.sonderben.trust.db.service.RoleService
 import com.sonderben.trust.equalAtLeastOne
 import com.sonderben.trust.viewUtil.ViewUtil
@@ -97,7 +96,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
 
                     for (screen in newValue.screens) {
                         gridPaneScreen.children.filtered {
-                            (it as RDButton).name == ScreenEnum.valueOf(screen.name)
+                            (it as RDButton).screen == ScreenEnum.valueOf(screen.name)
                         }.forEach {
                             (it as RDButton).select()
                         }
@@ -170,7 +169,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
         if (validateRole()) {
             val rdButtonsChecked: FilteredList<Node> = gridPaneScreen.children.filtered { (it as RDButton).isChecked }
 
-            RoleService.getInstance().save(Role(nameTf.text, rdButtonsChecked.map { (it as RDButton).name }.toMutableList())).subscribe({
+            RoleService.getInstance().save(Role(nameTf.text, rdButtonsChecked.map { (it as RDButton).screen }.toMutableList())).subscribe({
                 clearRDButtons()
             }, { th -> println("error: $th") })
         }
@@ -187,7 +186,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
 
             roleSelectedOrToSave!!.apply {
                 name = nameTf.text
-                screens = rdButtonsChecked.map { (it as RDButton).name }.toMutableList()
+                screens = rdButtonsChecked.map { (it as RDButton).screen }.toMutableList()
             }
             RoleService.getInstance().update(roleSelectedOrToSave!!)
                 .subscribe({ clear(mainPane) }, { th -> println(th.message) })

@@ -1,6 +1,6 @@
 package com.sonderben.trust
 
-import com.sonderben.trust.controller.EnterpriseController
+import com.sonderben.trust.controller.enterprise.EnterpriseController
 import com.sonderben.trust.db.service.AuthentificationService
 import com.sonderben.trust.db.service.EnterpriseService
 import com.sonderben.trust.viewUtil.ViewUtil

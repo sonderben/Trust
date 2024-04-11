@@ -12,7 +12,6 @@ import java.net.URL
 import java.util.*
 
 class SpendingCustomers:Initializable {
-    //private val spendingOrFrequentCustomer = CustomerDao.spendingOrFrequentCustomer()
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
 
         customerCol.setCellValueFactory { d->SimpleStringProperty(d.value.cusomerCode) }

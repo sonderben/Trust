@@ -30,11 +30,7 @@ class HelloApplication : Application() {
         stage.scene = scene
 
 
-
         //ScenicView.show( scene )
-
-
-
 
         primary.icons.add(
             Factory.createImage("image/shield.png")
