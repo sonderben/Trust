@@ -2,7 +2,7 @@ package com.sonderben.trust.db.service
 
 
 import com.sonderben.trust.db.dao.RoleDao
-import com.sonderben.trust.model.Role
+import entity.Role
 
 class RoleService private constructor(dao: RoleDao): CrudService<RoleDao, Role>(dao) {
     companion object{

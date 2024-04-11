@@ -7,11 +7,7 @@ import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.db.SqlDml.INSERT_ENTERPRISE
 import com.sonderben.trust.db.SqlDml.SELECT_ENTERPRISE
 import com.sonderben.trust.db.SqlDml.UPDATE_ENTERPRISE
-import com.sonderben.trust.model.Role
-import entity.AdminEntity
-import entity.CategoryEntity
-import entity.CustomerEntity
-import entity.EnterpriseEntity
+import entity.*
 import java.sql.Connection
 import java.sql.Timestamp
 import java.util.*

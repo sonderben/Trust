@@ -1,8 +1,6 @@
 package entity;
 
 import com.sonderben.trust.CategoryEnum;
-import com.sonderben.trust.constant.ScreenEnum;
-import com.sonderben.trust.model.Role;
 
 import java.util.Arrays;
 import java.util.Calendar;

@@ -1,16 +1,11 @@
-
 import com.sonderben.trust.constant.ScreenEnum;
 import com.sonderben.trust.db.SqlDdl;
-import com.sonderben.trust.db.dao.*;
-import com.sonderben.trust.db.service.ProductService;
-import com.sonderben.trust.db.service.RoleService;
-import com.sonderben.trust.model.Role;
-import entity.*;
+import entity.Role;
+import entity.ScheduleEntity;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 public class Database {
@@ -117,10 +112,7 @@ public class Database {
             return new Role();
         }
         List<Role>roleList = new ArrayList<>();
-        final var selectAllIdRole = """
-                SELECT * from Roles 
-                where id = ? 
-                """;
+        final var selectAllIdRole = "SELECT * from "+ SqlDdl.roles +" where id = ? ";
         try {
             PreparedStatement ps = Database.connect().prepareStatement(selectAllIdRole);
             ps.setLong(1,roleId);

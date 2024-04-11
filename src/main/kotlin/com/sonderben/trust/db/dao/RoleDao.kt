@@ -7,7 +7,7 @@ import com.sonderben.trust.db.SqlDml.DELETE_ROLE
 import com.sonderben.trust.db.SqlDml.INSERT_ROLE
 import com.sonderben.trust.db.SqlDml.SELECT_ALL_ROLE
 import com.sonderben.trust.db.SqlDml.UPDATE_ROLE
-import com.sonderben.trust.model.Role
+import entity.Role
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single

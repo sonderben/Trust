@@ -8,8 +8,8 @@ import com.sonderben.trust.changeVisibility
 import com.sonderben.trust.db.dao.RoleDao
 import com.sonderben.trust.db.service.RoleService
 import com.sonderben.trust.equalAtLeastOne
-import com.sonderben.trust.model.Role
 import com.sonderben.trust.viewUtil.ViewUtil
+import entity.Role
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue

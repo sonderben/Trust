@@ -1,6 +1,5 @@
 package entity;
 
-import com.sonderben.trust.model.Role;
 
 
 import java.util.ArrayList;

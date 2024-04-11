@@ -5,9 +5,9 @@ import com.sonderben.trust.db.service.EmployeeService
 
 import com.sonderben.trust.db.service.RoleService
 import com.sonderben.trust.db.service.ScheduleService
-import com.sonderben.trust.model.Role
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.EmployeeEntity
+import entity.Role
 import entity.ScheduleEntity
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections

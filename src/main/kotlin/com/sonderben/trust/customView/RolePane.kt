@@ -1,7 +1,7 @@
 package com.sonderben.trust.customView
 
 import com.sonderben.trust.constant.ScreenEnum
-import com.sonderben.trust.model.Role
+import entity.Role
 import javafx.beans.property.SimpleObjectProperty
 import javafx.event.EventHandler
 import javafx.scene.control.Label

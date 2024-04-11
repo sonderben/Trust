@@ -1,26 +1,19 @@
 package com.sonderben.trust.db.dao
 
+//import com.sonderben.trust.db.SqlDml.SELECT_ALL_EMPLOYEE_EXCLUDE_ALL_ADMINS
 import Database
 import com.sonderben.trust.Context
 import com.sonderben.trust.Util
 import com.sonderben.trust.constant.ScreenEnum
 import com.sonderben.trust.db.SqlDdl
 import com.sonderben.trust.db.SqlDml.DELETE_EMPLOYEE
-import com.sonderben.trust.db.SqlDml.EMPLOYEE_LOGIN
 import com.sonderben.trust.db.SqlDml.FIND_EMPLOYEE_BY_ID
 import com.sonderben.trust.db.SqlDml.INSERT_EMPLOYEE
 import com.sonderben.trust.db.SqlDml.INSERT_SCHEDULE
 import com.sonderben.trust.db.SqlDml.SELECT_ALL_EMPLOYEE_INCLUDE_ADMIN_EXCLUDE_MAIN_ADMIN
-//import com.sonderben.trust.db.SqlDml.SELECT_ALL_EMPLOYEE_EXCLUDE_ALL_ADMINS
 import com.sonderben.trust.db.SqlDml.UPDATE_EMPLOYEE
-import com.sonderben.trust.model.Role
 import entity.EmployeeEntity
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
-import javafx.collections.FXCollections
+import entity.Role
 import java.sql.Connection
 import java.sql.Timestamp
 
