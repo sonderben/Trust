@@ -3,6 +3,7 @@ package com.sonderben.trust
 import javafx.scene.Node
 import javafx.scene.control.TextField
 import javafx.scene.layout.VBox
+import org.json.simple.JSONObject
 import java.sql.Timestamp
 import java.text.DateFormat
 import java.text.NumberFormat
@@ -68,3 +69,9 @@ fun String.equalAtLeastOne(vararg strings: String,ignoreCase:Boolean=true):Boole
     }
     return false
 }
+
+
+fun JSONObject.getBoolean(key:String) = this[key] as Boolean
+fun JSONObject.getString(key:String) = this[key] as String
+fun JSONObject.getDouble(key:String) = this[key] as Double
+fun JSONObject.getJsonObject(key:String) = this[key] as JSONObject

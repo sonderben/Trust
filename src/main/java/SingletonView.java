@@ -1,4 +1,5 @@
 import com.sonderben.trust.HelloApplication;
+import com.sonderben.trust.constant.Constant;
 import com.sonderben.trust.controller.BaseController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -10,12 +11,10 @@ import java.util.ResourceBundle;
 
 public class SingletonView {
 
-    /*private static Node node,employee, configuration, sale, user, product,
-            invoice, businessInfo, inventory, role, queries, productSold,
-            productRemaining, bestEmployee, bestSellingProduct, frequentCustomer,
-            productExpired, returned,spendingCustomer,admin;*/
+    private static String tempPath = "";
+    private static Node node=null;
     private final static List<String> pathList =List.of("view/sale.fxml","view/user.fxml","view/product.fxml","view/employee.fxml",
-            /*"view/config/admin.fxml",*/"view/configuration.fxml",/*"view/config/businessInfo.fxml","view/config/invoice.fxml",*/
+            "view/configuration.fxml",
             "view/inventory.fxml","view/role.fxml", "view/queries/queries.fxml","view/queries/productSold.fxml",
             "view/queries/bestEmployee.fxml","view/queries/bestSellingProduct.fxml","view/queries/frequentCustomers.fxml",
             "view/queries/productExpired.fxml","view/queries/productRemaining.fxml","view/queries/productReturned.fxml",
@@ -35,11 +34,13 @@ public class SingletonView {
                 controller = null;
             }
 
-            ResourceBundle resourceBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string");FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path),resourceBundle);
-
-            Node node= fxmlLoader.load();
-            if (fxmlLoader.getController() instanceof BaseController){
-                controller = fxmlLoader.getController();
+            if ( !path.equals( tempPath ) ){
+                FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource(path), Constant.INSTANCE.getResource());
+                tempPath = path;
+                node= fxmlLoader.load();
+                if (fxmlLoader.getController() instanceof BaseController){
+                    controller = fxmlLoader.getController();
+                }
             }
 
             return node;
@@ -47,7 +48,7 @@ public class SingletonView {
 
 
         System.err.println("Error: Unknown view path");
-        return null;
+        return  null;
 
     }
 

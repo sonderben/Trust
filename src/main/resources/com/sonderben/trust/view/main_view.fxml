@@ -157,8 +157,14 @@
               <menus>
                 <Menu mnemonicParsing="false" text="%file">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Sign out" />
-                        <MenuItem mnemonicParsing="false" text="Configuration" />
+                    <MenuItem mnemonicParsing="false" onAction="#signOutOnAction" text="Sign out" />
+                        <Menu fx:id="menuLanguage" mnemonicParsing="false" text="Language">
+                          <items>
+                            <MenuItem fx:id="en" mnemonicParsing="false" text="English" />
+                              <MenuItem fx:id="es" mnemonicParsing="false" text="Spanish" />
+                              <MenuItem fx:id="fr" mnemonicParsing="false" text="French" />
+                          </items>
+                        </Menu>
                         <MenuItem mnemonicParsing="false" onAction="#editCredentialMenutitemOnAction" text="Edit credential" />
                   </items>
                 </Menu>

@@ -1,11 +1,11 @@
 package com.sonderben.trust.viewUtil
 
+import com.sonderben.trust.model.Technology
 import com.sonderben.trust.HelloApplication
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
-import javafx.scene.control.Alert
-import javafx.scene.control.Button
-import javafx.scene.control.Label
+import javafx.scene.control.*
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
@@ -40,6 +40,55 @@ class ViewUtil {
 
             loading.initStyle(StageStyle.TRANSPARENT)
             loading.initOwner(HelloApplication.primary)
+            loading.initModality( Modality.APPLICATION_MODAL )
+            loading.scene = scene
+            loading.isAlwaysOnTop = true
+
+            return loading
+        }
+
+        fun technology():Stage{
+            val loading = Stage()
+
+            val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/technologies.fxml"))
+            val vbox:AnchorPane = fxmlLoader.load()
+            val listView = vbox.children.filter{it.id=="listview"}[0] as ListView<Technology>
+
+
+            listView.setCellFactory {
+                object : ListCell<Technology?>() {
+                    override fun updateItem(technology: Technology?, b: Boolean) {
+                        super.updateItem(technology, b)
+                        if (technology != null) {
+                            text = technology.title
+                        }
+                    }
+                }
+
+            }
+            listView.selectionModel.selectedItemProperty().addListener{observable,oldValue,newValue->
+                HelloApplication.services.showDocument( newValue.url )
+            }
+
+            val mutableList = mutableListOf(
+
+                Technology("RXJava","https://www.github.com/ReactiveX/RxJava") ,
+                Technology("SQLite","https://www.sqlite.org"),
+                Technology("JSON-simple","https://code.google.com/archive/p/json-simple"),
+
+                Technology("Javafx","https://gluonhq.com/products/javafx"),
+                Technology("Nashorn","docs.oracle.com/en/java/11/nashorn/introduction.html"),
+                Technology("JUnit","https://junit.org/junit5/")
+            )
+
+
+            listView.items.addAll( mutableList)
+
+            val scene = Scene(vbox, 400.0, HelloApplication.primary.height * 0.80)
+
+
+
+            //loading.initOwner(HelloApplication.primary)
             loading.initModality( Modality.APPLICATION_MODAL )
             loading.scene = scene
             loading.isAlwaysOnTop = true

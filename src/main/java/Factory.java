@@ -4,13 +4,14 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.web.HTMLEditor;
 
+import java.util.Objects;
 import java.util.function.UnaryOperator;
 
 public class Factory {
 
     public static Image createImage(String path){
 
-        return new Image(HelloApplication.class.getResource(path).toString());
+        return new Image( Objects.requireNonNull( HelloApplication.class.getResource(path) ).toString() );
     }
 
     public static TextFormatter<String> createFilterTextField(){

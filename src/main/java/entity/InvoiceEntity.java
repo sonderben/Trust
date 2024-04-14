@@ -18,13 +18,13 @@ public class InvoiceEntity extends BaseEntity {
     private Calendar date;
     public InvoiceEntity(){}
 
-    public InvoiceEntity( List<ProductSaled> products, EmployeeEntity employee, CustomerEntity customer, String codeBar, Calendar date) {
+    public InvoiceEntity( List<ProductSaled> productsSaled, EmployeeEntity employee, CustomerEntity customer, String codeBar) {
 
-        this.products = products;
+        this.products = productsSaled;
         this.employee = employee;
         this.customer = customer;
         this.codeBar = codeBar;
-        this.date = date;
+        this.date = Calendar.getInstance();
     }
 
 

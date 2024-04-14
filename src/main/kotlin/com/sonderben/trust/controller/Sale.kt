@@ -44,6 +44,7 @@ class Sale :Initializable,MessageListener,BaseController(){
             socketMesageEvent.removeListener()
             println("clear Sale")
         }*/
+        mMediaplayer.dispose()
         println("clear saleController")
 
 
@@ -267,25 +268,39 @@ class Sale :Initializable,MessageListener,BaseController(){
     }
 
     private fun pay(){
+       val load = ViewUtil.loadingView()
+        load.show()
         if( validatePayment() ){
 
 
                 val codeBar = Random.nextLong(LongRange(10_000_000,99_999_999))
                 InvoiceService.getInstance().save(
-                    InvoiceEntity(mProducts, Context.currentEmployee.value, mCurrentCustomer, codeBar.toString(), Calendar.getInstance())
+                    InvoiceEntity(  mProducts, Context.currentEmployee.value,  mCurrentCustomer, codeBar.toString() )
                 ).subscribe({
 
-                        mCurrentCustomer?.let {
+                    if(mCurrentCustomer==null){
+                        mCurrentCustomer = CustomerEntity()
+                        mCurrentCustomer!!.id = 1
+                    }
+
+
                             val point = (grandTotal.text.toDouble()/100.0).toLong()
-                            CustomerService.getInstance().updatePoint(it.id, point)
+                            CustomerService.getInstance().updatePoint(mCurrentCustomer!!.id, point)
+                                .subscribe( {
+                                    mCurrentCustomer = null
+                                },{
+                                    mCurrentCustomer = null
+                                    println( it.message )
+                                } )
 
-                        }
 
+
+                    load.close()
                         ViewUtil.createAlert(Alert.AlertType.CONFIRMATION,"Payment","Pay with success").showAndWait()
                         clearAll()
                         customerCode.requestFocus()
 
-                },{})
+                },{ load.close()})
 
 
 
@@ -376,34 +391,7 @@ class Sale :Initializable,MessageListener,BaseController(){
         })
     }
 
-    /*private fun findProductBy(code:String){
-        val tempCode = code.padStart(12,'0')
-        val productFind = mProducts.find { it.code == tempCode }
-        if (qtyTextField.text.isBlank()){
-            qtyTextField.text = "1"
-        }
-        if (productFind!=null){
-            val index = mProducts.indexOf( productFind )
-            productFind.quantity += qtyTextField.text.toInt()
-            mProducts[index] = productFind
-            clearTextS()
-            beep()
-        }else{
-            val product = ProductDao.findProductByCode( codeProductTextField.text )
-            if (product !=null){
-                product.quantity = qtyTextField.text.toInt()
-                mProducts.add( product )
-                clearTextS()
-                beep()
-            }else{
-                ViewUtil.createAlert(
-                    Alert.AlertType.WARNING,
-                    "Product not found",
-                    "code prod. : $tempCode"
-                ).showAndWait()
-            }
-        }
-    }*/
+
     private fun findProductBy(code:String){
         val tempCode = code.padStart(12,'0')
         val productFind:ProductSaled? = mProducts.find { it.code == tempCode }

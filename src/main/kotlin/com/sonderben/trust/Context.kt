@@ -9,12 +9,19 @@ import org.json.simple.parser.JSONParser
 import java.io.FileReader
 import java.io.FileWriter
 import java.io.IOException
-import java.lang.RuntimeException
-import java.text.DateFormat
 import java.util.*
 
 object Context {
     val path: String = "src/main/kotlin/com/sonderben/trust/config/preference.json"
+    private val screenJson = readJson()["screen"] as JSONObject
+    var screen:Screen = Screen(
+        screenJson.getBoolean("isAlwaysOnTop"),
+        screenJson.getBoolean("isFullScreen") ,
+        screenJson.getDouble("width"),
+        screenJson.getDouble("height"),
+        screenJson.getDouble("x"),
+        screenJson.getDouble("y")
+    )
 
 
     var currentEmployee: SimpleObjectProperty<EmployeeEntity> = SimpleObjectProperty()
@@ -26,7 +33,7 @@ object Context {
         }
     }
     fun start() {
-        writeJson("language", "jp")
+        //writeJson("language", "jp")
         //readJson()
     }
 
@@ -36,17 +43,13 @@ object Context {
 
         when (language) {
             "fr" -> Locale.setDefault(Locale.FRENCH)
-            "ht" -> {
-                val locale = Locale.Builder()
-                    .setLanguage("ht")
-                    .setRegion("HT")
-                    .build()
-                val date = Date()
-                val datef = DateFormat.getDateInstance(DateFormat.FULL, locale)
-                println(datef.format(date))
-
-            }
+            "es" -> Locale.setDefault( Locale("es",
+                "ES") )
+            "en" -> Locale.setDefault( Locale.US )
+            else -> Locale.setDefault( Locale.getDefault() )
         }
+
+        println("default language is: ${Locale.getDefault()}")
 
     }
 
@@ -73,6 +76,28 @@ object Context {
         } catch (e: IOException) {
             e.printStackTrace()
         }
+    }
+
+    fun setScreen( key: String, value: Any ){
+        val jsonObj:JSONObject = readJson()
+        val jsonScreenObj = readJson().getJsonObject("screen")
+
+        if (!jsonScreenObj.containsKey(key))
+            throw RuntimeException("can't update json preference file, key dont exist")
+
+        jsonScreenObj[key] = value
+
+        jsonObj["screen"] = jsonScreenObj
+        try {
+
+            FileWriter(path).use { fileW ->
+                fileW.write(jsonObj.toString())
+                fileW.flush()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
     }
 
     fun defaultInvoice() = """
@@ -109,4 +134,14 @@ object Context {
 </body>
 </html>
     """.trimIndent()
+
+    data class Screen(val isAlwaysOnTop:Boolean,val isFullScreen:Boolean,val width:Double,val height:Double,val x:Double,val y:Double)
 }
+
+
+
+
+
+
+
+

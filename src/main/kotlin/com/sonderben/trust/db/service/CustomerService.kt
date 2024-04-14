@@ -6,6 +6,8 @@ import entity.CustomerEntity
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 
 
 class CustomerService private constructor(dao: CustomerDao) : CrudService<CustomerDao, CustomerEntity>(dao) {
@@ -54,7 +56,8 @@ class CustomerService private constructor(dao: CustomerDao) : CrudService<Custom
                 }
 
             }
-        }
+        }.subscribeOn( Schedulers.io() )
+            .observeOn( JavaFxScheduler.platform() )
 
     }
 
