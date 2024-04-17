@@ -269,10 +269,10 @@ class Sale :Initializable,MessageListener,BaseController(){
 
     private fun pay(){
        val load = ViewUtil.loadingView()
-        load.show()
+
         if( validatePayment() ){
 
-
+            load.show()
                 val codeBar = Random.nextLong(LongRange(10_000_000,99_999_999))
                 InvoiceService.getInstance().save(
                     InvoiceEntity(  mProducts, Context.currentEmployee.value,  mCurrentCustomer, codeBar.toString() )

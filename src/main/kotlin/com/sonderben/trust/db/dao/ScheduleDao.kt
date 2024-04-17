@@ -23,8 +23,8 @@ class ScheduleDao : CrudDao<ScheduleEntity> {
 
         connection.prepareStatement(insertIntoSchedule).use { ps ->
             ps.setInt(1, entity.workDay)
-            ps.setFloat(2, entity.startHour)
-            ps.setFloat(3, entity.endHour)
+            ps.setString(2, entity.startHour)
+            ps.setString(3, entity.endHour)
             ps.setLong(4, entity.idEmployee)
 
             if (ps.executeUpdate() > 0) {
@@ -68,8 +68,8 @@ class ScheduleDao : CrudDao<ScheduleEntity> {
 
         connection.prepareStatement(UPDATE_SCHEDULER).use { preparedStatement ->
             preparedStatement.setInt(1, entity.workDay)
-            preparedStatement.setFloat(2, entity.startHour)
-            preparedStatement.setFloat(3, entity.endHour)
+            preparedStatement.setString(2, entity.startHour)
+            preparedStatement.setString(3, entity.endHour)
             preparedStatement.setLong(4, entity.idEmployee)
             preparedStatement.setLong(5, entity.id)
 

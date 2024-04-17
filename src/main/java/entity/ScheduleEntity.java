@@ -2,7 +2,7 @@ package entity;
 
 
 public class ScheduleEntity extends BaseEntity{
-    private Integer workDay; private Float startHour, endHour;
+    private Integer workDay; private String startHour, endHour;
     private Long idEmployee;
 
     public ScheduleEntity() {
@@ -17,7 +17,7 @@ public class ScheduleEntity extends BaseEntity{
         this.idEmployee = idEmployee;
     }
 
-    public ScheduleEntity(Long idEmployee, Long id, Integer workDay, Float startHour, Float endHour) {
+    public ScheduleEntity(Long idEmployee, Long id, Integer workDay, String startHour, String endHour) {
         super(id);
         this.idEmployee = idEmployee;
         this.workDay = workDay;
@@ -34,19 +34,19 @@ public class ScheduleEntity extends BaseEntity{
         this.workDay = workDay;
     }
 
-    public Float getStartHour() {
+    public String getStartHour() {
         return startHour;
     }
 
-    public void setStartHour(Float startHour) {
+    public void setStartHour(String startHour) {
         this.startHour = startHour;
     }
 
-    public Float getEndHour() {
+    public String getEndHour() {
         return endHour;
     }
 
-    public void setEndHour(Float endHour) {
+    public void setEndHour(String endHour) {
         this.endHour = endHour;
     }
 }

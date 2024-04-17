@@ -13,6 +13,7 @@ import javafx.scene.text.Text
 import javafx.stage.Modality
 import javafx.stage.Stage
 import javafx.stage.StageStyle
+import java.util.*
 
 class ViewUtil {
     companion object{
@@ -100,33 +101,37 @@ class ViewUtil {
             val loading = Stage()
 
             val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/customAlert.fxml"))
-            val vbox:VBox = fxmlLoader.load()
+            val mainVbox:VBox = fxmlLoader.load()
 
-            //val node: GridPane = (vbox.children[0] as GridPane)
-            val header = vbox.children.filter { it.id=="header" }[0] as Label
-            val body = vbox.children.filter { it.id=="body" }[0] as Text
 
-            header.text = title
-            body.text = message
+            //val innerVbox = (mainVbox.children[0] as VBox)
+            val body = (mainVbox.children[0] as VBox).children[0] as Text
 
-            val btn:Button = vbox.children.filterIsInstance<HBox>()[0].children.filter { it.id == "okBtn" }[0] as Button
+
+            body.text = message.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+
+            val btn:Button = mainVbox.children.filterIsInstance<HBox>()[0].children.filter { it.id == "okBtn" }[0] as Button
             btn.setOnMouseClicked {
                 onClick?.invoke()
                 loading.close()
             }
-            vbox.style = "-fx-background-color:#032d3b;"
-            val scene = Scene(vbox, 400.0, 200.0)
+            mainVbox.style = "-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #032d3b,#3498db);"
+            val scene = Scene(mainVbox, 400.0, 200.0)
 
-            scene.fill = Color.TRANSPARENT
-            scene.stylesheets.add("-fx-background-color:rgba(0,0,0,0.5);")
+            //scene.fill = Color.TRANSPARENT
+            //scene.stylesheets.add("-fx-background-color:rgba(0,0,0,0.5);")
 
 
 
-            loading.initStyle(StageStyle.UNDECORATED)
+            //loading.initStyle(StageStyle.UNDECORATED)
+            loading.title = title
             loading.initOwner(HelloApplication.primary)
             loading.initModality( Modality.APPLICATION_MODAL )
             loading.scene = scene
-            loading.isAlwaysOnTop = true
+            loading.isAlwaysOnTop = HelloApplication.primary.isAlwaysOnTop
+
+            loading.isResizable = false
+            loading.isMaximized = false
 
             return loading
         }

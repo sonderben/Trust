@@ -93,8 +93,8 @@ public class Database {
                 ScheduleEntity schedule = new ScheduleEntity();
                 schedule.setId( resultSet.getLong("id") );
                 schedule.setWorkDay( resultSet.getInt("workDay") );
-                schedule.setStartHour( resultSet.getFloat("start_hour") );
-                schedule.setEndHour( resultSet.getFloat("end_hour") );
+                schedule.setStartHour(String.valueOf(resultSet.getFloat("start_hour")));
+                schedule.setEndHour(String.valueOf(resultSet.getFloat("end_hour")));
                 schedules.add( schedule );
 
             }

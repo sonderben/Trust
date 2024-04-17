@@ -31,8 +31,12 @@ class HelloApplication : Application() {
         primary.x = Context.screen.x
         primary.y = Context.screen.y
 
+        primary.width = Context.screen.width
+        primary.height = Context.screen.height
+
         primary.isAlwaysOnTop = Context.screen.isAlwaysOnTop
         primary.isMaximized = Context.screen.isFullScreen
+
 
 
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"),Constant.resource)

@@ -66,8 +66,8 @@ class EmployeeDao  constructor() : CrudDao<EmployeeEntity> {
                 for (schedule in entity.schedules) {
                     connection.prepareStatement(INSERT_SCHEDULE).use { ps ->
                         ps.setInt(1, schedule.workDay)
-                        ps.setFloat(2, schedule.startHour)
-                        ps.setFloat(3, schedule.endHour)
+                        ps.setString(2, schedule.startHour)
+                        ps.setString(3, schedule.endHour)
                         ps.setLong(4, lastIdEmployeeAdded)
                         val rowCount2 = ps.executeUpdate()
                         if (rowCount2 < 0) {
