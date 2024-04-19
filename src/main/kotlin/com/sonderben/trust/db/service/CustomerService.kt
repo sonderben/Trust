@@ -26,6 +26,7 @@ class CustomerService private constructor(dao: CustomerDao) : CrudService<Custom
     }
 
 
+
     fun findByCode(code: String): Maybe<CustomerEntity> {
         return Maybe.create{emitter->
             Database.connect().use { connection ->
