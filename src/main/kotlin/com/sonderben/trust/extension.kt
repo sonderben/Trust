@@ -1,8 +1,8 @@
 package com.sonderben.trust
 
+import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.control.TextField
-import javafx.scene.layout.VBox
 import org.json.simple.JSONObject
 import java.sql.Timestamp
 import java.text.DateFormat
@@ -68,6 +68,13 @@ fun String.equalAtLeastOne(vararg strings: String,ignoreCase:Boolean=true):Boole
             return true
     }
     return false
+}
+
+fun center():Point2D {
+    val  x = HelloApplication.primary.x + (HelloApplication.primary.width/2)
+    val  y = HelloApplication.primary.y + (HelloApplication.primary.height/2)
+    println( Point2D(x,y ))
+    return Point2D(x,y)
 }
 
 

@@ -33,9 +33,8 @@ class CustomerService : Initializable, BaseController() {
 
     private var customers = CustomerService.getInstance().entities
     private var selectedCustomer: CustomerEntity? = null
-    private var customerToChangePoint: CustomerEntity? = null
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
-
+        disableQueryControlButton()
         editMenuItem()
 
         rTableview.selectionModel.selectionMode = SelectionMode.MULTIPLE
@@ -314,16 +313,16 @@ class CustomerService : Initializable, BaseController() {
             cTelTf.textTrim().isBlank() || cEmailTf.textTrim().isBlank() ||
             cDirectionTtf.textTrim().isBlank() || cPassportTf.textTrim().isBlank()
         ) {
-            ViewUtil.customAlert("Error on fields", "please make sure you fill out all the text fields.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING, "please make sure you fill out all the text fields.").show()
             return false
         }
 
         if (cGenderCb.selectionModel.selectedItem == null) {
-            ViewUtil.createAlert(Alert.AlertType.WARNING, "Error on Gender", "Please select a gender").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,  "Please select a gender").show()
             return false
         }
         if (cBirthdayDp.value == null) {
-            ViewUtil.createAlert(Alert.AlertType.WARNING, "Error on birthday", "Please select a birthday").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,  "Please select a birthday").show()
             return false
         }
 
@@ -360,7 +359,7 @@ class CustomerService : Initializable, BaseController() {
                 }
             }
         } else {
-            ViewUtil.createAlert(Alert.AlertType.WARNING, "No data", "Please select a customer first.").showAndWait()
+            ViewUtil.customAlert(ViewUtil.WARNING, "Please select a customer first.").showAndWait()
 
         }
     }
@@ -384,15 +383,15 @@ class CustomerService : Initializable, BaseController() {
                 rReasonTf.textTrim(),
                 action
             ).subscribe({
-                ViewUtil.createAlert(Alert.AlertType.INFORMATION, "Saved", "Product return with success").showAndWait()
+                ViewUtil.customAlert(ViewUtil.WARNING,  "Product return with success").showAndWait()
 
             },{
-                ViewUtil.createAlert(Alert.AlertType.WARNING, "Error", "Product don't return.").showAndWait()
+                ViewUtil.customAlert(ViewUtil.WARNING, "Product don't return.").showAndWait()
 
             })
 
         } else {
-            ViewUtil.createAlert(Alert.AlertType.WARNING, "NO item selected", "You must select some items first")
+            ViewUtil.customAlert(ViewUtil.WARNING, "You must select some items first")
                 .showAndWait()
         }
     }

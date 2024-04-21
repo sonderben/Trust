@@ -19,11 +19,11 @@
 
 <VBox fx:id="mainNode" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.Sale">
    <children>
-      <GridPane hgap="10.0" minHeight="30.0" VBox.vgrow="NEVER">
+      <GridPane hgap="10.0" maxWidth="1.7976931348623157E308" minHeight="30.0" VBox.vgrow="NEVER">
          <columnConstraints>
             <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="NEVER" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="NEVER" maxWidth="189.0" minWidth="10.0" prefWidth="189.0" />
+            <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="311.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -42,7 +42,7 @@
                   <Font size="18.0" />
                </font>
             </Text>
-            <TextField fx:id="customerCode" onKeyReleased="#onKeyReleasedCustomer" GridPane.columnIndex="1" />
+            <TextField fx:id="customerCode" onKeyReleased="#onKeyReleasedCustomer" prefHeight="28.0" prefWidth="109.0" promptText="%code" GridPane.columnIndex="1" />
          </children>
          <padding>
             <Insets left="20.0" right="20.0" />

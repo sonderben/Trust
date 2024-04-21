@@ -5,6 +5,8 @@ import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.db.service.EmployeeService
 import com.sonderben.trust.db.service.RoleService
+import com.sonderben.trust.getBoolean
+import com.sonderben.trust.getString
 import com.sonderben.trust.viewUtil.ViewUtil
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
@@ -36,8 +38,9 @@ class MainController : Initializable {
 
     override fun initialize(location: URL?, resources: ResourceBundle) {
 
-        //HelloApplication.primary.isResizable = true
-        closeSession
+
+        alwaysOnTop.isSelected = Context.readJson().getBoolean("isAlwaysOnTop")
+        changeLanguage(Context.readJson().getString("language"))
         val toolTypeCloseSession = Tooltip("Close ${Context.currentEmployee.get().userName} session")
         val tooltipHideLeftPanel = Tooltip("Close or Open navigation panel")
         Tooltip.install(hideLeftPanel, tooltipHideLeftPanel)
@@ -60,15 +63,18 @@ class MainController : Initializable {
                     "fr" -> {
                         Context.writeJson("language", "fr")
                         println("id ${menutem.id}")
+                        changeLanguage("fr")
                     }
 
                     "es" -> {
                         Context.writeJson("language", "es")
+                        changeLanguage("es")
                         println("id ${menutem.id}")
                     }
 
                     "en" -> {
                         Context.writeJson("language", "en")
+                        changeLanguage("en")
                         println("id ${menutem.id}")
                     }
 
@@ -76,6 +82,7 @@ class MainController : Initializable {
                         println("id ${menutem.id}")
                     }
                 }
+                ViewUtil.customAlert(ViewUtil.INFO,resourceBundle.getString("change_take_effect_next_start")).show()
             }
         }
 
@@ -179,6 +186,7 @@ class MainController : Initializable {
     }
 
 
+    lateinit var alwaysOnTop: CheckMenuItem
     lateinit var menuLanguage: Menu
     lateinit var hideLeftPanel: ImageView
     lateinit var closeSession: ImageView
@@ -353,6 +361,20 @@ class MainController : Initializable {
 
     fun signOutOnAction() {
         disconnectOnMouseClicked()
+    }
+
+    fun alwaysOnTopOnAction(actionEvent: ActionEvent) {
+        val checkMenuItem = alwaysOnTop
+        HelloApplication.primary.isAlwaysOnTop = checkMenuItem.isSelected
+        Context.writeJson("isAlwaysOnTop",checkMenuItem.isSelected)
+    }
+
+    fun changeLanguage(idMenuItem:String){
+        menuLanguage
+        menuLanguage.items.forEach {
+            (it as CheckMenuItem).isSelected = it.id.equals(idMenuItem)
+
+        }
     }
 
 }

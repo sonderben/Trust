@@ -14,6 +14,13 @@ import javafx.scene.layout.VBox
 abstract class BaseController {
 
     abstract fun onDestroy()
+    fun disableQueryControlButton() {
+        MainController.next!!.opacity = 0.26
+        MainController.forward!!.opacity = 0.26
+
+        MainController.next!!.isDisable = true
+        MainController.forward!!.isDisable = true
+    }
     fun clear(pane: Pane){
 
             for (node in pane.children){

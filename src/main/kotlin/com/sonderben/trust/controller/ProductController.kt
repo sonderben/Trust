@@ -29,6 +29,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
     private var currentProductSelected:ProductEntity?=null
     private val loading = ViewUtil.loadingView()
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        disableQueryControlButton()
         editMenuItem()
         MainController.hideBottomBar(false) { hideBottomPanelOnMouseClicked() }
 
@@ -179,7 +180,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
                  loading.close()
             })
         }else{
-            ViewUtil.customAlert("No product selected","Please select a product first and try again.")
+            ViewUtil.customAlert(ViewUtil.WARNING,"Please select a product first and try again.")
             .show()
         }
 
@@ -220,7 +221,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
     private fun validateProduct(employee: EmployeeEntity?, category: CategoryEntity?): Boolean {
 
         if (employee == null){
-            ViewUtil.customAlert("Can't find current employee","can't find current employee,log in again to continue saving the product.") {
+            ViewUtil.customAlert(ViewUtil.WARNING,"can't find current employee,log in again to continue saving the product.") {
                 val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
                 HelloApplication.primary.scene = Scene(fxmlLoader.load(), 720.0, 440.0)
             }
@@ -229,27 +230,27 @@ class ProductController :Initializable,MessageListener,BaseController() {
             return false
         }
         if (sellbyCb.selectionModel.selectedIndex == -1){
-            ViewUtil.customAlert("Can't find how the product sold","Please choose how the product sold.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"Please choose how the product sold.").show()
             return false
         }
         if (category == null){
-            ViewUtil.customAlert("Can't find Category","Please select a category.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"Please select a category.").show()
             return false
         }
         if (codeTf.text.isEmpty() || descriptionTf.text.isEmpty()){
-            ViewUtil.customAlert("Error on fields","please make sure you fill out all the text fields.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you fill out all the text fields.").show()
             return false
         }
 
         try {
             GregorianCalendar.from( expDateDp.value.atStartOfDay( ZoneId.systemDefault() ) )
             if (sellingTf.text.toDouble()<0 || purchaseTf.text.toDouble()<0 || purchaseTf.text.toDouble()<0 || discountTf.text.toDouble()<0 || itbisTf.text.toDouble()<0 || qtyTf.text.toInt() <= 0){
-                ViewUtil.customAlert("Error on fields","please make sure you fill out all the text fields.").show()
+                ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you fill out all the text fields.").show()
                 return false
             }
         }
         catch (e:Exception){
-            ViewUtil.customAlert("Error on fields","please make sure you fill out all the text fields with the correct info").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you fill out all the text fields with the correct info").show()
             return false
         }
         return true
@@ -288,7 +289,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
                 },{th-> println(th.message) })
             }
         }else{
-            ViewUtil.customAlert("No product selected","Please select a product first and try again.")
+            ViewUtil.customAlert(ViewUtil.WARNING,"Please select a product first and try again.")
                 .show()
         }
     }

@@ -1,5 +1,6 @@
 package com.sonderben.trust.controller.enterprise
 
+import com.sonderben.trust.controller.BaseController
 import entity.EnterpriseEntity
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
@@ -9,7 +10,7 @@ import java.net.URL
 import java.time.LocalDate
 import java.util.*
 
-class Admin :Initializable {
+class Admin :Initializable,BaseController() {
     lateinit var phoneTextField: TextField
     private var bundle:ResourceBundle?=null;
     var enterprise: EnterpriseEntity?=null
@@ -19,7 +20,7 @@ class Admin :Initializable {
              setBusiness(bundle!!)
          }
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
-
+        disableQueryControlButton()
         bundle = p1
 
         categoryChoiceBox.items.clear()
@@ -165,6 +166,10 @@ class Admin :Initializable {
             telephoneTextField.text = enterprise!!.telephone
             websiteTextField.text = enterprise!!.website
         }
+
+    }
+
+    override fun onDestroy() {
 
     }
 }

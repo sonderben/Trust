@@ -28,6 +28,13 @@
     -fx-border-radius: 10;
     -fx-text-fill: white;
 }
+
+.list-view .list-cell:even{
+    -fx-background-color: rgba(154, 154, 154, 0.13);
+}
+.list-cell{
+    -fx-control-inner-background: transparent;/*linear-gradient(from 25% 25% to 100% 100%, #032d3b,#3498db);*/
+}
 .table-view{
 
 }

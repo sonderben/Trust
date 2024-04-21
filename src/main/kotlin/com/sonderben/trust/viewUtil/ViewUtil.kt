@@ -2,6 +2,8 @@ package com.sonderben.trust.viewUtil
 
 import com.sonderben.trust.model.Technology
 import com.sonderben.trust.HelloApplication
+import com.sonderben.trust.center
+import com.sonderben.trust.constant.Constant
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
 import javafx.scene.control.*
@@ -16,15 +18,13 @@ import javafx.stage.StageStyle
 import java.util.*
 
 class ViewUtil {
+
     companion object{
-        fun createAlert(alertType: Alert.AlertType, title:String, headerText:String):Alert{
-            val alert = Alert(alertType/*Alert.AlertType.WARNING*/)
-            alert.initModality(Modality.APPLICATION_MODAL)
-            alert.initOwner(HelloApplication.primary)
-            alert.title = title
-            alert.headerText = headerText
-            return alert
-        }
+        val WARNING:Int = 2
+        val ERROR:Int = 3
+        val INFO:Int = 1
+        val SUCCESS:Int = 0
+
 
         fun loadingView():Stage{
             val loading = Stage()
@@ -45,14 +45,24 @@ class ViewUtil {
             loading.scene = scene
             loading.isAlwaysOnTop = true
 
+            val center = center()
+            val centerX = center.x
+            val centerY = center.y
+            loading.x = centerX - (loading.scene.width * 0.50)
+            loading.y = centerY - (loading.scene.height * 0.50)
+
             return loading
         }
 
         fun technology():Stage{
             val loading = Stage()
+            loading.icons.add(
+                Factory.createImage("image/shield.png")
+            )
+            loading.title = Constant.resource.getString("technologies")
 
-            val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/technologies.fxml"))
-            val vbox:AnchorPane = fxmlLoader.load()
+            val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/technologies.fxml"),Constant.resource)
+            val vbox:VBox = fxmlLoader.load()
             val listView = vbox.children.filter{it.id=="listview"}[0] as ListView<Technology>
 
 
@@ -89,23 +99,31 @@ class ViewUtil {
 
 
 
-            //loading.initOwner(HelloApplication.primary)
+            loading.initOwner(HelloApplication.primary)
             loading.initModality( Modality.APPLICATION_MODAL )
             loading.scene = scene
             loading.isAlwaysOnTop = true
 
+            val center = center()
+            val centerX = center.x
+
+            loading.x = centerX - (loading.scene.width/2)
+
             return loading
         }
 
-        fun customAlert(title:String,message:String,onClick:(()->Unit)?=null):Stage{
+        fun customAlert(alertType:Int,message:String,onClick:(()->Unit)?=null):Stage{
             val loading = Stage()
-
-            val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/customAlert.fxml"))
+            loading.icons.add(
+                Factory.createImage("image/shield.png")
+            )
+            val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/customAlert.fxml"),Constant.resource)
             val mainVbox:VBox = fxmlLoader.load()
 
 
-            //val innerVbox = (mainVbox.children[0] as VBox)
+
             val body = (mainVbox.children[0] as VBox).children[0] as Text
+            body.style = createStyle( alertType )
 
 
             body.text = message.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
@@ -118,13 +136,13 @@ class ViewUtil {
             mainVbox.style = "-fx-background-color: linear-gradient(from 25% 25% to 100% 100%, #032d3b,#3498db);"
             val scene = Scene(mainVbox, 400.0, 200.0)
 
-            //scene.fill = Color.TRANSPARENT
-            //scene.stylesheets.add("-fx-background-color:rgba(0,0,0,0.5);")
-
-
-
-            //loading.initStyle(StageStyle.UNDECORATED)
-            loading.title = title
+            val title =  when(alertType){
+                INFO->  "info"
+                WARNING->  "warning"
+                SUCCESS -> "success"
+                else->  "error"
+            }
+            loading.title = Constant.resource.getString( title )
             loading.initOwner(HelloApplication.primary)
             loading.initModality( Modality.APPLICATION_MODAL )
             loading.scene = scene
@@ -133,7 +151,23 @@ class ViewUtil {
             loading.isResizable = false
             loading.isMaximized = false
 
+            val center = center()
+            val centerX = center.x
+            val centerY = center.y
+            loading.x = centerX - (loading.scene.width/2)
+            loading.y = centerY - (loading.scene.height*0.40)
+
             return loading
+        }
+
+        private fun createStyle(alertType: Int): String {
+
+            return when(alertType){
+                INFO ->  "-fx-fill: linear-gradient(from 25% 25% to 100% 100%, #C8C8C8,#A3A3A3);"
+                WARNING -> "-fx-fill: linear-gradient(from 25% 25% to 100% 100%, #FFC62A,#C69A21);"
+                SUCCESS -> "-fx-fill: linear-gradient(from 25% 25% to 100% 100%, #289858,#1B673C);"
+                else ->  "-fx-fill: linear-gradient(from 25% 25% to 100% 100%, #FF4642,#FF5B3D);"
+            }
         }
 
 

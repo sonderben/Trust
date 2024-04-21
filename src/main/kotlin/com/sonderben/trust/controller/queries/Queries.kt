@@ -21,6 +21,11 @@ class Queries :Initializable, BaseController(),EventHandler<MouseEvent> {
         MainController.forward!!.onMouseClicked   = this
 
 
+
+        MainController.next!!.isDisable = false
+        MainController.forward!!.isDisable = false
+
+
         vboxContainer.children.forEach { node ->
             if (node is FlowPane){
                 node.children.forEach { vb ->

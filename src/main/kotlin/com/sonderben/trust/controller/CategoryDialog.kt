@@ -76,7 +76,7 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
                 },{th-> println(th.message) })
 
         }else{
-            ViewUtil.customAlert("Error", "please first select a category.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING, "please first select a category.").show()
         }
     }
 
@@ -123,14 +123,14 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
     private fun validateCategory(validateId:Boolean = false): Boolean {
         if (validateId)
             if ( categorySelected?.id == null){
-                ViewUtil.customAlert("Error", "please first select a category.").show()
+                ViewUtil.customAlert(ViewUtil.WARNING, "please first select a category.").show()
             }
 
         //////////
 
         if ( Util.areBlank( codeTf, descriptionTf, discountTf ) ){
             ViewUtil.customAlert(
-                "Error on fields",
+                ViewUtil.WARNING,
                 "please make sure you fill out all the text fields."
             ).show()
             return false

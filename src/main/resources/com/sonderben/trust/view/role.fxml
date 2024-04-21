@@ -20,9 +20,9 @@
    <children>
       <VBox fx:id="mainPane" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <TableView fx:id="tableView" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
               <columns>
-                <TableColumn fx:id="nameCol" prefWidth="75.0" text="%name" />
+                <TableColumn fx:id="nameCol" maxWidth="2000.0" prefWidth="75.0" text="%name" />
                 <TableColumn fx:id="screensCol" prefWidth="75.0" text="%screens" />
               </columns>
                <columnResizePolicy>

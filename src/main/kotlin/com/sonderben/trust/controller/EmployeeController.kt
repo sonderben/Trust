@@ -33,6 +33,7 @@ class EmployeeController : Initializable, BaseController() {
     //var scheduleEntity: Optional<List<ScheduleEntity>>?  = null
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        disableQueryControlButton()
         editMenuItem()
 
 
@@ -275,7 +276,7 @@ class EmployeeController : Initializable, BaseController() {
         try {
 
             if (employeeToSave == null || employeeToSave!!.schedules.isEmpty()) {
-                ViewUtil.createAlert(Alert.AlertType.WARNING, "Schedulers is obligatory", "Please add Scheduler")
+                ViewUtil.customAlert(ViewUtil.WARNING, "Please add Scheduler")
                     .showAndWait()
                 return false
             }
@@ -286,22 +287,22 @@ class EmployeeController : Initializable, BaseController() {
                 telephoneTextField.text.isBlank() || accountNumberTextField.text.isBlank() || userNameTextField.text.isBlank() ||
                 passwordField.text.isBlank()
             ) {
-                ViewUtil.customAlert("Error on fields", "please make sure you fill out all the text fields.").show()
+                ViewUtil.customAlert(ViewUtil.WARNING, "please make sure you fill out all the text fields.").show()
                 return false
             }
 
             if (birthdayDatePicker.value == null) {
-                ViewUtil.customAlert("Error on fields", "please enter a valid birthday.").show()
+                ViewUtil.customAlert(ViewUtil.WARNING, "please enter a valid birthday.").show()
                 return false
             }
 
 
             if (choiceBoxRole.value == null) {
-                ViewUtil.customAlert("Error on fields", "please select a role and try again.").show()
+                ViewUtil.customAlert(ViewUtil.WARNING, "please select a role and try again.").show()
                 return false
             }
         } catch (e: Exception) {
-            ViewUtil.customAlert("Error on fields", "please make sure you fill out all the text fields.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING, "please make sure you fill out all the text fields.").show()
             return false
         }
 
@@ -315,7 +316,7 @@ class EmployeeController : Initializable, BaseController() {
         if (employeeToSave != null) {
             if (validateEmployee()) {
                 if (employeeToSave!!.schedules == null || employeeToSave!!.schedules.isEmpty()) {
-                    ViewUtil.createAlert(Alert.AlertType.WARNING, "Schedulers is obligatory", "Please add Scheduler")
+                    ViewUtil.customAlert(ViewUtil.WARNING,  "Please add Scheduler")
                         .showAndWait()
                     return
                 }
@@ -341,7 +342,7 @@ class EmployeeController : Initializable, BaseController() {
                     }, { th -> println(th.message) })
             }
         } else {
-            ViewUtil.createAlert(Alert.AlertType.WARNING, "No data", "Please select a employee first.").showAndWait()
+            ViewUtil.customAlert(ViewUtil.WARNING,  "Please select a employee first.").showAndWait()
         }
 
     }

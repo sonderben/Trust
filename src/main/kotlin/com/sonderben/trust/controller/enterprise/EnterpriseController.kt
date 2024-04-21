@@ -197,56 +197,56 @@ class EnterpriseController:Initializable, BaseController() {
     }
     private fun validateEmployee():Boolean{
         if (admin!!.nameTextField.text.isBlank()){
-            ViewUtil.customAlert("Error on fields","please make sure you fill out all the text fields.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you fill out all the text fields.").show()
             return false
         }
         if (admin!!.telephoneTextField.text.isBlank()){
-            ViewUtil.customAlert("Error on fields","please make sure you enter a international phone number.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you enter a international phone number.").show()
             return false
         }
         if ( admin!!.directionTextField.text.isBlank() ){
-            ViewUtil.customAlert("Error on fields","please make sure you enter the direction.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you enter the direction.").show()
             return false
         }
         if (admin!!.foundationDatePicker.value == null){
-            ViewUtil.customAlert("Error on fields","please make sure you enter the foundation date.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you enter the foundation date.").show()
 
             return false
         }
         if (admin!!.firstNameTextField.text.isBlank()){
-            ViewUtil.customAlert("Error on fields","please enter your first name.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"please enter your first name.").show()
 
             return false
         }
         if ( admin!!.lastNameTextField.text.isBlank() ){
-            ViewUtil.customAlert("Error on fields","please enter your last name.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"please enter your last name.").show()
             return false
         }
         if ( admin!!.birthdayDatePicker.value == null ){
-            ViewUtil.customAlert("Error on fields","please enter a birthday.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"please enter a birthday.").show()
             return false
         }
         if ( admin!!.userNameTextField.text.isBlank() ){
-            ViewUtil.customAlert("Error on fields","please make sure you fill out all the text fields.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you fill out all the text fields.").show()
             return false
         }
         if ( admin!!.passwordField.text.isBlank() ){
-            ViewUtil.customAlert("Error on fields","please make sure you enter a valid password.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you enter a valid password.").show()
             return false
         }
 
         if ( admin!!.telephoneTextField.text.isBlank() ){
-            ViewUtil.customAlert("Error on fields","please enter a valid international phone number.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"please enter a valid international phone number.").show()
             return false
         }
 
         if ( admin!!.emailTextField.text.isBlank() ){
-            ViewUtil.customAlert("Error on fields","please make sure you enter a valid email.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you enter a valid email.").show()
             return false
         }
 
         if ( admin!!.choiceBoxGender.value == null ){
-            ViewUtil.customAlert("Error on fields","please make sure you select a gender.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you select a gender.").show()
             return false
         }
         return true

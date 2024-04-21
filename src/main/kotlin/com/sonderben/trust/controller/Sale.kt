@@ -37,6 +37,8 @@ import kotlin.random.nextLong
 class Sale :Initializable,MessageListener,BaseController(){
     //private var socketMesageEvent = SocketMessageEvent(this)
     private var mCurrentCustomer:CustomerEntity? = null
+    private lateinit var resourceBundle: ResourceBundle
+    private var tempCustomerCode = ""
 
     override fun onDestroy(){
 
@@ -50,9 +52,10 @@ class Sale :Initializable,MessageListener,BaseController(){
 
     }
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+    override fun initialize(location: URL?, resources: ResourceBundle) {
         //socketMesageEvent.startingListening()
-
+        resourceBundle = resources
+        disableQueryControlButton()
         editMenuItem()
         MainController.hideBottomBar(true)
 
@@ -60,6 +63,13 @@ class Sale :Initializable,MessageListener,BaseController(){
         codeProductTextField.onlyInt()
         qtyTextField//.onlyInt()
         cashTextField.onlyInt()
+
+        customerCode.focusedProperty().addListener { _, _, newValue ->
+            if (newValue && tempCustomerCode.isNotBlank() ){
+                customerCode.text = tempCustomerCode
+                customerCode.selectAll()
+            }
+        }
 
 
         qtyTotal.prefWidthProperty().bind( qtyCol.widthProperty() )
@@ -288,15 +298,17 @@ class Sale :Initializable,MessageListener,BaseController(){
                             CustomerService.getInstance().updatePoint(mCurrentCustomer!!.id, point)
                                 .subscribe( {
                                     mCurrentCustomer = null
+                                    tempCustomerCode = ""
                                 },{
                                     mCurrentCustomer = null
+                                    tempCustomerCode = ""
                                     println( it.message )
                                 } )
 
 
 
                     load.close()
-                        ViewUtil.createAlert(Alert.AlertType.CONFIRMATION,"Payment","Pay with success").showAndWait()
+                        ViewUtil.customAlert(ViewUtil.SUCCESS,"Pay with success").showAndWait()
                         clearAll()
                         customerCode.requestFocus()
 
@@ -309,11 +321,11 @@ class Sale :Initializable,MessageListener,BaseController(){
 
     private fun validatePayment(): Boolean {
         if (mProducts.isEmpty()){
-            ViewUtil.createAlert(Alert.AlertType.WARNING,"No Products","There is no products to pay").showAndWait()
+            ViewUtil.customAlert(ViewUtil.WARNING,"There is no products to pay").showAndWait()
             return false
         }
         if (cashTextField.text.isBlank() || cashTextField.text.toDouble()<grandTotal.text.toDouble() ){
-            ViewUtil.createAlert(Alert.AlertType.WARNING,"Invalid Data","Cash must be greater than grand total").showAndWait()
+            ViewUtil.customAlert(ViewUtil.ERROR,"Cash must be greater than grand total").showAndWait()
             return false
         }
         return true
@@ -334,12 +346,13 @@ class Sale :Initializable,MessageListener,BaseController(){
 
         if (event.code.equals( KeyCode.ENTER )){
 
-            var code = (event.source as TextField).text
+            var code = customerCode.text
+            tempCustomerCode = code
             code = code.padStart(12,'0')
 
              CustomerService.getInstance().findByCode(code)
                 .subscribe{
-                    (event.source as TextField).text = it.fullName
+                    customerCode.text = if (it.code!=null) it.fullName else resourceBundle.getString("not_found")
                 }
 
 
@@ -427,9 +440,8 @@ class Sale :Initializable,MessageListener,BaseController(){
                    },
                      {
 
-                     ViewUtil.createAlert(
-                         Alert.AlertType.WARNING,
-                         "Product not found",
+                     ViewUtil.customAlert(
+                         ViewUtil.WARNING,
                          "code prod. : $tempCode"
                      ).showAndWait()
 
@@ -448,18 +460,16 @@ class Sale :Initializable,MessageListener,BaseController(){
         val qtyBought = mProducts.filtered { it.code.equals( codeProduct ) }.sumOf { it.qty.toInt() }
 
         if (productQty<qtyBought+qtyWantBye){
-            ViewUtil.createAlert(
-                Alert.AlertType.INFORMATION,
-                "Quantity don't enough",
-                "There is only: $productQty and you already bought $qtyBought"
+            ViewUtil.customAlert(
+                ViewUtil.WARNING,
+                "Quantity don't enough,there is only: $productQty and you already bought $qtyBought"
             ).showAndWait()
             return false
         }
         if (sellBy.equals("unit",true)){
             if(qtyWantBye % 1>0){
-                ViewUtil.createAlert(
-                    Alert.AlertType.WARNING,
-                    "Bad data",
+                ViewUtil.customAlert(
+                    ViewUtil.WARNING,
                     "This product is sold per unit."
                 ).showAndWait()
                 return false

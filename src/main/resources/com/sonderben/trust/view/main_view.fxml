@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -15,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="borderpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.MainController">
+<BorderPane fx:id="borderpane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.MainController">
    <center>
       <StackPane fx:id="stackPane" prefHeight="150.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <padding>
@@ -160,9 +161,9 @@
                     <MenuItem mnemonicParsing="false" onAction="#signOutOnAction" text="Sign out" />
                         <Menu fx:id="menuLanguage" mnemonicParsing="false" text="Language">
                           <items>
-                            <MenuItem fx:id="en" mnemonicParsing="false" text="English" />
-                              <MenuItem fx:id="es" mnemonicParsing="false" text="Spanish" />
-                              <MenuItem fx:id="fr" mnemonicParsing="false" text="French" />
+                              <CheckMenuItem fx:id="en" mnemonicParsing="false" text="%english" />
+                              <CheckMenuItem fx:id="es" mnemonicParsing="false" text="%spanish" />
+                              <CheckMenuItem fx:id="fr" mnemonicParsing="false" text="%french" />
                           </items>
                         </Menu>
                         <MenuItem mnemonicParsing="false" onAction="#editCredentialMenutitemOnAction" text="Edit credential" />
@@ -184,6 +185,7 @@
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="B" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                            </accelerator></MenuItem>
+                        <CheckMenuItem fx:id="alwaysOnTop" mnemonicParsing="false" onAction="#alwaysOnTopOnAction" text="%always_on_top" />
                      </items>
                   </Menu>
                 <Menu mnemonicParsing="false" text="%help">
@@ -236,7 +238,7 @@
                   </HBox>
                   <ImageView fx:id="closeSession" fitHeight="17.0" fitWidth="17.0" layoutX="100.0" layoutY="15.0" onMouseClicked="#disconnectOnMouseClicked" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../image/logout.PNG" />
+                        <Image url="@../image/logout.png" />
                      </image>
                   </ImageView>
                </children>

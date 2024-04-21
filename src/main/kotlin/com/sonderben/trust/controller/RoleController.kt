@@ -30,7 +30,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
     lateinit var mainPane: VBox
     private var roleSelectedOrToSave: Role? = null
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-
+        disableQueryControlButton()
         editMenuItem()
         MainController.hideBottomBar(false) {
             hideBottomPanelOnMouseClicked()
@@ -199,18 +199,18 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
         if (validateId) {
             if (roleSelectedOrToSave?.id == null) {
 
-                ViewUtil.customAlert("Error", "please first select a role.").show()
+                ViewUtil.customAlert(ViewUtil.WARNING, "please first select a role.").show()
                 return false
             } else if (roleSelectedOrToSave!!.name.trim().equalAtLeastOne("admin", "seller", ignoreCase = true)) {
 
-                ViewUtil.customAlert("Error", "Role \"Admin\" and \"Seller\" can't be update or delete.").show()
+                ViewUtil.customAlert(ViewUtil.WARNING, "Role \"Admin\" and \"Seller\" can't be update or delete.").show()
                 return false
             }
 
         }
         if (Util.areBlank(nameTf) || gridPaneScreen.children.filtered { (it as RDButton).isChecked }.isEmpty()) {
             ViewUtil.customAlert(
-                "Error",
+                ViewUtil.WARNING,
                 "please select at least one screen authorization and fill out the name field."
             ).show()
 
