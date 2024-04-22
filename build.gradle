@@ -67,12 +67,12 @@ dependencies {
 
 }
 
-/*jar {
+jar {
     //duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest{
-        attributes 'Main-class': 'com.sonderben.trust.HelloApplication'
+        attributes 'Main-class': 'com.sonderben.trust.EntryPoint'
     }
-}*/
+}
 test {
     useJUnitPlatform()
 }
