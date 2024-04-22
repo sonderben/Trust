@@ -8,6 +8,7 @@ import com.sonderben.trust.changeVisibility
 import com.sonderben.trust.db.service.RoleService
 import com.sonderben.trust.equalAtLeastOne
 import com.sonderben.trust.viewUtil.ViewUtil
+import entity.EmployeeEntity
 import entity.Role
 import javafx.beans.property.SimpleStringProperty
 import javafx.beans.value.ChangeListener
@@ -36,7 +37,8 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
             hideBottomPanelOnMouseClicked()
         }
 
-        val listScreen = Context.currentEmployee.get().role.screens //ScreenEnum.values().toList()
+        val listScreen = Context.currentEmployee.get().role.screens
+
         gridPaneScreen.children.clear()
 
 
@@ -46,8 +48,6 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
                 if (index >= listScreen.size   ){
                     break
                 }
-
-
                     val radioButton = RDButton(listScreen[index])
                     radioButton.onMouseClicked = this
                     gridPaneScreen.children.add(radioButton)
@@ -71,6 +71,17 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
 
         tableView.items = RoleService.getInstance().entities
 
+        if (Context.currentEmployee.get().isAdmin){
+            val role = Context.currentEmployee.get().role
+            if ( !tableView.items.contains( role ) ){
+                tableView.items.add( role )
+
+                if ( tableView.items.size > 1 )
+                    Collections.swap( tableView.items,tableView.items.size-1,0 )
+            }
+        }
+
+
 
         tableView.selectionModel.selectedIndices.addListener(ListChangeListener { change ->
             if (change.list.isEmpty()) {
@@ -85,13 +96,14 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
         tableView.selectionModel.selectedItemProperty().addListener(object : ChangeListener<Role> {
             override fun changed(observable: ObservableValue<out Role>?, oldValue: Role?, newValue: Role?) {
                 if (newValue != null) {
+                    roleSelectedOrToSave = newValue
                     clearRDButtons()
 
                     if (!bottomPanelVBOx.isVisible) {
                         bottomPanelVBOx.changeVisibility()
                     }
 
-                    roleSelectedOrToSave = newValue
+
                     nameTf.text = newValue.name
 
                     for (screen in newValue.screens) {
@@ -101,6 +113,11 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
                             (it as RDButton).select()
                         }
                     }
+
+
+
+
+
                 }
             }
         })
@@ -167,11 +184,15 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
 
 
         if (validateRole()) {
-            val rdButtonsChecked: FilteredList<Node> = gridPaneScreen.children.filtered { (it as RDButton).isChecked }
+            if ( !nameTf.text.equals("admin",true) && !nameTf.text.equals("seller",true) ){
+                val rdButtonsChecked: FilteredList<Node> = gridPaneScreen.children.filtered { (it as RDButton).isSelected }
 
-            RoleService.getInstance().save(Role(nameTf.text, rdButtonsChecked.map { (it as RDButton).screen }.toMutableList())).subscribe({
-                clearRDButtons()
-            }, { th -> println("error: $th") })
+                RoleService.getInstance().save(Role(nameTf.text, rdButtonsChecked.map { (it as RDButton).screen }.toMutableList())).subscribe({
+                    clearRDButtons()
+                }, { th -> println("error: $th") })
+            }else{
+                ViewUtil.customAlert(ViewUtil.WARNING,"Admin or seller are reserved words, you can not use them.").show()
+            }
         }
 
 
@@ -181,7 +202,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
     fun onUpdateRole() {
         println("validate: "+ validateRole(true))
         if ( validateRole(true) ) {
-            val rdButtonsChecked: FilteredList<Node> = gridPaneScreen.children.filtered { (it as RDButton).isChecked }
+            val rdButtonsChecked: FilteredList<Node> = gridPaneScreen.children.filtered { (it as RDButton).isSelected }
 
 
             roleSelectedOrToSave!!.apply {
@@ -197,21 +218,21 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
     private fun validateRole(validateId: Boolean = false): Boolean {
 
         if (validateId) {
-            if (roleSelectedOrToSave?.id == null) {
+            if ( roleSelectedOrToSave?.id == null && !roleSelectedOrToSave?.name.equals("admin",true)) {
 
                 ViewUtil.customAlert(ViewUtil.WARNING, "please first select a role.").show()
                 return false
             } else if (roleSelectedOrToSave!!.name.trim().equalAtLeastOne("admin", "seller", ignoreCase = true)) {
 
-                ViewUtil.customAlert(ViewUtil.WARNING, "Role \"Admin\" and \"Seller\" can't be update or delete.").show()
+                ViewUtil.customAlert(ViewUtil.INFO, "Role \"Admin\" and \"Seller\" can't be update or delete.").show()
                 return false
             }
 
         }
-        if (Util.areBlank(nameTf) || gridPaneScreen.children.filtered { (it as RDButton).isChecked }.isEmpty()) {
+        if (Util.areBlank(nameTf) || gridPaneScreen.children.filtered { (it as RDButton).isSelected }.isEmpty()) {
             ViewUtil.customAlert(
                 ViewUtil.WARNING,
-                "please select at least one screen authorization and fill out the name field."
+                "Please select at least one screen authorization and fill out the name field."
             ).show()
 
             return false
@@ -222,7 +243,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
 
     @FXML
     fun onDeleteRole() {
-        if (validateRole()) {
+        if (validateRole(true)) {
 
             RoleService.getInstance().delete(roleSelectedOrToSave!!.id)
                 .subscribe({ clearAll() }, { th -> println(th.message) })

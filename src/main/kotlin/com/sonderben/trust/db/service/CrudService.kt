@@ -14,7 +14,7 @@ import javafx.collections.ObservableList
 abstract class CrudService<T : CrudDao<E>, E : BaseEntity>(var dao: T) {
 
 
-    public val entities: ObservableList<E> = FXCollections.observableArrayList(dao.findAll())
+    val entities: ObservableList<E> = FXCollections.observableArrayList(dao.findAll())
     fun save(entity: E): Completable {
         return Completable.create { emitter ->
             Database.connect().use { connection ->

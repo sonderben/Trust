@@ -4,7 +4,7 @@ import com.sonderben.trust.constant.Constant
 import com.sonderben.trust.constant.ScreenEnum
 import javafx.scene.control.RadioButton
 
-class RDButton(var screen:ScreenEnum, var isChecked:Boolean = false): RadioButton( Constant.resource.getString(screen.name.lowercase()) ) {
+class RDButton(var screen:ScreenEnum,  isChecked:Boolean = false): RadioButton( Constant.resource.getString(screen.name.lowercase()) ) {
 
 
     init {

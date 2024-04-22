@@ -82,6 +82,6 @@ class HelloApplication : Application() {
     }
 }
 
-fun main() {
+/*fun main() {
     Application.launch(HelloApplication::class.java)
-}
+}*/

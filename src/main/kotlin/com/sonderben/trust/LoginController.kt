@@ -10,6 +10,8 @@ import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.Scene
 import javafx.scene.control.*
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import java.net.URL
 import java.util.*
 import javax.script.ScriptEngineManager
@@ -35,7 +37,7 @@ class LoginController : Initializable{
 
     @FXML
     fun onLoginButtonClick() {
-        Locale.setDefault( Locale.FRENCH )
+
 
         val loading = ViewUtil.loadingView()
         loading.show()
@@ -96,6 +98,16 @@ class LoginController : Initializable{
         }
 
 
+    }
+
+    fun passwordOnReleased(keyEvent: KeyEvent) {
+        if (keyEvent.code.equals( KeyCode.ENTER ))
+            onLoginButtonClick()
+    }
+
+    fun userNameOnReleased(keyEvent: KeyEvent) {
+        if (keyEvent.code.equals( KeyCode.ENTER ))
+            password.requestFocus()
     }
 
 

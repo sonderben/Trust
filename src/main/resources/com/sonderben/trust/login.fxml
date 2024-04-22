@@ -13,8 +13,8 @@
    <center>
       <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="300.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="300.0" spacing="30.0" styleClass="login" BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="userNameTextField" focusTraversable="false" minHeight="45.0" promptText="%username" text="root" />
-            <PasswordField fx:id="password" promptText="%password" text="1234" />
+            <TextField fx:id="userNameTextField" minHeight="45.0" onKeyReleased="#userNameOnReleased" promptText="%username" />
+            <PasswordField fx:id="password" onKeyReleased="#passwordOnReleased" promptText="%password" />
             <Button fx:id="login" disable="true" maxWidth="1.7976931348623157E308" minHeight="45.0" mnemonicParsing="false" onAction="#onLoginButtonClick" text="%sign_in" />
             <Label fx:id="infoLabel" maxWidth="1.7976931348623157E308" text="Label" visible="false">
                <VBox.margin>

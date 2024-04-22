@@ -13,7 +13,7 @@ class AuthentificationDao {
                 val adms = admDao.findAll()
 
                 if ( adms.isNotEmpty() && adms[0].password.equals( password )){
-                    return adms[0]
+                    return adms[ 0 ]
                 }
             }else{
                 connection.prepareStatement(SqlDml.EMPLOYEE_LOGIN).use { preparedStatement ->

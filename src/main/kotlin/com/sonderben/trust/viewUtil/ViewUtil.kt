@@ -157,6 +157,9 @@ class ViewUtil {
             loading.x = centerX - (loading.scene.width/2)
             loading.y = centerY - (loading.scene.height*0.40)
 
+            btn.requestFocus()
+
+
             return loading
         }
 
