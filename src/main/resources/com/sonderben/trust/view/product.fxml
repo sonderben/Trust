@@ -13,15 +13,26 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.ProductController">
+<VBox fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.ProductController">
    <children>
       <HBox alignment="CENTER_LEFT" minHeight="30.0" prefHeight="30.0" prefWidth="200.0" VBox.vgrow="NEVER">
          <children>
-            <Label onMouseClicked="#goToCategoryOnMouseClicked" text="Go categories" textFill="WHITE" underline="true" />
+            <TextField prefWidth="200.0" promptText="%search" />
+            <Button mnemonicParsing="false" text="%search">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Button>
+            <Pane maxHeight="1.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+            <Label onMouseClicked="#goToCategoryOnMouseClicked" text="%category" textFill="WHITE" underline="true" />
          </children>
+         <VBox.margin>
+            <Insets bottom="10.0" left="5.0" right="5.0" top="2.0" />
+         </VBox.margin>
       </HBox>
       <TableView fx:id="tableView" editable="true" minHeight="50.0" VBox.vgrow="SOMETIMES">
          <columns>

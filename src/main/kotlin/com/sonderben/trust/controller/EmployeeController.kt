@@ -29,12 +29,15 @@ import java.util.*
 class EmployeeController : Initializable, BaseController() {
     @FXML
     lateinit var mainPane: VBox
-    var days = arrayListOf<String>("Lunes", "Martes", "Miercroles", "Jueves", "Viernes", "Sabado", "Domingo")
-    //var scheduleEntity: Optional<List<ScheduleEntity>>?  = null
+    lateinit var days:ArrayList<String>
+    lateinit var resources: ResourceBundle
 
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+
+    override fun initialize(location: URL?, resourceBundle: ResourceBundle) {
+        resources=resourceBundle
         disableQueryControlButton()
         editMenuItem()
+        days = resources.getString("days").split(",") as ArrayList<String>
 
 
         userTableView.selectionModel.selectedIndices.addListener(ListChangeListener { change ->
@@ -276,7 +279,7 @@ class EmployeeController : Initializable, BaseController() {
         try {
 
             if (employeeToSave == null || employeeToSave!!.schedules.isEmpty()) {
-                ViewUtil.customAlert(ViewUtil.WARNING, "Please add Scheduler")
+                ViewUtil.customAlert(ViewUtil.WARNING, resources.getString("please_add_scheduler"))
                     .showAndWait()
                 return false
             }
@@ -287,22 +290,22 @@ class EmployeeController : Initializable, BaseController() {
                 telephoneTextField.text.isBlank() || accountNumberTextField.text.isBlank() || userNameTextField.text.isBlank() ||
                 passwordField.text.isBlank()
             ) {
-                ViewUtil.customAlert(ViewUtil.WARNING, "please make sure you fill out all the text fields.").show()
+                ViewUtil.customAlert(ViewUtil.WARNING, resources.getString("fill_all_text_fields")).show()
                 return false
             }
 
             if (birthdayDatePicker.value == null) {
-                ViewUtil.customAlert(ViewUtil.WARNING, "please enter a valid birthday.").show()
+                ViewUtil.customAlert(ViewUtil.WARNING, resources.getString("please_enter_birthday")).show()
                 return false
             }
 
 
             if (choiceBoxRole.value == null) {
-                ViewUtil.customAlert(ViewUtil.WARNING, "please select a role and try again.").show()
+                ViewUtil.customAlert(ViewUtil.WARNING, resources.getString("please_select_role")).show()
                 return false
             }
         } catch (e: Exception) {
-            ViewUtil.customAlert(ViewUtil.WARNING, "please make sure you fill out all the text fields.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING, resources.getString("fill_all_text_fields")).show()
             return false
         }
 
@@ -316,7 +319,7 @@ class EmployeeController : Initializable, BaseController() {
         if (employeeToSave != null) {
             if (validateEmployee()) {
                 if (employeeToSave!!.schedules == null || employeeToSave!!.schedules.isEmpty()) {
-                    ViewUtil.customAlert(ViewUtil.WARNING,  "Please add Scheduler")
+                    ViewUtil.customAlert(ViewUtil.WARNING,  resources.getString("please_add_scheduler"))
                         .showAndWait()
                     return
                 }
@@ -342,7 +345,7 @@ class EmployeeController : Initializable, BaseController() {
                     }, { th -> println(th.message) })
             }
         } else {
-            ViewUtil.customAlert(ViewUtil.WARNING,  "Please select a employee first.").showAndWait()
+            ViewUtil.customAlert(ViewUtil.WARNING,  resources.getString("please_select_employee")).showAndWait()
         }
 
     }
@@ -370,7 +373,7 @@ class EmployeeController : Initializable, BaseController() {
 
     class RoleStringConverter : StringConverter<Role>() {
         override fun toString(`object`: Role?): String {
-            return `object`?.name ?: "Select a Role"
+            return `object`?.name ?: Constant.resource.getString("select_role")
         }
 
         override fun fromString(string: String?): Role? {
@@ -461,12 +464,7 @@ class EmployeeController : Initializable, BaseController() {
             )
             if ( tableView.items.any { it.idEmployee.equals( Context.currentEmployee.get().id ) } ) {
                 ScheduleService.getInstance().save(
-                    /*ScheduleEntity(
-                        Context.currentEmployee.get().id,
-                        null,
-                        dayChoicebox.items.indexOf(dayChoicebox.value),
-                        "${cbStartHour.value}.${cbStartMin.value}", "${cbEndHour.value}.${cbEndMin.value}"
-                    )*/ schedule
+                    schedule
                 ).subscribe({  tableView.items.add(schedule);clear() }, { th -> println(th.message) })
             }else{
 
@@ -566,20 +564,20 @@ class EmployeeController : Initializable, BaseController() {
         MainController.editMenu?.items?.clear()
 
 
-        val saveMenuItem = MenuItem("Save")
+        val saveMenuItem = MenuItem(resources.getString("save"))
         saveMenuItem.setOnAction {
 
         }
-        val updateMenuItems = MenuItem("Update")
+        val updateMenuItems = MenuItem(resources.getString("update"))
         updateMenuItems.setOnAction {
 
         }
 
-        val deleteMenuItems = MenuItem("Delete")
+        val deleteMenuItems = MenuItem(resources.getString("delete"))
         deleteMenuItems.setOnAction {
 
         }
-        val clearMenuItems = MenuItem("Clear")
+        val clearMenuItems = MenuItem(resources.getString("clear"))
         clearMenuItems.setOnAction {
             clear(mainPane)
         }

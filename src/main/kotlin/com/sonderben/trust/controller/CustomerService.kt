@@ -21,6 +21,7 @@ import java.util.*
 import kotlin.collections.List
 
 class CustomerService : Initializable, BaseController() {
+    lateinit var customerBottomPanelVBOx: VBox
     lateinit var tabPane: TabPane
     lateinit var changePointTab: Tab
     lateinit var returnProductTab: Tab
@@ -30,12 +31,21 @@ class CustomerService : Initializable, BaseController() {
     lateinit var returnProductMainPane: VBox
     lateinit var customerMainPane: VBox
 
+    lateinit var resource:ResourceBundle
+
 
     private var customers = CustomerService.getInstance().entities
     private var selectedCustomer: CustomerEntity? = null
-    override fun initialize(p0: URL?, p1: ResourceBundle?) {
+    override fun initialize(p0: URL?, resourceBundle:  ResourceBundle) {
+        resource=resourceBundle
         disableQueryControlButton()
         editMenuItem()
+
+        MainController.hideBottomBar(false) { hideBottomPanelOnMouseClicked() }
+
+        tabPane.selectionModel.selectedIndexProperty().addListener { _, _, number2 ->
+            MainController.bottomBarMenuItem?.isDisable = number2.toInt() != 0
+        }
 
         rTableview.selectionModel.selectionMode = SelectionMode.MULTIPLE
 
@@ -95,24 +105,26 @@ class CustomerService : Initializable, BaseController() {
 
     }
 
+
+
     private fun editMenuItem() {
         MainController.editMenu?.items?.clear()
 
 
-        val saveMenuItem = MenuItem("Save")
+        val saveMenuItem = MenuItem(resource.getString("save"))
         saveMenuItem.setOnAction {
 
         }
-        val updateMenuItems = MenuItem("Update")
+        val updateMenuItems = MenuItem(resource.getString("update"))
         updateMenuItems.setOnAction {
 
         }
 
-        val deleteMenuItems = MenuItem("Delete")
+        val deleteMenuItems = MenuItem(resource.getString("delete"))
         deleteMenuItems.setOnAction {
 
         }
-        val clearMenuItems = MenuItem("Clear")
+        val clearMenuItems = MenuItem(resource.getString("clear"))
         clearMenuItems.setOnAction {
             clear()
         }
@@ -437,5 +449,9 @@ class CustomerService : Initializable, BaseController() {
 
     fun cpOnClear() {
         clear()
+    }
+
+    fun hideBottomPanelOnMouseClicked() {
+        customerBottomPanelVBOx.changeVisibility()
     }
 }

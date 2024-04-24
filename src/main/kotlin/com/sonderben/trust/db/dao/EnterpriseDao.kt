@@ -15,19 +15,14 @@ import java.util.*
 class EnterpriseDao : CrudDao<EnterpriseEntity> {
 
 
-    /*init {
-        try {
-            findAll()
-        } catch (_: Exception) {
-        }
-    }*/
+
 
     /**
      * create  default role,category,customer in this order.
      */
     private fun createDefaultEntity(connection: Connection) {
         val defaultCustomer = CustomerEntity("0000", "Default", "0000", "Customer",
-            "No binary", "0000", "", "0000", Calendar.getInstance(), 0)
+            "No binary", "0000", "0000", "0000", Calendar.getInstance(), 0)
 
         val defaultSellerRole = Role("Seller", mutableListOf(ScreenEnum.SALE))
 

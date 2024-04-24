@@ -3,6 +3,7 @@ package com.sonderben.trust.controller
 import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.changeVisibility
+import com.sonderben.trust.constant.Constant
 import com.sonderben.trust.db.service.EmployeeService
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -16,18 +17,19 @@ import java.util.*
 
 class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
 
-    var isSave = false
+    private var isSave = false
+    private val resource = Constant.resource
     init {
 
 
 
 
-        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/EditCredentialDialog.fxml"))
+        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/editCredentialDialog.fxml"))
         fxmlLoader.setController(this)
         try {
             dialogPane = fxmlLoader.load()
             
-            val cancel = ButtonType("Cancel", ButtonBar.ButtonData.APPLY)
+            val cancel = ButtonType(resource.getString("cancel"), ButtonBar.ButtonData.APPLY)
             dialogPane.buttonTypes.addAll( cancel )
 
             resultConverter = Callback { param  ->
@@ -45,6 +47,7 @@ class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
 
     }
     override fun initialize(p0: URL?, p1: ResourceBundle?) {
+
         labelInfo.text = ""
         username.text = Context.currentEmployee.get().userName
         if(Context.currentEmployee.get().userName.equals("root")){
@@ -83,15 +86,15 @@ class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
     private fun validateCredential(): Boolean {
         labelInfo.textFill = Color.ORANGE
         if (!currentPwd.text.equals(Context.currentEmployee.get().password)){
-            labelInfo.text = "The current password is wrong"
+            labelInfo.text = resource.getString("current_pwd_wrong")
             return false
         }
         if ( currentPwd.text.isBlank() || newPwd.text.isBlank() || confirmPwd.text.isBlank() ){
-            labelInfo.text = "Please make sure you fill out all the text fields."
+            labelInfo.text = resource.getString("fill_all_text_fields")
             return false
         }
         if ( !newPwd.text.equals( confirmPwd.text ) ){
-            labelInfo.text = "The new password is different with the confirmation password."
+            labelInfo.text = resource.getString("new_pwd_different_with_confirmation_pwd")
             return false
         }
         labelInfo.text = ""
@@ -100,7 +103,7 @@ class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
 
     private fun vali() {
         labelInfo.textFill = Color.LIGHTGREEN
-        labelInfo.text = "Credential update with success."
+        labelInfo.text = resource.getString("Credential_update_success")
         newPwd.changeVisibility()
         currentPwd.changeVisibility()
         confirmPwd.changeVisibility()

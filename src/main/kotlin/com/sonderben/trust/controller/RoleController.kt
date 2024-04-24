@@ -30,7 +30,9 @@ import java.util.*
 class RoleController : Initializable, BaseController(), EventHandler<MouseEvent> {
     lateinit var mainPane: VBox
     private var roleSelectedOrToSave: Role? = null
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+    lateinit var resources: ResourceBundle
+    override fun initialize(location: URL?, resourceBundle: ResourceBundle) {
+        resources = resourceBundle
         disableQueryControlButton()
         editMenuItem()
         MainController.hideBottomBar(false) {
@@ -191,7 +193,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
                     clearRDButtons()
                 }, { th -> println("error: $th") })
             }else{
-                ViewUtil.customAlert(ViewUtil.WARNING,"Admin or seller are reserved words, you can not use them.").show()
+                ViewUtil.customAlert(ViewUtil.WARNING,resources.getString("Admin_seller_cannot_use")).show()
             }
         }
 
@@ -220,11 +222,11 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
         if (validateId) {
             if ( roleSelectedOrToSave?.id == null && !roleSelectedOrToSave?.name.equals("admin",true)) {
 
-                ViewUtil.customAlert(ViewUtil.WARNING, "please first select a role.").show()
+                ViewUtil.customAlert(ViewUtil.WARNING, resources.getString("please_select_role")).show()
                 return false
             } else if (roleSelectedOrToSave!!.name.trim().equalAtLeastOne("admin", "seller", ignoreCase = true)) {
 
-                ViewUtil.customAlert(ViewUtil.INFO, "Role \"Admin\" and \"Seller\" can't be update or delete.").show()
+                ViewUtil.customAlert(ViewUtil.INFO, resources.getString("Admin_seller_cannot_update")).show()
                 return false
             }
 
@@ -232,7 +234,7 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
         if (Util.areBlank(nameTf) || gridPaneScreen.children.filtered { (it as RDButton).isSelected }.isEmpty()) {
             ViewUtil.customAlert(
                 ViewUtil.WARNING,
-                "Please select at least one screen authorization and fill out the name field."
+                resources.getString("please_select_screen_fill_name")
             ).show()
 
             return false
@@ -265,20 +267,20 @@ class RoleController : Initializable, BaseController(), EventHandler<MouseEvent>
         MainController.editMenu?.items?.clear()
 
 
-        val saveMenuItem = MenuItem("Save")
+        val saveMenuItem = MenuItem(resources.getString("save"))
         saveMenuItem.setOnAction {
             onSaveRole()
         }
-        val updateMenuItems = MenuItem("Update")
+        val updateMenuItems = MenuItem(resources.getString("update"))
         updateMenuItems.setOnAction {
             onUpdateRole()
         }
 
-        val deleteMenuItems = MenuItem("Delete")
+        val deleteMenuItems = MenuItem(resources.getString("delete"))
         deleteMenuItems.setOnAction {
             onDeleteRole()
         }
-        val clearMenuItems = MenuItem("Clear")
+        val clearMenuItems = MenuItem(resources.getString("clear"))
         clearMenuItems.setOnAction {
             clearAll()
         }

@@ -63,10 +63,7 @@ class EnterpriseController:Initializable, BaseController() {
         saveMenuItem.setOnAction {
             onSave()
         }
-        /*val updateMenuItems = MenuItem("Update")
-        updateMenuItems.setOnAction {
 
-        }*/
 
 
         val clearMenuItems = MenuItem("Clear")
@@ -94,12 +91,12 @@ class EnterpriseController:Initializable, BaseController() {
     private var enterpriseInfo:Node?=null
     private var invoice:Node?=null
     private fun createPage(index :Int):Node{
-        val resourcesBundle = Constant.resource //ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
+
         val fxmlLoader: FXMLLoader
         when(index){
             0 -> {
                if(nodeAdmin==null){
-                    fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/config/admin.fxml"),resourcesBundle)
+                    fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/config/admin.fxml"),resourceBundle)
                    nodeAdmin = fxmlLoader.load<Node>()
                    admin = fxmlLoader.getController()
                    admin?.enterprise = enterprise
@@ -110,7 +107,7 @@ class EnterpriseController:Initializable, BaseController() {
             }
             else -> {
                 if (invoice==null){
-                     fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/config/invoice.fxml"),resourcesBundle)
+                     fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/config/invoice.fxml"),resourceBundle)
                     invoice = fxmlLoader.load<Node>()
                     invoiceController?.enterprise = enterprise
                 }
@@ -197,56 +194,56 @@ class EnterpriseController:Initializable, BaseController() {
     }
     private fun validateEmployee():Boolean{
         if (admin!!.nameTextField.text.isBlank()){
-            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you fill out all the text fields.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("fill_all_text_fields")).show()
             return false
         }
         if (admin!!.telephoneTextField.text.isBlank()){
-            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you enter a international phone number.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_enter_international_phone")).show()
             return false
         }
         if ( admin!!.directionTextField.text.isBlank() ){
-            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you enter the direction.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_enter_direction")).show()
             return false
         }
         if (admin!!.foundationDatePicker.value == null){
-            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you enter the foundation date.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_enter_foundation_date")).show()
 
             return false
         }
         if (admin!!.firstNameTextField.text.isBlank()){
-            ViewUtil.customAlert(ViewUtil.WARNING,"please enter your first name.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_enter_first_name")).show()
 
             return false
         }
         if ( admin!!.lastNameTextField.text.isBlank() ){
-            ViewUtil.customAlert(ViewUtil.WARNING,"please enter your last name.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_enter_lastname")).show()
             return false
         }
         if ( admin!!.birthdayDatePicker.value == null ){
-            ViewUtil.customAlert(ViewUtil.WARNING,"please enter a birthday.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_enter_birthday")).show()
             return false
         }
         if ( admin!!.userNameTextField.text.isBlank() ){
-            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you fill out all the text fields.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_enter_username")).show()
             return false
         }
         if ( admin!!.passwordField.text.isBlank() ){
-            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you enter a valid password.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_enter_valid_password")).show()
             return false
         }
 
         if ( admin!!.telephoneTextField.text.isBlank() ){
-            ViewUtil.customAlert(ViewUtil.WARNING,"please enter a valid international phone number.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_enter_international_phone")).show()
             return false
         }
 
         if ( admin!!.emailTextField.text.isBlank() ){
-            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you enter a valid email.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_enter_email")).show()
             return false
         }
 
         if ( admin!!.choiceBoxGender.value == null ){
-            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you select a gender.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_select_gender")).show()
             return false
         }
         return true

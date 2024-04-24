@@ -25,9 +25,10 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
     private var categoriesChanged:List<CategoryEntity> = mutableListOf()
 
     private var categorySelected:CategoryEntity?=null
+    val resource = Constant.resource
     init {
 
-        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/GoToCategoryDialog.fxml"),Constant.resource)
+        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/GoToCategoryDialog.fxml"),resource)
         fxmlLoader.setController(this)
         try {
             dialogPane = fxmlLoader.load()
@@ -76,7 +77,7 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
                 },{th-> println(th.message) })
 
         }else{
-            ViewUtil.customAlert(ViewUtil.WARNING, "please first select a category.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING, resource.getString("please_select_category")).show()
         }
     }
 
@@ -123,7 +124,7 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
     private fun validateCategory(validateId:Boolean = false): Boolean {
         if (validateId)
             if ( categorySelected?.id == null){
-                ViewUtil.customAlert(ViewUtil.WARNING, "please first select a category.").show()
+                ViewUtil.customAlert(ViewUtil.WARNING, resource.getString("please_select_category")).show()
             }
 
         //////////
@@ -131,7 +132,7 @@ class CategoryDialog : Dialog< List<CategoryEntity> >(), Initializable {
         if ( Util.areBlank( codeTf, descriptionTf, discountTf ) ){
             ViewUtil.customAlert(
                 ViewUtil.WARNING,
-                "please make sure you fill out all the text fields."
+                resource.getString("fill_all_text_fields")
             ).show()
             return false
         }

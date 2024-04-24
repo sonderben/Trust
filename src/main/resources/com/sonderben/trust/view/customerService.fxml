@@ -14,6 +14,8 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -22,7 +24,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.CustomerService">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" styleClass="main-bg" stylesheets="@../css/general.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sonderben.trust.controller.CustomerService">
    <children>
       <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
@@ -32,7 +34,21 @@
                      <children>
                         <VBox fx:id="customerMainPane" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <TableView fx:id="cTableview" prefHeight="200.0" prefWidth="200.0">
+                              <HBox alignment="CENTER_LEFT" minHeight="30.0" prefHeight="30.0" prefWidth="200.0">
+                                 <children>
+                                    <TextField prefWidth="200.0" promptText="%search" />
+                                    <Button mnemonicParsing="false" text="%search">
+                                       <HBox.margin>
+                                          <Insets left="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Pane maxHeight="1.0" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <TableView fx:id="cTableview" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                                 <columns>
                                   <TableColumn fx:id="cCodeCol" prefWidth="75.0" text="%code" />
                                   <TableColumn fx:id="cFullNameCol" prefWidth="75.0" text="%full_name" />
@@ -48,61 +64,73 @@
                                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                  </columnResizePolicy>
                               </TableView>
-                              <Pane opacity="0.32" prefHeight="1.0" prefWidth="200.0" style="-fx-background-color: #aaa;">
-                                 <VBox.margin>
-                                    <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
-                                 </VBox.margin>
-                              </Pane>
-                              <GridPane hgap="10.0" vgap="5.0">
-                                <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
+                              <HBox alignment="CENTER_RIGHT" maxHeight="18.0">
                                  <children>
-                                    <Label text="%first_name" textFill="WHITE" />
-                                    <Label text="%last_name" textFill="WHITE" GridPane.columnIndex="1" />
-                                    <Label text="%passport" textFill="WHITE" GridPane.columnIndex="2" />
-                                    <Label text="%gender" textFill="WHITE" GridPane.columnIndex="3" />
-                                    <Label text="%direction" textFill="WHITE" GridPane.rowIndex="2" />
-                                    <Label text="%email" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                    <Label text="%phone" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                                    <Label text="%birthday" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                                    <TextField fx:id="cFirstnameTf" GridPane.rowIndex="1" />
-                                    <TextField fx:id="cLastNameTf" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <TextField fx:id="cPassportTf" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                    <TextField fx:id="cDirectionTtf" GridPane.rowIndex="3" />
-                                    <TextField fx:id="cEmailTf" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                                    <TextField fx:id="cTelTf" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                                    <ChoiceBox fx:id="cGenderCb" prefWidth="150.0" value="%select_gender" GridPane.columnIndex="3" GridPane.rowIndex="1">
-                                        <items>
-                                            <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="Male" />
-                                                <String fx:value="Female" />
-                                                <String fx:value="No binary" />
-                                            </FXCollections>
-                                        </items>
-                                    </ChoiceBox>
-                                    <DatePicker fx:id="cBirthdayDp" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                    <ImageView fitHeight="17.0" fitWidth="17.0" onMouseClicked="#hideBottomPanelOnMouseClicked" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../image/hide_panel.PNG" />
+                                       </image>
+                                    </ImageView>
                                  </children>
-                              </GridPane>
-                              <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
-                                 <children>
-                                    <Button fx:id="customer_saveBtn" layoutX="382.0" layoutY="44.0" mnemonicParsing="false" onAction="#onSaveCustomer" text="%save" />
-                                    <Button fx:id="customer_updateBtn" disable="true" mnemonicParsing="false" onAction="#onUpdateCustomer" text="%update" />
-                                    <Button fx:id="customer_deleteBtn" disable="true" mnemonicParsing="false" onAction="#onDeleteCustomer" text="%delete" />
-                                    <Button fx:id="customer_clearBtn" layoutX="387.0" layoutY="44.0" mnemonicParsing="false" onAction="#onClearCustomer" text="%clear" />
-                                 </children>
+                                 <padding>
+                                    <Insets right="5.0" top="1.0" />
+                                 </padding>
                               </HBox>
+                              <VBox fx:id="customerBottomPanelVBOx">
+                                 <children>
+                                    <GridPane hgap="10.0" vgap="5.0">
+                                      <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label text="%first_name" textFill="WHITE" />
+                                          <Label text="%last_name" textFill="WHITE" GridPane.columnIndex="1" />
+                                          <Label text="%passport" textFill="WHITE" GridPane.columnIndex="2" />
+                                          <Label text="%gender" textFill="WHITE" GridPane.columnIndex="3" />
+                                          <Label text="%direction" textFill="WHITE" GridPane.rowIndex="2" />
+                                          <Label text="%email" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <Label text="%phone" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                                          <Label text="%birthday" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                                          <TextField fx:id="cFirstnameTf" GridPane.rowIndex="1" />
+                                          <TextField fx:id="cLastNameTf" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                          <TextField fx:id="cPassportTf" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                                          <TextField fx:id="cDirectionTtf" GridPane.rowIndex="3" />
+                                          <TextField fx:id="cEmailTf" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                          <TextField fx:id="cTelTf" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                                          <ChoiceBox fx:id="cGenderCb" prefWidth="150.0" value="%select_gender" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                              <items>
+                                                  <FXCollections fx:factory="observableArrayList">
+                                                      <String fx:value="Male" />
+                                                      <String fx:value="Female" />
+                                                      <String fx:value="No binary" />
+                                                  </FXCollections>
+                                              </items>
+                                          </ChoiceBox>
+                                          <DatePicker fx:id="cBirthdayDp" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                       </children>
+                                    </GridPane>
+                                    <HBox alignment="CENTER_RIGHT" prefWidth="200.0" spacing="10.0">
+                                       <children>
+                                          <Button fx:id="customer_saveBtn" layoutX="382.0" layoutY="44.0" mnemonicParsing="false" onAction="#onSaveCustomer" text="%save" />
+                                          <Button fx:id="customer_updateBtn" disable="true" mnemonicParsing="false" onAction="#onUpdateCustomer" text="%update" />
+                                          <Button fx:id="customer_deleteBtn" disable="true" mnemonicParsing="false" onAction="#onDeleteCustomer" text="%delete" />
+                                          <Button fx:id="customer_clearBtn" layoutX="387.0" layoutY="44.0" mnemonicParsing="false" onAction="#onClearCustomer" text="%clear" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="5.0" top="20.0" />
+                                       </padding>
+                                    </HBox>
+                                 </children>
+                              </VBox>
                            </children>
                         </VBox>
                      </children></AnchorPane>

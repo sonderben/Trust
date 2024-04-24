@@ -41,8 +41,8 @@ class MainController : Initializable {
 
         alwaysOnTop.isSelected = Context.readJson().getBoolean("isAlwaysOnTop")
         changeLanguage(Context.readJson().getString("language"))
-        val toolTypeCloseSession = Tooltip("Close ${Context.currentEmployee.get().userName} session")
-        val tooltipHideLeftPanel = Tooltip("Close or Open navigation panel")
+        val toolTypeCloseSession = Tooltip("${resources.getString("signOut")} (${Context.currentEmployee.get().userName})")
+        val tooltipHideLeftPanel = Tooltip(resources.getString("close_open_nav_panel"))
         Tooltip.install(hideLeftPanel, tooltipHideLeftPanel)
         toolTypeCloseSession.hideDelay = Duration(5000.0)
         Tooltip.install(closeSession, toolTypeCloseSession)

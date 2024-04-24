@@ -153,20 +153,20 @@ class Sale :Initializable,MessageListener,BaseController(){
         MainController.editMenu?.items?.clear()
 
 
-        val saveMenuItem =  MenuItem("Pay")
+        val saveMenuItem =  MenuItem(resourceBundle.getString("pay"))
         saveMenuItem.accelerator = KeyCodeCombination(KeyCode.DIGIT1, KeyCombination.CONTROL_DOWN,KeyCombination.SHIFT_DOWN )
 
         saveMenuItem.setOnAction {
             pay()
         }
-        val clearMenuItems =  MenuItem("Clear")
+        val clearMenuItems =  MenuItem( resourceBundle.getString("clear") )
         clearMenuItems.accelerator = KeyCodeCombination(KeyCode.DIGIT2,KeyCombination.CONTROL_DOWN,KeyCombination.SHIFT_DOWN)
 
         clearMenuItems.setOnAction {
             clearTextS()
         }
 
-        val cancelMenuItems =  MenuItem("Cancel")
+        val cancelMenuItems =  MenuItem(resourceBundle.getString("cancel"))
         cancelMenuItems.accelerator = KeyCodeCombination(KeyCode.DIGIT3,KeyCombination.CONTROL_DOWN,KeyCombination.SHIFT_DOWN)
 
         clearMenuItems.setOnAction {
@@ -265,7 +265,6 @@ class Sale :Initializable,MessageListener,BaseController(){
 
         if(cashTextField.text.isNotEmpty()){
             changeTextField.text = (cashTextField.text.toDouble()-grandTotal.text.toDouble()).toString()
-            println(" ${event.code.equals( KeyCode.ENTER )} && ${changeTextField.text.toDouble()>=0} ${event.code}")
             if ( event.code.equals( KeyCode.ENTER ) && changeTextField.text.toDouble()>=0 ){
                 payBtn.requestFocus()
             }
@@ -308,7 +307,7 @@ class Sale :Initializable,MessageListener,BaseController(){
 
 
                     load.close()
-                        ViewUtil.customAlert(ViewUtil.SUCCESS,"Pay with success").showAndWait()
+                        ViewUtil.customAlert(ViewUtil.SUCCESS,resourceBundle.getString("pay_with_success")).showAndWait()
                         clearAll()
                         customerCode.requestFocus()
 
@@ -321,11 +320,11 @@ class Sale :Initializable,MessageListener,BaseController(){
 
     private fun validatePayment(): Boolean {
         if (mProducts.isEmpty()){
-            ViewUtil.customAlert(ViewUtil.WARNING,"There is no products to pay").showAndWait()
+            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("no_products_to_pay")).showAndWait()
             return false
         }
         if (cashTextField.text.isBlank() || cashTextField.text.toDouble()<grandTotal.text.toDouble() ){
-            ViewUtil.customAlert(ViewUtil.ERROR,"Cash must be greater than grand total").showAndWait()
+            ViewUtil.customAlert(ViewUtil.ERROR,resourceBundle.getString("cash_must_be_greater_than_grand_total")).showAndWait()
             return false
         }
         return true
@@ -442,7 +441,7 @@ class Sale :Initializable,MessageListener,BaseController(){
 
                      ViewUtil.customAlert(
                          ViewUtil.WARNING,
-                         "code prod. : $tempCode"
+                         resourceBundle.getString("product_with_dont_found").replace("#tempCode",tempCode)
                      ).showAndWait()
 
                  })
@@ -462,7 +461,8 @@ class Sale :Initializable,MessageListener,BaseController(){
         if (productQty<qtyBought+qtyWantBye){
             ViewUtil.customAlert(
                 ViewUtil.WARNING,
-                "Quantity don't enough,there is only: $productQty and you already bought $qtyBought"
+                resourceBundle.getString("qty_dont_enough").replace("#productQty","$productQty")
+                    .replace("#qtyBought","$qtyBought")
             ).showAndWait()
             return false
         }
@@ -470,7 +470,7 @@ class Sale :Initializable,MessageListener,BaseController(){
             if(qtyWantBye % 1>0){
                 ViewUtil.customAlert(
                     ViewUtil.WARNING,
-                    "This product is sold per unit."
+                    resourceBundle.getString("product_sold_per_unit")
                 ).showAndWait()
                 return false
             }

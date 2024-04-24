@@ -62,21 +62,7 @@ class Admin :Initializable,BaseController() {
        }
     }
 
-    /*fun onUpdateButton() {
 
-    }
-
-    fun onDeleteButton(actionEvent: ActionEvent) {
-
-    }
-
-    fun onSaveButton() {
-
-    }
-
-    fun scheduleOnMOuseClick() {
-
-    }*/
 
 
 
@@ -127,7 +113,7 @@ class Admin :Initializable,BaseController() {
 
     @FXML
      lateinit var userNameTextField: TextField
-     ///////---------------\\\\\\\\\\\\\\\\\\\
+
 
     @FXML
     lateinit var categoryChoiceBox: ChoiceBox<String>
@@ -141,8 +127,7 @@ class Admin :Initializable,BaseController() {
     @FXML
     lateinit var nameTextField: TextField
 
-    /*@FXML
-    lateinit var telephoneTextField: TextField*/
+
 
     @FXML
     lateinit var websiteTextField: TextField

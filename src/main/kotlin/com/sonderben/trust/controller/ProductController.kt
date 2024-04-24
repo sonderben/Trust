@@ -28,12 +28,14 @@ class ProductController :Initializable,MessageListener,BaseController() {
     //private var socketMesageEvent = SocketMessageEvent(this)
     private var currentProductSelected:ProductEntity?=null
     private val loading = ViewUtil.loadingView()
-    override fun initialize(location: URL?, resources: ResourceBundle?) {
+    private lateinit var resources: ResourceBundle
+    override fun initialize(location: URL?, resourcesBundle: ResourceBundle) {
+        resources = resourcesBundle
         disableQueryControlButton()
         editMenuItem()
         MainController.hideBottomBar(false) { hideBottomPanelOnMouseClicked() }
 
-        sellbyCb.items.addAll(resources?.getString("unit") ?: "unit",resources?.getString("weight")?:"weight" )
+        sellbyCb.items.addAll(resources.getString("unit") , resources.getString("weight")  )
 
        // socketMesageEvent.startingListening()
 
@@ -180,7 +182,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
                  loading.close()
             })
         }else{
-            ViewUtil.customAlert(ViewUtil.WARNING,"Please select a product first and try again.")
+            ViewUtil.customAlert(ViewUtil.WARNING,resources.getString("please_select_product"))
             .show()
         }
 
@@ -221,7 +223,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
     private fun validateProduct(employee: EmployeeEntity?, category: CategoryEntity?): Boolean {
 
         if (employee == null){
-            ViewUtil.customAlert(ViewUtil.WARNING,"can't find current employee,log in again to continue saving the product.") {
+            ViewUtil.customAlert(ViewUtil.ERROR,resources.getString("cant_find_current_employee")) {
                 val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"))
                 HelloApplication.primary.scene = Scene(fxmlLoader.load(), 720.0, 440.0)
             }
@@ -230,27 +232,27 @@ class ProductController :Initializable,MessageListener,BaseController() {
             return false
         }
         if (sellbyCb.selectionModel.selectedIndex == -1){
-            ViewUtil.customAlert(ViewUtil.WARNING,"Please choose how the product sold.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resources.getString("please_choose_how_product_sold")).show()
             return false
         }
         if (category == null){
-            ViewUtil.customAlert(ViewUtil.WARNING,"Please select a category.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resources.getString("please_select_category")).show()
             return false
         }
         if (codeTf.text.isEmpty() || descriptionTf.text.isEmpty()){
-            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you fill out all the text fields.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resources.getString("fill_all_text_fields")).show()
             return false
         }
 
         try {
             GregorianCalendar.from( expDateDp.value.atStartOfDay( ZoneId.systemDefault() ) )
             if (sellingTf.text.toDouble()<0 || purchaseTf.text.toDouble()<0 || purchaseTf.text.toDouble()<0 || discountTf.text.toDouble()<0 || itbisTf.text.toDouble()<0 || qtyTf.text.toInt() <= 0){
-                ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you fill out all the text fields.").show()
+                ViewUtil.customAlert(ViewUtil.WARNING,resources.getString("fill_all_text_fields")).show()
                 return false
             }
         }
         catch (e:Exception){
-            ViewUtil.customAlert(ViewUtil.WARNING,"please make sure you fill out all the text fields with the correct info").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resources.getString("fill_all_text_fields_corect_info")).show()
             return false
         }
         return true
@@ -289,7 +291,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
                 },{th-> println(th.message) })
             }
         }else{
-            ViewUtil.customAlert(ViewUtil.WARNING,"Please select a product first and try again.")
+            ViewUtil.customAlert(ViewUtil.WARNING,resources.getString("please_select_product"))
                 .show()
         }
     }
@@ -325,20 +327,20 @@ class ProductController :Initializable,MessageListener,BaseController() {
         MainController.editMenu?.items?.clear()
 
 
-        val saveMenuItem =  MenuItem("Save")
+        val saveMenuItem =  MenuItem(resources.getString("save"))
         saveMenuItem.setOnAction {
             onSaveBtn()
         }
-        val updateMenuItems =  MenuItem("Update")
+        val updateMenuItems =  MenuItem(resources.getString("update"))
         updateMenuItems.setOnAction {
             onUpdateBtn()
         }
 
-        val deleteMenuItems =  MenuItem("Delete")
+        val deleteMenuItems =  MenuItem(resources.getString("delete"))
         deleteMenuItems.setOnAction {
             onDeleteBtn()
         }
-        val clearMenuItems =  MenuItem("Clear")
+        val clearMenuItems =  MenuItem(resources.getString("clear"))
         clearMenuItems.setOnAction {
             clear(mainPane)
         }
