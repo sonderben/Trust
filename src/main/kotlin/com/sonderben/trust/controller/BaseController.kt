@@ -15,11 +15,13 @@ abstract class BaseController {
 
     abstract fun onDestroy()
     fun disableQueryControlButton() {
-        MainController.next!!.opacity = 0.26
-        MainController.forward!!.opacity = 0.26
+        if (MainController.next != null){
+            MainController.next!!.opacity = 0.26
+            MainController.forward!!.opacity = 0.26
 
-        MainController.next!!.isDisable = true
-        MainController.forward!!.isDisable = true
+            MainController.next!!.isDisable = true
+            MainController.forward!!.isDisable = true
+        }
     }
     fun clear(pane: Pane){
 

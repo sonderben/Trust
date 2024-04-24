@@ -36,12 +36,6 @@ class InvoiceController:Initializable {
     override fun initialize(location: URL?, resources: ResourceBundle?) {
 
 
-
-
-
-
-        ///htmlEditor.maxWidth = charWidth
-        //htmlEditor.prefWidth = charWidth
         htmlEditor.style = "-fx-max-width: 80mm;"
 
 
@@ -97,7 +91,7 @@ class InvoiceController:Initializable {
 
 
 
-            saveContent(htmlEditor)
+            saveContent(htmlEditor.htmlText)
         }
 
 
@@ -118,12 +112,12 @@ class InvoiceController:Initializable {
     }
 
 
-    fun saveContent(htmlEditor:HTMLEditor) {
+    fun saveContent(htmlEditor:String) {
         val file = File("data/invoice.html")
         try {
             val fileWritter = FileWriter(file)
             fileWritter.use {
-                fileWritter.write(htmlEditor.htmlText)
+                fileWritter.write(htmlEditor)
             }
 
         }catch (ex: IOException){
@@ -132,13 +126,17 @@ class InvoiceController:Initializable {
     }
     private fun readContent(htmlEditor: HTMLEditor) {
         try {
+            val file = File("data/invoice.html")
+            if (!file.exists()){
+                file.createNewFile()
+                saveContent(Context.defaultInvoice( ))
+            }
             val t= String( Files.readAllBytes( Paths.get( "data/invoice.html" ) ) )
             htmlEditor.htmlText = t
 
         }catch (ex: IOException){
             ex.printStackTrace()
-            htmlEditor.htmlText = Context.defaultInvoice()
-            saveContent(htmlEditor)
+
         }
 
     }

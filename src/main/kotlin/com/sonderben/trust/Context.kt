@@ -6,13 +6,17 @@ import entity.EnterpriseEntity
 import javafx.beans.property.SimpleObjectProperty
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
+import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 import java.io.IOException
+import java.nio.file.Paths
 import java.util.*
 
 object Context {
-    val path: String = "src/main/kotlin/com/sonderben/trust/config/preference.json"
+    val path: String = "data/preference.json"
+
+
     private val screenJson = readJson()["screen"] as JSONObject
     var screen:Screen = Screen(
         screenJson.getBoolean("isAlwaysOnTop"),
@@ -28,6 +32,18 @@ object Context {
     private var enterpriseEntity:EnterpriseEntity? = null
     var language: String = ""
     init {
+        val file = File(path)
+
+        /*if(!file.exists()){
+            val vv = file.createNewFile()
+            println("isCreated: $vv")
+            FileWriter(file).use {
+                val a = """
+                    {"existTables":false,"last_count_customer":0,"isAlwaysOnTop":true,"screen":{"isAlwaysOnTop":true,"width":720.0,"x":480.0,"y":125.0,"isFullScreen":false,"height":498.0},"language":"es"}
+                """.trimIndent()
+                it.write(a)
+            }
+        }*/
         if (EnterpriseService.getInstance().entities.isNotEmpty()){
             enterpriseEntity = EnterpriseService.getInstance().entities[0]
         }
@@ -103,15 +119,15 @@ object Context {
     fun defaultInvoice() = """
         <html dir="ltr">
 <head></head>
-<body contenteditable="true"><p style="text-align: center;"><span style="font-family: &quot;&quot;; font-weight: bold;">${enterpriseEntity?.name}</span>
+<body contenteditable="true"><p style="text-align: center;"><span style="font-family: &quot;&quot;; font-weight: bold;">Enterprise name</span>
 </p>
-<p style="text-align: center;"><span style="font-family: &quot;&quot;;">${enterpriseEntity?.category.toString()}</span></p>
-<p style="text-align: center;"><span style="font-family: &quot;&quot;;">${enterpriseEntity?.direction}</span></p>
-<p style="text-align: center;"><span style="font-family: &quot;&quot;;">Phone: ${enterpriseEntity?.telephone}</span></p>
+<p style="text-align: center;"><span style="font-family: &quot;&quot;;">Category</span></p>
+<p style="text-align: center;"><span style="font-family: &quot;&quot;;">Direction</span></p>
+<p style="text-align: center;"><span style="font-family: &quot;&quot;;">Phone: telephone</span></p>
 <p style="text-align: center;"><span style="font-family: &quot;&quot;;">..............................................................................................................................................</span>
 </p>
 <p style="text-align: center;"><span style="font-family: &quot;&quot;;">Cashier: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</span><span
-        style="font-family: &quot;&quot;;">&nbsp; ${currentEmployee.get().fullName}</span></p>
+        style="font-family: &quot;&quot;;">&nbsp; Employee</span></p>
 <p style="text-align: center;"><span style="font-family: &quot;&quot;;">..............................................................................................................................................</span>
 </p>
 <p style="text-align: center;"><span style="font-family: &quot;&quot;; font-weight: bold;">Desc. &nbsp; &nbsp; &nbsp; &nbsp;|Price &nbsp; &nbsp; |Qty &nbsp; &nbsp; &nbsp; |taxe &nbsp; &nbsp; |Total&nbsp;</span>

@@ -1,9 +1,8 @@
-package com.sonderben
+package com.sonderben.trust
 
-import com.sonderben.trust.HelloApplication
 import javafx.application.Application
 
-
+//java -cp Trust.jar com.sonderben.trust.EntryPointKt
 
 
     fun main(args:Array<String>) {

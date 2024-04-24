@@ -94,7 +94,7 @@ class EnterpriseController:Initializable, BaseController() {
     private var enterpriseInfo:Node?=null
     private var invoice:Node?=null
     private fun createPage(index :Int):Node{
-        val resourcesBundle = ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
+        val resourcesBundle = Constant.resource //ResourceBundle.getBundle("com.sonderben.trust.i18n.string")
         val fxmlLoader: FXMLLoader
         when(index){
             0 -> {

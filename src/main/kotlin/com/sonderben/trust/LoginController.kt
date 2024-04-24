@@ -37,28 +37,29 @@ class LoginController : Initializable{
 
     @FXML
     fun onLoginButtonClick() {
+        if (EnterpriseService.getInstance().entities.size > 0 ){
+            val loading = ViewUtil.loadingView()
+            loading.show()
+            AuthentificationService.getInstance().login(userNameTextField.text.trim(),password.text.trim())
+                .subscribe({employeeEntity ->
 
+                    Context.currentEmployee = SimpleObjectProperty(employeeEntity)
 
-        val loading = ViewUtil.loadingView()
-        loading.show()
-        AuthentificationService.getInstance().login(userNameTextField.text.trim(),password.text.trim())
-            .subscribe({employeeEntity ->
+                    val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/main_view.fxml"),resourceBundle)
 
-                Context.currentEmployee = SimpleObjectProperty(employeeEntity)
+                    val scene = Scene(fxmlLoader.load(), HelloApplication.primary.scene.width, HelloApplication.primary.scene.height )
+                    loading.close()
+                    HelloApplication.primary.scene = scene
 
-                val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/main_view.fxml"),resourceBundle)
-
-                val scene = Scene(fxmlLoader.load(), HelloApplication.primary.scene.width, HelloApplication.primary.scene.height )
-                loading.close()
-                HelloApplication.primary.scene = scene
-
-            },{loading.close()},{
-                loading.close()
-                infoLabel.isVisible = true
-                infoLabel.text = "username or password is wrong"
-            })
-
-
+                },{loading.close()},{
+                    loading.close()
+                    infoLabel.isVisible = true
+                    infoLabel.text = "username or password is wrong"
+                })
+        }
+        else{
+            ViewUtil.Companion.customAlert(ViewUtil.INFO,resourceBundle.getString("please_create_system")).show()
+        }
     }
 
     @FXML
@@ -92,7 +93,7 @@ class LoginController : Initializable{
 
 
 
-        if (EnterpriseService.getInstance().entities.size > 0 /*|| isFromEnterprise*/){
+        if (EnterpriseService.getInstance().entities.size > 0 ){
             login.isDisable = false
             newSystemLabel.isDisable = true
         }

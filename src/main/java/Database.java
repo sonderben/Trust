@@ -1,8 +1,10 @@
 import com.sonderben.trust.constant.ScreenEnum;
 import com.sonderben.trust.db.SqlDdl;
+import com.sonderben.trust.viewUtil.ViewUtil;
 import entity.Role;
 import entity.ScheduleEntity;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +27,12 @@ public class Database {
 
 
                 Class.forName( "org.sqlite.JDBC" );
+                File file = new File("data");
+                if ( !file.exists() ){
+                    if ( !file.mkdir() ){
+                        ViewUtil.Companion.customAlert(ViewUtil.Companion.getERROR(),"can not create data directory.",null).show();
+                    }
+                }
                 connection = DriverManager.getConnection("jdbc:sqlite:data/midb.db"/*,"",""*/);
                 return connection;
 

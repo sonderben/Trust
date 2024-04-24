@@ -8,12 +8,47 @@ import javafx.application.HostServices
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
 import javafx.stage.Stage
+import java.io.File
+import java.io.FileWriter
 
 
 class HelloApplication : Application() {
     override fun start(stage: Stage) {
 
         Database.createTable()
+        val path: String = "data/preference.json"
+        val file = File(path)
+
+        val isCr = file.createNewFile()
+        println( "$isCr is create" )
+
+        if(isCr){
+            
+            FileWriter(file).use {
+                val a = """
+                    {"existTables":false,"last_count_customer":0,"isAlwaysOnTop":true,"screen":{"isAlwaysOnTop":true,"width":720.0,"x":480.0,"y":125.0,"isFullScreen":false,"height":498.0},"language":"es"}
+                """.trimIndent()
+                it.write(a)
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         Context.start()
 
 
@@ -40,6 +75,7 @@ class HelloApplication : Application() {
 
 
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"),Constant.resource)
+
         val scene = Scene(fxmlLoader.load(), Context.screen.width, Context.screen.height)
         stage.title = "Trust"
         stage.scene = scene

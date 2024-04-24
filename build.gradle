@@ -70,7 +70,7 @@ dependencies {
 jar {
     //duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest{
-        attributes 'Main-class': 'com.sonderben.trust.EntryPoint'
+        attributes 'Main-class': 'com.sonderben.trust.EntryPointKt'
     }
 }
 test {
