@@ -24,7 +24,7 @@ class EditCredentialDialog(val w:Double):Dialog<Boolean>(),Initializable {
 
 
 
-        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/editCredentialDialog.fxml"))
+        val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/editCredentialDialog.fxml"),Constant.resource)
         fxmlLoader.setController(this)
         try {
             dialogPane = fxmlLoader.load()

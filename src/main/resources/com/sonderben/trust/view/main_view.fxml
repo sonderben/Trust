@@ -158,15 +158,15 @@
               <menus>
                 <Menu mnemonicParsing="false" text="%file">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#signOutOnAction" text="Sign out" />
-                        <Menu fx:id="menuLanguage" mnemonicParsing="false" text="Language">
+                    <MenuItem mnemonicParsing="false" onAction="#signOutOnAction" text="%signOut" />
+                        <Menu fx:id="menuLanguage" mnemonicParsing="false" text="%language">
                           <items>
                               <CheckMenuItem fx:id="en" mnemonicParsing="false" text="%english" />
                               <CheckMenuItem fx:id="es" mnemonicParsing="false" text="%spanish" />
                               <CheckMenuItem fx:id="fr" mnemonicParsing="false" text="%french" />
                           </items>
                         </Menu>
-                        <MenuItem mnemonicParsing="false" onAction="#editCredentialMenutitemOnAction" text="Edit credential" />
+                        <MenuItem mnemonicParsing="false" onAction="#editCredentialMenutitemOnAction" text="%edit_credential" />
                   </items>
                 </Menu>
                 <Menu fx:id="menuEdit" mnemonicParsing="false" text="%edit">

@@ -174,7 +174,7 @@ class Sale :Initializable,MessageListener,BaseController(){
         }
 
 
-        MainController.editMenu?.items?.addAll(  saveMenuItem,/*updateMenuItem,deleteMenuItem,*/clearMenuItems,cancelMenuItems  )
+        MainController.editMenu?.items?.addAll(  saveMenuItem,clearMenuItems,cancelMenuItems  )
 
     }
 
