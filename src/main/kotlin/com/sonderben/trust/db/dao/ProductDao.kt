@@ -10,13 +10,6 @@ import com.sonderben.trust.toTimestamp
 import entity.CategoryEntity
 import entity.EmployeeEntity
 import entity.ProductEntity
-import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
-import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
-import javafx.collections.FXCollections
-import javafx.collections.ObservableList
 import java.sql.Connection
 import java.sql.Statement
 import java.sql.Timestamp
@@ -97,9 +90,10 @@ class ProductDao : CrudDao<ProductEntity> {
                 statement.executeQuery(SELECT_ALL_PRODUCT).use { resultSet ->
                     while (resultSet.next()) {
                         val employee = EmployeeEntity()
+                        val tempId = resultSet.getLong("id_employee")
                         employee.apply {
-                            id = resultSet.getLong("id_employee")
-                            userName = resultSet.getString("userName")
+                            id = if (tempId == 0L) 1L else tempId
+                            userName = resultSet.getString("userName") ?: "root"
                         }
                         val category = CategoryEntity()
                         category.apply {

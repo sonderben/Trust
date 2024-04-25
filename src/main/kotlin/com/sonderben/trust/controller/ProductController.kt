@@ -93,6 +93,14 @@ class ProductController :Initializable,MessageListener,BaseController() {
         categoryCb.converter = CategoryConverter()
             categoryCb.items = categories
 
+        tableView.setOnScrollFinished {
+
+        }
+        tableView.setOnScroll {
+
+            println("scroll fini lay7: ${it.deltaY}")
+        }
+
         tableView.selectionModel.selectedIndices.addListener( ListChangeListener { change->
             if ( change.list.isEmpty() ){
                 enableActionButton(mainPane,true)

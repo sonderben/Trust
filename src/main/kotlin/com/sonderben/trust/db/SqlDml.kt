@@ -162,7 +162,7 @@ object SqlDml {
             SELECT products.quantityRemaining,products.sellby,products.id,products.discount as discount_product,quantity,itbis,sellingPrice,purchaseprice,
             id_category,products.dateAdded,id_employee,expirationDate,products.code as code_product,products.description as description_product,
             Categories.discount as discount_category,Categories.code as code_categpry,Categories.description as description_category,userName
-             from ${SqlDdl.products} INNER JOIN Employee  on 
+             from ${SqlDdl.products} LEFT JOIN Employee  on 
             products.id_employee = Employee.id
             INNER JOIN Categories on 
             products.id_category = Categories.id
