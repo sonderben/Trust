@@ -42,19 +42,8 @@
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
                         <Label text="Day" />
-                        <ChoiceBox fx:id="dayChoicebox" prefWidth="150.0">
-                            <items>
-                                <FXCollections fx:factory="observableArrayList">
-                                    <String fx:value="Lunes" />
-                                    <String fx:value="Martes" />
-                                    <String fx:value="Miercroles" />
-                                    <String fx:value="Jueves" />
-                                    <String fx:value="Viernes" />
-                                    <String fx:value="Sabado" />
-                                    <String fx:value="Domingo" />
-                                </FXCollections>
-                            </items>
-                        </ChoiceBox>
+                        <ChoiceBox fx:id="dayChoicebox" prefWidth="150.0"/>
+
                      </children>
                   </VBox>
                   <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">

@@ -22,5 +22,9 @@ class ProductService private constructor(dao: ProductDao): CrudService<ProductDa
             instance = null
         }
     }
+
+    fun search(limit:Int,offset:Int) {
+        dao.search(limit,offset)
+    }
 }
 

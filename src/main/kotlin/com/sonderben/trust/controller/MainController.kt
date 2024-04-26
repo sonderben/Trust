@@ -3,6 +3,7 @@ package com.sonderben.trust.controller
 import SingletonView
 import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
+import com.sonderben.trust.constant.Constant
 import com.sonderben.trust.db.service.EmployeeService
 import com.sonderben.trust.db.service.RoleService
 import com.sonderben.trust.getBoolean
@@ -339,6 +340,7 @@ class MainController : Initializable {
         RoleService.clearInstance()
         EmployeeService.clearInstance()
 
+        val temp = Constant.resource
 
         val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("login.fxml"), resourceBundle)
         val scene =

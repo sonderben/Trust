@@ -45,11 +45,31 @@ class LoginController : Initializable{
 
                     Context.currentEmployee = SimpleObjectProperty(employeeEntity)
 
-                    val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/main_view.fxml"),resourceBundle)
+                    val cal = Calendar.getInstance()
+                    val day =cal.get( Calendar.DAY_OF_WEEK )
+                    println("day of week: $day: ${employeeEntity.schedules}")
+                    val schedules = employeeEntity.schedules.filter { it.workDay + 1 == day }
 
-                    val scene = Scene(fxmlLoader.load(), HelloApplication.primary.scene.width, HelloApplication.primary.scene.height )
-                    loading.close()
-                    HelloApplication.primary.scene = scene
+                    if( schedules.isNotEmpty() || employeeEntity.isAdmin){
+                        val hour = "${cal.get( Calendar.HOUR_OF_DAY )}.${cal.get( Calendar.MINUTE )}".toFloat()
+                        val r = schedules.filter { it.startHour.toFloat()>=hour && hour <= it.endHour.toFloat() }
+                        println("hour: $hour ")
+                        if(employeeEntity.isAdmin || r.isNotEmpty() ){
+                            val fxmlLoader = FXMLLoader(HelloApplication::class.java.getResource("view/main_view.fxml"),resourceBundle)
+
+                            val scene = Scene(fxmlLoader.load(), HelloApplication.primary.scene.width, HelloApplication.primary.scene.height )
+                            loading.close()
+                            HelloApplication.primary.scene = scene
+                        }else{
+                            ViewUtil.customAlert(ViewUtil.INFO," u pa gen akse ak sistem nn le sa a").show()
+                        }
+                    }else{
+                        loading.close()
+                        ViewUtil.customAlert(ViewUtil.INFO," u pa gen akse ak sistem nn jodi a").show()
+
+                    }
+
+
 
                 },{loading.close()},{
                     loading.close()

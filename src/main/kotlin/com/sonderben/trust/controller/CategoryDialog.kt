@@ -1,6 +1,5 @@
 package com.sonderben.trust.controller
 
-import com.sonderben.trust.Context
 import com.sonderben.trust.HelloApplication
 import com.sonderben.trust.Util
 import com.sonderben.trust.constant.Constant
@@ -10,7 +9,6 @@ import com.sonderben.trust.viewUtil.ViewUtil
 import entity.CategoryEntity
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.ObservableList
-
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable

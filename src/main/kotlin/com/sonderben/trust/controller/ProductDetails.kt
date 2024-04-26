@@ -135,6 +135,7 @@ class ProductDetails {
                             resultSet.getDouble("points")
                         )
                     )
+                    println(bestSellers+" genial")
                 }
                 return bestSellers
             }

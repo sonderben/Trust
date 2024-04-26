@@ -4,6 +4,7 @@ import com.sonderben.trust.*
 import com.sonderben.trust.db.service.CustomerService
 import com.sonderben.trust.db.dao.InvoiceDao
 import com.sonderben.trust.db.service.InvoiceService
+import com.sonderben.trust.db.service.ProductService
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.CustomerEntity
 import javafx.beans.property.SimpleStringProperty
@@ -14,6 +15,8 @@ import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.*
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.layout.VBox
 import javafx.util.Callback
 import java.net.URL
@@ -21,6 +24,7 @@ import java.util.*
 import kotlin.collections.List
 
 class CustomerService : Initializable, BaseController() {
+    lateinit var searchTextField: TextField
     lateinit var customerBottomPanelVBOx: VBox
     lateinit var tabPane: TabPane
     lateinit var changePointTab: Tab
@@ -40,6 +44,14 @@ class CustomerService : Initializable, BaseController() {
         resource=resourceBundle
         disableQueryControlButton()
         editMenuItem()
+
+        cTelTf.onlyInt()
+
+        searchTextField.textProperty().addListener { observableValue, s, s2 ->
+            if (s2.isBlank()){
+                cTableview.items=customers
+            }
+        }
 
         MainController.hideBottomBar(false) { hideBottomPanelOnMouseClicked() }
 
@@ -325,17 +337,20 @@ class CustomerService : Initializable, BaseController() {
             cTelTf.textTrim().isBlank() || cEmailTf.textTrim().isBlank() ||
             cDirectionTtf.textTrim().isBlank() || cPassportTf.textTrim().isBlank()
         ) {
-            ViewUtil.customAlert(ViewUtil.WARNING, "please make sure you fill out all the text fields.").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resource.getString("fill_all_text_fields")).show()
             return false
         }
 
         if (cGenderCb.selectionModel.selectedItem == null) {
-            ViewUtil.customAlert(ViewUtil.WARNING,  "Please select a gender").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resource.getString("please_select_gender")).show()
             return false
         }
         if (cBirthdayDp.value == null) {
-            ViewUtil.customAlert(ViewUtil.WARNING,  "Please select a birthday").show()
+            ViewUtil.customAlert(ViewUtil.WARNING,resource.getString("please_enter_birthday")).show()
             return false
+        }
+        if( !cEmailTf.text.isValidEmail() ){
+            ViewUtil.customAlert(ViewUtil.WARNING,resource.getString("please_enter_email") +" (${cEmailTf.text})" ).show()
         }
 
 
@@ -371,7 +386,7 @@ class CustomerService : Initializable, BaseController() {
                 }
             }
         } else {
-            ViewUtil.customAlert(ViewUtil.WARNING, "Please select a customer first.").showAndWait()
+            ViewUtil.customAlert(ViewUtil.WARNING, resource.getString("please_select_customer")).showAndWait()
 
         }
     }
@@ -453,5 +468,16 @@ class CustomerService : Initializable, BaseController() {
 
     fun hideBottomPanelOnMouseClicked() {
         customerBottomPanelVBOx.changeVisibility()
+    }
+
+    fun searchTextFieldOnKeyRelased(keyEvent: KeyEvent) {
+        if (keyEvent.code.equals( KeyCode.ENTER ))
+            serachBtnOnAction()
+    }
+
+    fun serachBtnOnAction() {
+
+        cTableview.items =customers.filtered { it.passport.startsWith(searchTextField.textTrim(), true) ||it.code.startsWith(searchTextField.textTrim(),true) }
+
     }
 }

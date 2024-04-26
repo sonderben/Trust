@@ -1,8 +1,11 @@
 package com.sonderben.trust
 
+import javafx.event.Event
 import javafx.geometry.Point2D
 import javafx.scene.Node
 import javafx.scene.control.TextField
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import org.json.simple.JSONObject
 import java.sql.Timestamp
 import java.text.DateFormat
@@ -52,7 +55,10 @@ fun Calendar.toTimestamp():Timestamp{
 }
 
 fun TextField.onlyInt(){
-    this.textFormatter = Factory.createFilterTextField()
+    this.textFormatter = Factory.intFilterTextField()
+}
+fun TextField.onlyFloat(){
+    this.textFormatter = Factory.doubleFilterTextField()
 }
 
  fun Double.toCurrency(): String {
@@ -82,3 +88,12 @@ fun JSONObject.getBoolean(key:String) = this[key] as Boolean
 fun JSONObject.getString(key:String) = this[key] as String
 fun JSONObject.getDouble(key:String) = this[key] as Double
 fun JSONObject.getJsonObject(key:String) = this[key] as JSONObject
+
+fun String.isValidEmail():Boolean{
+    return this.matches("^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$".toRegex())
+}
+
+fun Float.isInt():Boolean{
+    val s = this.toString().split(".")
+    return ( s.size==1 || s[1].toInt()==0 )
+}

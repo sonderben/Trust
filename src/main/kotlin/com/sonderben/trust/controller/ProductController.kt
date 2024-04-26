@@ -16,6 +16,9 @@ import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.Scene
 import javafx.scene.control.*
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
+import javafx.scene.input.ScrollEvent
 import javafx.scene.layout.VBox
 import javafx.util.StringConverter
 import java.lang.Exception
@@ -25,6 +28,8 @@ import java.time.ZoneId
 import java.util.*
 
 class ProductController :Initializable,MessageListener,BaseController() {
+    lateinit var searcTextField: TextField
+
     //private var socketMesageEvent = SocketMessageEvent(this)
     private var currentProductSelected:ProductEntity?=null
     private val loading = ViewUtil.loadingView()
@@ -35,7 +40,20 @@ class ProductController :Initializable,MessageListener,BaseController() {
         editMenuItem()
         MainController.hideBottomBar(false) { hideBottomPanelOnMouseClicked() }
 
+
         sellbyCb.items.addAll(resources.getString("unit") , resources.getString("weight")  )
+
+
+        discountTf.onlyFloat()
+        itbisTf.onlyFloat()
+        qtyTf.onlyFloat()
+
+
+        searcTextField.textProperty().addListener { observableValue, s, s2 ->
+            if (s2.isBlank()){
+                tableView.items=ProductService.getInstance().entities
+            }
+        }
 
        // socketMesageEvent.startingListening()
 
@@ -46,7 +64,7 @@ class ProductController :Initializable,MessageListener,BaseController() {
 
 
         dateAddedCol.setCellValueFactory { data -> SimpleStringProperty( data.value.dateAdded.format() ) }
-        codeCol.setCellValueFactory { data -> SimpleStringProperty(data.value.code) }
+        codeCol.setCellValueFactory { data -> SimpleStringProperty(data.value.code.padStart(12,'0')) }
         descriptionCol.setCellValueFactory { data -> SimpleStringProperty( data.value.description ) }
         categoryCol.setCellValueFactory { data -> SimpleStringProperty( data.value.category.description ) }
         purchaseCol.setCellValueFactory { data -> SimpleStringProperty( data.value.purchasePrice.toString() ) }
@@ -93,13 +111,6 @@ class ProductController :Initializable,MessageListener,BaseController() {
         categoryCb.converter = CategoryConverter()
             categoryCb.items = categories
 
-        tableView.setOnScrollFinished {
-
-        }
-        tableView.setOnScroll {
-
-            println("scroll fini lay7: ${it.deltaY}")
-        }
 
         tableView.selectionModel.selectedIndices.addListener( ListChangeListener { change->
             if ( change.list.isEmpty() ){
@@ -254,8 +265,13 @@ class ProductController :Initializable,MessageListener,BaseController() {
 
         try {
             GregorianCalendar.from( expDateDp.value.atStartOfDay( ZoneId.systemDefault() ) )
-            if (sellingTf.text.toDouble()<0 || purchaseTf.text.toDouble()<0 || purchaseTf.text.toDouble()<0 || discountTf.text.toDouble()<0 || itbisTf.text.toDouble()<0 || qtyTf.text.toInt() <= 0){
+            if (sellingTf.text.toDouble()<0 || purchaseTf.text.toDouble()<0 || purchaseTf.text.toDouble()<0 || discountTf.text.toDouble()<0 || itbisTf.text.toDouble()<0 || qtyTf.text.toFloat() < 0){
                 ViewUtil.customAlert(ViewUtil.WARNING,resources.getString("fill_all_text_fields")).show()
+                return false
+            }
+            //  if(sellbyCb.selectionModel.selectedIndex==0) "unit" else "weight",
+            if(sellbyCb.selectionModel.selectedIndex==0 && !qtyTf.text.toFloat().isInt()){
+                ViewUtil.customAlert(ViewUtil.WARNING,resources.getString("if_product_sold_per_unit")).show()
                 return false
             }
         }
@@ -281,6 +297,9 @@ class ProductController :Initializable,MessageListener,BaseController() {
     }
 
     @FXML fun onUpdateBtn() {
+
+
+
         if(currentProductSelected!=null) {
             if (validateProduct(Context.currentEmployee.value, categoryCb.selectionModel.selectedItem )){
                 currentProductSelected!!.apply {
@@ -291,7 +310,10 @@ class ProductController :Initializable,MessageListener,BaseController() {
                     discount = discountTf.text.toDouble()
                     itbis = itbisTf.text.toDouble()
                     quantity = qtyTf.text.toFloat()
-                    qtyTf.text.toInt()
+                    quantityRemaining = qtyTf.text.toFloat()
+                    category = categoryCb.selectionModel.selectedItem
+                    sellBy = if(sellbyCb.selectionModel.selectedIndex==0) "unit" else "weight"
+
 
                 }
                 ProductService.getInstance().update(currentProductSelected!!) .subscribe({
@@ -358,5 +380,15 @@ class ProductController :Initializable,MessageListener,BaseController() {
 
         MainController.editMenu?.items?.addAll(  saveMenuItem,updateMenuItems,deleteMenuItems,clearMenuItems  )
 
+    }
+
+    fun searchBtnAction() {
+        tableView.items = ProductService.getInstance().entities.filtered { it.description.startsWith(searcTextField.textTrim(),ignoreCase = true) ||it.code.startsWith(searcTextField.textTrim(),true) }
+    }
+
+    fun searchTextFieldOnKeyRelased(keyEvent: KeyEvent) {
+
+        if (keyEvent.code.equals( KeyCode.ENTER ))
+            searchBtnAction()
     }
 }

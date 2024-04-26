@@ -45,7 +45,7 @@ abstract class BaseController {
              if ( node is GridPane || node is VBox || node is HBox){
                  enableActionButton(node as Pane,tableViewItemIsSelected)
              }
-             else if (node is Button){
+             else if ( (node is Button) && node.id !=null ){
                 val temp = node.id.split("_").filter { it.contains("Btn") }
                  if (temp.isNotEmpty()){
                      when( temp[0] ){

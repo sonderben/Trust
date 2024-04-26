@@ -41,8 +41,8 @@
                      <children>
                         <Label text="%from" textFill="WHITE" />
                         <Label text="%to" textFill="WHITE" GridPane.columnIndex="1" />
-                        <DatePicker GridPane.rowIndex="1" />
-                        <DatePicker GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <DatePicker fx:id="fromDatePicker" GridPane.rowIndex="1" />
+                        <DatePicker fx:id="toDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
                   </GridPane>
                </children>

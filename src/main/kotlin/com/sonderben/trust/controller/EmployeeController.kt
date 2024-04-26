@@ -39,6 +39,7 @@ class EmployeeController : Initializable, BaseController() {
         editMenuItem()
         days = resources.getString("days").split(",") as ArrayList<String>
 
+        telephoneTextField.onlyInt()
 
         userTableView.selectionModel.selectedIndices.addListener(ListChangeListener { change ->
             if (change.list.isEmpty()) {
@@ -434,7 +435,7 @@ class EmployeeController : Initializable, BaseController() {
 
         @FXML
         fun onDelete() {
-            //val selectedScheduler = tableView.selectionModel.selectedItem
+             selectedScheduler = tableView.selectionModel.selectedItem
             if (selectedScheduler != null) {
 
                 if (selectedScheduler?.id != null){
@@ -494,50 +495,67 @@ class EmployeeController : Initializable, BaseController() {
         @FXML
         fun onUpdate() {
 
-
+            selectedScheduler = tableView.selectionModel.selectedItem
 
             if (selectedScheduler != null) {
 
-                val temp = ScheduleEntity(
+                /*val temp = ScheduleEntity(
                     Context.currentEmployee.get().id,
                     selectedScheduler!!.id,
                     dayChoicebox.items.indexOf(dayChoicebox.value),
                     "${cbStartHour.value}.${cbStartMin.value}",
                     "${cbEndHour.value}.${cbEndMin.value}"
-                )
+                )*/
+
+                selectedScheduler?.apply {
+                    workDay=dayChoicebox.selectionModel.selectedIndex
+                    startHour = "${cbStartHour.value}.${cbStartMin.value}"
+                    endHour = "${cbEndHour.value}.${cbEndMin.value}"
+                }
 
                     if ( selectedScheduler?.idEmployee != null ){
-                        ScheduleService.getInstance().update(temp)
+                        println("dif de ul")
+                        ScheduleService.getInstance().update(selectedScheduler!!)
                             .subscribe({
 
-                                tableView.items[tableView.items.indexOf(selectedScheduler)] = temp
+                                tableView.items[tableView.items.indexOf(selectedScheduler)] = selectedScheduler!!
                                 clear()
 
                             }, { th -> println(th.message);clear() })
                     }else{
-                        tableView.items[ tableView.items.indexOf(selectedScheduler) ] = temp
+                        tableView.items[ tableView.items.indexOf(selectedScheduler) ] = selectedScheduler!!
+                        println("dif de ulgghfhgfhgfhgh")
                         clear()
                     }
 
             } else {
-                //select first
+                ViewUtil.customAlert(ViewUtil.ERROR,"select a schedule first")
             }
         }
 
-        override fun initialize(location: URL?, resources: ResourceBundle?) {
-            dayCol.setCellValueFactory { data -> SimpleStringProperty(dayChoicebox.items[data.value.workDay]) }
+        override fun initialize(location: URL?, resources: ResourceBundle) {
+
+            val days = resources.getString("days").split(",")
+            dayChoicebox.items = FXCollections.observableArrayList( days)
+
+            dayCol.setCellValueFactory { data -> SimpleStringProperty( /*dayChoicebox.items[data.value.workDay])*/ days[ data.value.workDay ] )}
             startHourCol.setCellValueFactory { data -> SimpleStringProperty(data.value.startHour.replace(".", "H ")) }
             endHourCol.setCellValueFactory { data -> SimpleStringProperty(data.value.endHour.replace(".","H ")) }
             tableView.items = FXCollections.observableArrayList(schedulers)
 
-            tableView.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
-                 selectedScheduler = newValue
+            tableView.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
+                 if (newValue!=null){
+                     selectedScheduler = newValue
 
-                cbStartHour.selectionModel.select( newValue.startHour.split(".")[0] )
-                cbStartMin.selectionModel.select( newValue.startHour.split(".")[1] )
+                     dayChoicebox.selectionModel.select( newValue.workDay )
 
-                cbEndHour.selectionModel.select( newValue.endHour.split(".")[0] )
-                cbEndMin.selectionModel.select( newValue.endHour.split(".")[1] )
+
+                     cbStartHour.selectionModel.select( newValue.startHour.split(".")[0] )
+                     cbStartMin.selectionModel.select( newValue.startHour.split(".")[1] )
+
+                     cbEndHour.selectionModel.select( newValue.endHour.split(".")[0] )
+                     cbEndMin.selectionModel.select( newValue.endHour.split(".")[1] )
+                 }
 
             }
 

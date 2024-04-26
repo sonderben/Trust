@@ -153,61 +153,15 @@ class EnterpriseDao : CrudDao<EnterpriseEntity> {
         connection.autoCommit = false
 
 
-        val employeeDao = AdministratorDao()
-        val emp = employeeDao.update( entity.adminEntity, connection )
+        val administratorDao = AdministratorDao()
+        val emp = administratorDao.update( entity.adminEntity, connection )
         if (emp == null) {
+            println("m nulllllllll")
             connection.rollback()
             return null
         }
 
 
-        /*connection.prepareStatement(UPDATE_EMPLOYEE).use { preparedStatement ->
-            preparedStatement.setString(1,entity.employee.bankAccount)
-            preparedStatement.setString(2,entity.employee.direction)
-            preparedStatement.setString(3,entity.employee.email)
-            preparedStatement.setString(4,entity.employee.firstName)
-            preparedStatement.setString(5,entity.employee.genre)
-            preparedStatement.setString(6,entity.employee.lastName)
-            preparedStatement.setString(7,entity.employee.passport)
-            preparedStatement.setString(8,entity.employee.password)
-            preparedStatement.setString(9,entity.employee.telephone)
-            preparedStatement.setString(10,entity.employee.userName)
-            preparedStatement.setTimestamp(11,Timestamp(entity.employee.birthDay.time.time))
-            preparedStatement.setLong(12,entity.employee.role.id)
-            preparedStatement.setLong(13,entity.employee.id)
-
-
-
-            if (preparedStatement.executeUpdate()>0){
-                lastIdEmployeeAdded = entity.employee.id
-
-
-                for (schedule in entity.employee.schedules){
-                    connection.prepareStatement(UPDATE_SCHEDULER).use { ps ->
-                        preparedStatement.setInt(1, schedule.workDay)
-                        preparedStatement.setFloat(2, schedule.startHour)
-                        preparedStatement.setFloat(3, schedule.endHour)
-                        preparedStatement.setLong(4, schedule.idEmployee)
-                        preparedStatement.setLong(5, schedule.id)
-                        val rowCount2 = ps.executeUpdate()
-                        if (rowCount2<0){
-                            connection.rollback()
-                            connection.autoCommit = true
-                            return null
-
-                        }
-                    }
-                }
-            }else{
-                connection.rollback()
-                connection.autoCommit = true
-                return null
-
-            }*/
-
-
-        // set name = ?, direction = ?,telephone = ?,foundation = ?,
-        // website = ?,category = ?, invoiceTemplateHtml = ? WHERE id = ?
 
         connection.prepareStatement(UPDATE_ENTERPRISE).use { ps2 ->
             ps2.setString(1, entity.name)

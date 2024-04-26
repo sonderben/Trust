@@ -7,6 +7,7 @@ import com.sonderben.trust.constant.Constant
 import com.sonderben.trust.controller.BaseController
 import com.sonderben.trust.controller.MainController
 import com.sonderben.trust.db.service.EnterpriseService
+import com.sonderben.trust.isValidEmail
 import com.sonderben.trust.viewUtil.ViewUtil
 import entity.EnterpriseEntity
 import javafx.fxml.FXML
@@ -137,7 +138,7 @@ class EnterpriseController:Initializable, BaseController() {
 
             enterprise.apply {
                 name = admin!!.nameTextField.text
-                telephone =  admin!!.telephoneTextField.text
+                telephone =  admin!!.telephoneEnterpriseTextField.text
                 website =  admin!!.websiteTextField.text
                 direction =  admin!!.directionTextField.text
                 foundation =  GregorianCalendar.from( admin!!.foundationDatePicker.value.atStartOfDay(ZoneId.systemDefault()) )
@@ -149,7 +150,7 @@ class EnterpriseController:Initializable, BaseController() {
                     birthDay = GregorianCalendar.from(admin!!.birthdayDatePicker.value.atStartOfDay(ZoneId.systemDefault()))
                     userName = admin!!.userNameTextField.text
                     password = admin!!.passwordField.text
-                    telephone = admin!!.telephoneTextField.text
+                    telephone = admin!!.telephoneAdminTextField.text
                     genre = admin!!.choiceBoxGender.value
                     email = admin!!.emailTextField.text
                 }
@@ -169,14 +170,36 @@ class EnterpriseController:Initializable, BaseController() {
                     },{})
             }
             else{
+                enterprise.apply {
+                    name = admin!!.nameTextField.text
+                    telephone =  admin!!.telephoneEnterpriseTextField.text
+                    website =  admin!!.websiteTextField.text
+                    direction =  admin!!.directionTextField.text
+                    foundation =  GregorianCalendar.from( admin!!.foundationDatePicker.value.atStartOfDay(ZoneId.systemDefault()) )
+                    category = CategoryEnum.valueOf( catString )
+
+                    adminEntity?.apply {
+                        firstName = admin!!.firstNameTextField.text
+                        lastName = admin!!.lastNameTextField.text
+                        birthDay = GregorianCalendar.from(admin!!.birthdayDatePicker.value.atStartOfDay(ZoneId.systemDefault()))
+                        userName = admin!!.userNameTextField.text
+                        password = admin!!.passwordField.text
+                        telephone = admin!!.telephoneAdminTextField.text
+                        genre = admin!!.choiceBoxGender.value
+                        email = admin!!.emailTextField.text
+                    }
+                }
+
                 val loading = ViewUtil.loadingView()
                 loading.show()
                 EnterpriseService.getInstance().update(enterprise)
                     .subscribe({
                                loading.close()//
+                        ViewUtil.customAlert(ViewUtil.SUCCESS,"Success").show()
                     },{
                         th-> println(th.message)
                         loading.close()
+                        ViewUtil.customAlert(ViewUtil.ERROR,"Error").show()
                     })
             }
         }
@@ -197,7 +220,7 @@ class EnterpriseController:Initializable, BaseController() {
             ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("fill_all_text_fields")).show()
             return false
         }
-        if (admin!!.telephoneTextField.text.isBlank()){
+        if (admin!!.telephoneAdminTextField.text.isBlank()){
             ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_enter_international_phone")).show()
             return false
         }
@@ -232,13 +255,10 @@ class EnterpriseController:Initializable, BaseController() {
             return false
         }
 
-        if ( admin!!.telephoneTextField.text.isBlank() ){
-            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_enter_international_phone")).show()
-            return false
-        }
 
-        if ( admin!!.emailTextField.text.isBlank() ){
-            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_enter_email")).show()
+
+        if ( admin!!.emailTextField.text.isBlank() || !admin!!.emailTextField.text.isValidEmail() ){
+            ViewUtil.customAlert(ViewUtil.WARNING,resourceBundle.getString("please_enter_email") +" (${admin!!.emailTextField.text})" ).show()
             return false
         }
 

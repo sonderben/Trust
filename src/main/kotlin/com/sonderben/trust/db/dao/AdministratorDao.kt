@@ -153,8 +153,10 @@ class AdministratorDao: CrudDao<AdminEntity> {
 
             preparedStatement.setTimestamp(7, Timestamp(entity.birthDay.time.time))
             preparedStatement.setString(8, entity.email)
+            preparedStatement.setLong(9,entity.id)
 
             val rowCount = preparedStatement.executeUpdate()
+            println("men li: $rowCount")
             if (rowCount > 0) {
 
                 return entity

@@ -125,6 +125,8 @@ class ViewUtil {
             val body = (mainVbox.children[0] as VBox).children[0] as Text
             body.style = createStyle( alertType )
 
+            body.wrappingWidth = 390.0
+
 
             body.text = message.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 

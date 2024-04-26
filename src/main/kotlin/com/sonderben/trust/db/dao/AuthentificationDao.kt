@@ -26,7 +26,7 @@ class AuthentificationDao {
                         if (resultSet.next()) {
                             val employee = EmployeeEntity()
                             employee.apply {
-                                this.id = id
+                                this.id = resultSet.getLong("id")
                                 firstName = resultSet.getString("firstName")
                                 passport = resultSet.getString("passport")
                                 lastName = resultSet.getString("lastName")

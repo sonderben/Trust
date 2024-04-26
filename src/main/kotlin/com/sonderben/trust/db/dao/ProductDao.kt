@@ -4,6 +4,7 @@ package com.sonderben.trust.db.dao
 import com.sonderben.trust.Context
 import com.sonderben.trust.Util
 import com.sonderben.trust.db.SqlDdl
+import com.sonderben.trust.db.SqlDml.SEARCH_PRODUCT
 import com.sonderben.trust.db.SqlDml.SELECT_ALL_PRODUCT
 import com.sonderben.trust.db.SqlDml.UPDATE_PRODUCT
 import com.sonderben.trust.toTimestamp
@@ -130,6 +131,58 @@ class ProductDao : CrudDao<ProductEntity> {
 
     }
 
+     fun search(limit:Int,offset:Int): List<ProductEntity> {
+
+        val products = mutableListOf<ProductEntity>()
+
+        Database.connect().use { connection ->
+            connection.prepareStatement(SEARCH_PRODUCT).use { statement ->
+                statement.setInt(1,limit)
+                statement.setInt(2,offset)
+
+                statement.executeQuery().use { resultSet ->
+                    while (resultSet.next()) {
+                        val employee = EmployeeEntity()
+                        val tempId = resultSet.getLong("id_employee")
+                        employee.apply {
+                            id = if (tempId == 0L) 1L else tempId
+                            userName = resultSet.getString("userName") ?: "root"
+                        }
+                        val category = CategoryEntity()
+                        category.apply {
+                            id = resultSet.getLong("id_category")
+                            code = resultSet.getString("code_categpry")
+                            description = resultSet.getString("description_category")
+                            discount = resultSet.getDouble("discount_category")
+                        }
+                        val prod = ProductEntity(
+                            resultSet.getString("code_product"),
+                            resultSet.getString("sellby"),
+                            resultSet.getString("description_product"),
+                            resultSet.getDouble("sellingPrice"),
+                            resultSet.getDouble("purchaseprice"),
+                            resultSet.getDouble("discount_product"),
+                            resultSet.getDouble("itbis"),
+                            resultSet.getFloat("quantity"),
+                            resultSet.getFloat("quantityRemaining"),
+                            Util.timeStampToCalendar(resultSet.getTimestamp("dateAdded")),
+                            Util.timeStampToCalendar(resultSet.getTimestamp("expirationDate")),
+                            category,
+                            employee
+                        )
+                        prod.id = resultSet.getLong("id")
+                        products.add(prod)
+
+                    }
+
+                }
+            }
+        }
+
+        return products
+
+    }
+
     override fun update(entity: ProductEntity, connection: Connection): ProductEntity? {
         if (entity.id == null)
             throw RuntimeException(" id product can not be null")
@@ -143,7 +196,7 @@ class ProductDao : CrudDao<ProductEntity> {
             preparedStatement.setLong(6, entity.category.id)
             preparedStatement.setLong(7, Context.currentEmployee.value.id)
             preparedStatement.setTimestamp(8, entity.expirationDate.toTimestamp())
-            preparedStatement.setString(9, entity.code)
+            preparedStatement.setString(9, entity.code.padStart(12,'0'))
             preparedStatement.setString(10, entity.description)
             preparedStatement.setFloat(11, entity.quantityRemaining)
             preparedStatement.setString(12, entity.sellBy)

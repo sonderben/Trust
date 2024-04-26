@@ -1,6 +1,7 @@
 package com.sonderben.trust.controller.enterprise
 
 import com.sonderben.trust.controller.BaseController
+import com.sonderben.trust.onlyInt
 import entity.EnterpriseEntity
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
@@ -11,24 +12,27 @@ import java.time.LocalDate
 import java.util.*
 
 class Admin :Initializable,BaseController() {
-    lateinit var phoneTextField: TextField
-    private var bundle:ResourceBundle?=null;
+
+    private lateinit var bundle:ResourceBundle;
     var enterprise: EnterpriseEntity?=null
          set(value) {
              field=value
              setEnterprise()
-             setBusiness(bundle!!)
+             setBusiness(bundle)
          }
-    override fun initialize(p0: URL?, p1: ResourceBundle?) {
+    override fun initialize(p0: URL?, p1: ResourceBundle) {
         disableQueryControlButton()
         bundle = p1
 
+        telephoneEnterpriseTextField.onlyInt()
+        telephoneAdminTextField.onlyInt()
+
         categoryChoiceBox.items.clear()
         categoryChoiceBox.items.addAll(
-            p1?.getString("supermarket") ?: "Supermarket",
-            p1?.getString("hardware_store") ?: "Hardware store",
-            p1?.getString("pharmacy") ?: "Pharmacy",
-            p1?.getString("general") ?: "General"
+            p1.getString("supermarket") ?: "Supermarket",
+            p1.getString("hardware_store") ?: "Hardware store",
+            p1.getString("pharmacy") ?: "Pharmacy",
+            p1.getString("general") ?: "General"
         )
     }
 
@@ -39,6 +43,7 @@ class Admin :Initializable,BaseController() {
      */
     private fun setEnterprise() {
        if (enterprise!=null){
+           println(enterprise)
            val emp = enterprise!!.adminEntity
 
            val cal = emp.birthDay
@@ -57,8 +62,9 @@ class Admin :Initializable,BaseController() {
            firstNameTextField.text = emp.firstName
            lastNameTextField.text = emp.lastName
            passwordField.text = emp.password
-           phoneTextField.text = emp.telephone
-           scheduleTextField.text = "Mon-Mon"
+           telephoneAdminTextField.text = emp.telephone
+           val day = bundle.getString("days").split(",")[0].substring(0,3)
+           scheduleTextField.text = "$day - $day"
        }
     }
 
@@ -107,7 +113,9 @@ class Admin :Initializable,BaseController() {
      lateinit var scheduleTextField: TextField
 
     @FXML
-     lateinit var telephoneTextField: TextField
+     lateinit var telephoneAdminTextField: TextField
+    @FXML
+    lateinit var telephoneEnterpriseTextField: TextField
 
 
 
@@ -148,7 +156,7 @@ class Admin :Initializable,BaseController() {
             }
 
             nameTextField.text = enterprise!!.name
-            telephoneTextField.text = enterprise!!.telephone
+            telephoneEnterpriseTextField.text = enterprise!!.telephone
             websiteTextField.text = enterprise!!.website
         }
 

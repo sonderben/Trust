@@ -8,6 +8,7 @@ import com.sonderben.trust.db.SqlDml.INSERT_PRODUCT_RETURN
 import com.sonderben.trust.db.SqlDml.PRODUCT_SOLD_BY_CODE
 import com.sonderben.trust.db.SqlDml.SELECT_PRODUCT_RETURNED
 import com.sonderben.trust.db.SqlDml.UPDATE_STATUS_PRODUCT_IS_RETURNED
+import com.sonderben.trust.format
 import com.sonderben.trust.toCalendar
 import com.sonderben.trust.toTimestamp
 import entity.InvoiceEntity
@@ -19,7 +20,7 @@ import io.reactivex.rxjavafx.schedulers.JavaFxScheduler
 import java.sql.Connection
 import java.sql.SQLException
 import java.sql.Timestamp
-import java.util.Calendar
+import java.util.*
 import kotlin.collections.List
 
 class InvoiceDao : CrudDao<InvoiceEntity> {
@@ -143,14 +144,18 @@ class InvoiceDao : CrudDao<InvoiceEntity> {
         return null
     }
 
-    fun productSealed(connection: Connection): List<ProductSealed> {
+    fun productSealed(connection: Connection,from:Long,to:Long): List<ProductSealed> {
         val productsSealed = mutableListOf<ProductSealed>()
 
 
-        connection.createStatement().use { statement ->
-            statement.executeQuery(PRODUCT_SOLD_BY_CODE).use { resultSet ->
+        connection.prepareStatement(PRODUCT_SOLD_BY_CODE).use { statement ->
+            statement.setLong(1,from)
+            statement.setLong(2,to)
+            statement.executeQuery().use { resultSet ->
                 while (resultSet.next()) {
 
+                    val cal = Calendar.getInstance()
+                    cal.time = Date( resultSet.getLong("dateCreated") )
 
                     productsSealed.add(
                         ProductSealed(
@@ -158,7 +163,7 @@ class InvoiceDao : CrudDao<InvoiceEntity> {
                             resultSet.getString("description"),
                             resultSet.getString("total_price"),
                             resultSet.getString("total_quantity"),
-                            resultSet.getString("dateCreated"),
+                            cal.format(),//resultSet.getString("dateCreated"),
                             resultSet.getString("category")
                         )
                     )

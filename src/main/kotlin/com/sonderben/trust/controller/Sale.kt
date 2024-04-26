@@ -61,7 +61,7 @@ class Sale :Initializable,MessageListener,BaseController(){
 
         //customerCode.onlyInt()
         codeProductTextField.onlyInt()
-        qtyTextField//.onlyInt()
+        qtyTextField.onlyFloat()//.onlyInt()
         cashTextField.onlyInt()
 
         customerCode.focusedProperty().addListener { _, _, newValue ->

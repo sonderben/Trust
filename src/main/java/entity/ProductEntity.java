@@ -158,7 +158,7 @@ public class ProductEntity extends BaseEntity {
         if (discount <= 0){
             return normalPrice;
         } else if (category!=null && category.getDiscount()>0) {
-            return normalPrice-(sellingPrice * (quantity/100.0) * category.getDiscount());
+            return normalPrice-(sellingPrice * ( quantity/100.0) * category.getDiscount() );
         }
         return normalPrice-(sellingPrice * (quantity/100.0) * discount);
     }

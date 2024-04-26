@@ -51,7 +51,7 @@
                         <Label text="%category" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                         <TextField fx:id="nameTextField" GridPane.rowIndex="1" />
                         <TextField fx:id="directionTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <TextField fx:id="phoneTextField" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <TextField fx:id="telephoneEnterpriseTextField" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                         <TextField fx:id="websiteTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <ChoiceBox fx:id="categoryChoiceBox" maxWidth="1.7976931348623157E308" prefWidth="150.0" value="%select_type_company" GridPane.columnIndex="2" GridPane.rowIndex="3" />
 
@@ -91,7 +91,7 @@
                         <TextField fx:id="firstNameTextField" GridPane.rowIndex="1" />
                         <TextField fx:id="lastNameTextField" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                         <TextField fx:id="emailTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <TextField fx:id="telephoneTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="telephoneAdminTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <TextField fx:id="userNameTextField" editable="false" text="root" GridPane.rowIndex="3" />
                         <TextField fx:id="scheduleTextField" disable="true" editable="false" promptText="%schedules" GridPane.rowIndex="5" />
                         <DatePicker fx:id="birthdayDatePicker" maxWidth="1.7976931348623157E308" promptText="%birthday" GridPane.columnIndex="3" GridPane.rowIndex="1" />

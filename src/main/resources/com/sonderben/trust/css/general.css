@@ -51,7 +51,7 @@
 
 
 .chart-plot-background{
-    -fx-background-color: tranparent;
+    -fx-background-color: transparent;
 }
 .chart-title{
     -fx-text-fill: white;

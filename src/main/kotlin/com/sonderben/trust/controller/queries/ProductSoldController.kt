@@ -3,6 +3,7 @@ package com.sonderben.trust.controller.queries
 import com.sonderben.trust.controller.BaseController
 import com.sonderben.trust.db.dao.InvoiceDao
 import com.sonderben.trust.db.service.InvoiceService
+import com.sonderben.trust.toCalendar
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.fxml.FXML
@@ -10,6 +11,7 @@ import javafx.fxml.Initializable
 import javafx.scene.chart.BarChart
 import javafx.scene.chart.PieChart
 import javafx.scene.chart.XYChart
+import javafx.scene.control.DatePicker
 import javafx.scene.control.TableColumn
 import javafx.scene.control.TableView
 import javafx.scene.layout.AnchorPane
@@ -28,7 +30,25 @@ class ProductSoldController:Initializable, BaseController() {
         categoryCol.setCellValueFactory { data -> SimpleStringProperty( data.value.category) }
         totalPrice.setCellValueFactory { data -> SimpleStringProperty(data.value.totalPrice) }
 
-        val pds = InvoiceService.getInstance().productSealed()
+        setValue()
+
+        fromDatePicker.valueProperty().addListener { observableValue, localDate, localDate2 ->
+            setValue()
+        }
+        toDatePicker.valueProperty().addListener { observableValue, localDate, localDate2 ->
+            setValue()
+        }
+
+
+    }
+
+    private fun setValue() {
+        tableView.items.clear()
+        pieChart.data.clear()
+        barChart.data.clear()
+        InvoiceService.getInstance().productSealed(
+            from = fromDatePicker.value?.toCalendar()?.timeInMillis?:1000,
+            to = toDatePicker.value?.toCalendar()?.timeInMillis ?: 100_000_000_000_000_000)
             .subscribe({
                 tableView.items.addAll( it )
 
@@ -62,19 +82,15 @@ class ProductSoldController:Initializable, BaseController() {
 
 
                 pieChart.data = pieChartDta
-            },{})
+            },{th-> println(th) })
 
 
 
         barChart.lookup("")
-
-
-
-
-
-
-
     }
+
+    lateinit var toDatePicker: DatePicker
+    lateinit var fromDatePicker: DatePicker
 
     @FXML
     private lateinit var barChart: BarChart<String, Double>

@@ -103,6 +103,7 @@ public class Database {
                 schedule.setWorkDay( resultSet.getInt("workDay") );
                 schedule.setStartHour(String.valueOf(resultSet.getFloat("start_hour")));
                 schedule.setEndHour(String.valueOf(resultSet.getFloat("end_hour")));
+                schedule.setIdEmployee( employeeId );
                 schedules.add( schedule );
 
             }

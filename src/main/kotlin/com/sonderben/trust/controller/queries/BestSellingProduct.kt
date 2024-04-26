@@ -41,7 +41,7 @@ class BestSellingProduct:Initializable, BaseController() {
 
 
                 }
-            },{})
+            },{th-> println(th) })
 
 
 

@@ -49,4 +49,15 @@ public class ScheduleEntity extends BaseEntity{
     public void setEndHour(String endHour) {
         this.endHour = endHour;
     }
+
+    @Override
+    public String toString() {
+        return "ScheduleEntity{" +
+                "workDay=" + workDay +
+                ", startHour='" + startHour + '\'' +
+                ", endHour='" + endHour + '\'' +
+                ", idEmployee=" + idEmployee +
+                ", id=" + id +
+                '}';
+    }
 }

@@ -21,8 +21,8 @@
    <children>
       <HBox alignment="CENTER_LEFT" minHeight="30.0" prefHeight="30.0" prefWidth="200.0" VBox.vgrow="NEVER">
          <children>
-            <TextField prefWidth="200.0" promptText="%search" />
-            <Button mnemonicParsing="false" text="%search">
+            <TextField fx:id="searcTextField" onKeyReleased="#searchTextFieldOnKeyRelased" prefWidth="200.0" promptText="%search" />
+            <Button mnemonicParsing="false" onAction="#searchBtnAction" text="%search">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>

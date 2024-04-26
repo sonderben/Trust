@@ -24,10 +24,10 @@ class InvoiceService private constructor(dao: InvoiceDao): CrudService<InvoiceDa
         }
     }
 
-    fun productSealed(): Single<List<InvoiceDao.ProductSealed>> {
+    fun productSealed(from:Long,to:Long): Single<List<InvoiceDao.ProductSealed>> {
         return Single.create { emitter->
             Database.connect().use { connection ->
-                val ps = dao.productSealed(connection)
+                val ps = dao.productSealed(connection,from,to)
 
                 emitter.onSuccess(ps)
             }

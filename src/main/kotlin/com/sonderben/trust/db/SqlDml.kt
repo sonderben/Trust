@@ -18,7 +18,7 @@ object SqlDml {
     }
     val DELETE_CUSTOMER = "DELETE FROM ${SqlDdl.customers} WHERE id = ?"
     val FIND_CUSTOMER_BY_ID = "SELECT * FROM ${SqlDdl.customers} WHERE id = ?"
-    val SELECT_ALL_CUSTOMER = "SELECT * FROM ${SqlDdl.customers}"
+    val SELECT_ALL_CUSTOMER = "SELECT * FROM ${SqlDdl.customers} WHERE id != 1"
     val UPDATE_CUSTOMER = """
             update  ${SqlDdl.customers}
              set birthDay =   ?,direction = ? ,email = ? ,firstName = ? ,genre = ? ,lastName = ? ,passport = ? ,
@@ -50,7 +50,7 @@ object SqlDml {
     val DELETE_ADMIN = "delete from ${SqlDdl.administrator} where id = ?"
 
     val UPDATE_ADMIN = """
-        update ${SqlDdl.employees} set 
+        update ${SqlDdl.administrator} set 
         firstName = ?,genre = ?,lastName = ? ,password = ? ,telephone = ?,
         userName = ?,birthDay = ?,email = ? where id = ? 
         """
@@ -120,8 +120,9 @@ object SqlDml {
             FROM ${SqlDdl.productSealed} as ps
             INNER JOIN ${SqlDdl.invoiceProductSealed}  as ip ON ip.id_product_sealed = ps.id
             INNER JOIN ${SqlDdl.invoices} as iv ON iv.id = ip.id_invoice
-            INNER JOIN ${SqlDdl.employees} as emp ON emp.id = iv.id_employee
+            LEFT JOIN ${SqlDdl.employees} as emp ON emp.id = iv.id_employee
             /*WHERE Date(iv.dateCreated/1000,'unixepoch') = date('now')*/
+            WHERE iv.dateCreated BETWEEN ? and ?
             GROUP BY ps.code;
     """.trimIndent()
 
@@ -167,6 +168,18 @@ object SqlDml {
             INNER JOIN Categories on 
             products.id_category = Categories.id
         """.trimIndent()
+
+    val SEARCH_PRODUCT = """
+        SELECT products.quantityRemaining,products.sellby,products.id,products.discount as discount_product,quantity,itbis,sellingPrice,purchaseprice,
+        id_category,products.dateAdded,id_employee,expirationDate,products.code as code_product,products.description as description_product,
+        Categories.discount as discount_category,Categories.code as code_categpry,Categories.description as description_category,userName
+        from products LEFT JOIN Employee  on 
+        products.id_employee = Employee.id
+        INNER JOIN Categories on 
+        products.id_category = Categories.id
+        WHERE products.code like '?%' or description_product like '?%'
+        LIMIT 2 OFFSET 0
+    """.trimIndent()
 
     val UPDATE_PRODUCT = """update  ${SqlDdl.products} 
             set discount = ?, 
