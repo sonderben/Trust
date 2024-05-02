@@ -61,6 +61,7 @@ class LoginController : Initializable{
                             loading.close()
                             HelloApplication.primary.scene = scene
                         }else{
+                            loading.close()
                             ViewUtil.customAlert(ViewUtil.INFO," u pa gen akse ak sistem nn le sa a").show()
                         }
                     }else{

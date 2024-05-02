@@ -103,11 +103,11 @@ class Sale :Initializable,MessageListener,BaseController(){
 
 
         codeCol.setCellValueFactory{data-> SimpleStringProperty( data.value.code ) }
-        itbisCol.setCellValueFactory{data-> SimpleStringProperty( data.value.itbis.toString()) }
-        discountCol.setCellValueFactory{data-> SimpleStringProperty( data.value.discount.toString() ) }
+        itbisCol.setCellValueFactory{data-> SimpleStringProperty( if ( data.value.itbis.isInt() ) data.value.itbis.toInt().toString() else data.value.itbis.toString() ) }
+        discountCol.setCellValueFactory{data-> SimpleStringProperty( if ( data.value.discount.isInt() ) data.value.discount.toInt().toString() else data.value.discount.toString() ) }
         priceCol.setCellValueFactory{data-> SimpleStringProperty( data.value.price.toString() ) }
 
-        qtyCol.setCellValueFactory{data-> SimpleStringProperty( if (data.value.sellBy.equals("unit",true)) data.value.qty.toString() else "${data.value.qty} Lb") }
+        qtyCol.setCellValueFactory{data-> SimpleStringProperty(formatQty(data.value.sellBy,data.value.qty)) }
 
         descriptionCol.setCellValueFactory{data-> SimpleStringProperty( data.value.description.replaceFirstChar { it.uppercase() } ) }
         totalCol.setCellValueFactory {
@@ -146,6 +146,16 @@ class Sale :Initializable,MessageListener,BaseController(){
 
 
 
+
+    }
+
+    private fun formatQty(sellBy:String,qty: Float): String {
+
+        return if( sellBy.equals("unit",true) ){
+            if (qty.isInt()) qty.toInt().toString() else qty.toString()
+        }else{
+            if (qty.isInt()) "${qty.toInt()} Lb" else "$qty Lb"
+        }
 
     }
 
